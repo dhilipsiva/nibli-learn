@@ -56,12 +56,18 @@
     },
     "content_version": {
       "type": "integer",
-      "minimum": 1
+      "minimum": 1,
+      "enum": [
+        2,
+        3,
+        4
+      ]
     },
     "app_schema": {
       "enum": [
         2,
-        3
+        3,
+        4
       ]
     },
     "engine_revision": {

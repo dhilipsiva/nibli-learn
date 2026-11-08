@@ -58,7 +58,7 @@ fn rss_kib() -> Option<u64> {
         .parse()
         .ok()
 }
-fn phase<T>(name: &str, work: impl FnOnce() -> T) -> (T, Value) {
+pub(crate) fn phase<T>(name: &str, work: impl FnOnce() -> T) -> (T, Value) {
     let rss_before = rss_kib();
     let before = counts();
     let began = Instant::now();

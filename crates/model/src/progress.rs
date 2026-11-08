@@ -417,4 +417,53 @@ mod tests {
                 .is_none()
         );
     }
+    #[test]
+    fn adding_build_preserves_prior_track_evidence_without_completing_new_objectives() {
+        let current = Course::parse(include_str!("../../../content/course.json")).unwrap();
+        let mut previous = current.clone();
+        previous.schema = 3;
+        previous.version = 3;
+        previous.lessons.retain(|lesson| lesson.track != "build");
+        previous.validate().unwrap();
+        let lesson = &previous.lessons[10];
+        let activity = &lesson.activities[0];
+        let mut saved = CourseProgress::new(&previous);
+        saved.current = LearningSelection {
+            lesson: lesson.id.clone(),
+            activity: activity.id.clone(),
+        };
+        let entry = saved
+            .activity_mut(&previous, &lesson.id, &activity.id)
+            .unwrap();
+        entry.checked = true;
+        entry.prediction = Some("Historical test-fixture prediction".into());
+        entry.reflection = Some("Keep the original explanation and source revision.".into());
+        entry.evidence.push(LearningEvidence {
+            engine_revision: crate::ENGINE_REVISION.into(),
+            content_version: 3,
+            run_id: "historical-test-fixture".into(),
+            epoch: "prior-epoch".into(),
+            revision: "8".into(),
+            action: None,
+            result_family: "decision".into(),
+            outcome: Some("FALSE".into()),
+        });
+        let before = serde_json::to_value(&saved).unwrap();
+        let imported = CourseProgress::import(&before.to_string(), &current).unwrap();
+        assert_eq!(serde_json::to_value(&imported).unwrap(), before);
+        assert_eq!(imported.completed(&current), 1);
+        for lesson in current
+            .lessons
+            .iter()
+            .filter(|lesson| lesson.track == "build")
+        {
+            for activity in &lesson.activities {
+                assert!(
+                    imported
+                        .activity(&current, &lesson.id, &activity.id)
+                        .is_none()
+                );
+            }
+        }
+    }
 }

@@ -1,4 +1,4 @@
-# Local integration labs
+# Local integration and construction labs
 
 These original experiments connect the companion to the pinned native engine and
 WASI component. They exercise real engine calls and a real Wasmtime host. A report
@@ -83,7 +83,47 @@ Inspect the error before rerunning; do not change a failed check into a pass.
 Journals are local experimental data. Reports and logs may contain local paths;
 review them before sharing.
 
-Return to the matching Integrate Applications activity and import the report into
+Return to the matching Integrate Applications or Build a Reasoner activity and import the report into
 the local-lab panel. The panel must label it as supplied evidence, retain its
 identity and failure details, and never turn it into a browser-engine run. Answer
 the activity's diagnosis and self-review prompts using the actual observations.
+
+## Build a Reasoner experiments
+
+```sh
+python3 labs/run.py compiler-internals --output ../nibli-compiler-first
+python3 labs/run.py store-search --output ../nibli-store-first
+python3 labs/run.py rules-witnesses --output ../nibli-rules-first
+python3 labs/run.py runtime-buffers --output ../nibli-runtime-first
+python3 labs/run.py finite-assurance --output ../nibli-finite-first
+python3 labs/run.py formal-models --engine-root ../nibli-lab-engine --output ../nibli-models-first
+```
+
+The first five run original native Rust experiments against the engine pin. The
+formal-model experiment also needs the clean pinned engine checkout described above.
+It explicitly requires Lean, checks the six top-level model files and records their
+source hashes, the observed tool version and the current coverage inventory. The
+default engine shell supplies Lean 4.28.0. Production extraction uses a separate
+pinned toolchain and is not executed by this lab. A separately labeled Rust regression
+uses an eight-step test-only proof cap, verifies whole-certificate refusal, removes
+the override and certifies the same query. This does not exhaust the production
+100,000-step ceiling.
+
+| Lab | Observation | Failure and repair |
+| --- | --- | --- |
+| `compiler-internals` | Actual source spans, owned parser tree, flat AST arrays, connective/scope lowering and compute marking. | Repair punctuation or vocabulary at the failed stage. Invalid raw indices are refused. Partial parser recovery is not atomic admission; opaque bodies do not become world facts. |
+| `store-search` | A small real `FactStore` used in `CoreSession`, typed matching, predicate calls, materialization reports and source replay. | Start with an empty mirror and admit authoritative sources. Preserve repeated bindings, wrappers and independent support. Withdraw the final source to expose stale derivations. |
+| `rules-witnesses` | Real shared proof nodes and references, citations, dependent generated terms and public rule events. | Keep typed witness dependencies and source multiplicity. Distinguish a truncated event record from query completion or proof-size exhaustion. |
+| `runtime-buffers` | Actual interning, owned AST lifetime, separate cloned node vectors, JSON round-trip and allocation observations. | Keep keys with their interner, distinguish graph sharing from allocation sharing, and preserve root reachability. Native JSON measurements do not measure the component ABI. |
+| `finite-assurance` | An independent Boolean fixed point over all 64 base sets, 576 named query comparisons, 576 recorded/plain comparisons and 192 metamorphic controls. | Review the restricted oracle domain. The locally authored wrong-reference and application-OR controls must fail their discriminating examples. This is not an engine mutation campaign. |
+| `formal-models` | Six actual Lean model checks and a source-bound obligation inventory. | Fail if Lean is unavailable. Keep model propositions separate from production extraction receipts and whole-system claims; the inventory declares no complete certified target. |
+
+`LearningStore` copies fact buckets but shares observation counters when cloned;
+its counts aggregate candidate/rebuild work. It is not a durable database. The
+finite oracle covers only three names, three unary relations, two fixed positive
+acyclic rules and six optional base facts. It does not cover negation, equality,
+existential heads, arithmetic, external compute, arbitrary rule sets or budgets.
+
+A kit change produces a new source digest. Keep earlier reports for comparison,
+but rerun the matching kit to meet a new activity's report check. The schema-1
+archive and report formats stay the same; an old digest is not silently relabeled.

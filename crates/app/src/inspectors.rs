@@ -17,6 +17,23 @@ pub fn Replay() -> Element {
         .enumerate()
         .filter(|(_, event)| {
             let matches_filter = match s.event_filter.as_str() {
+                "compile" => text(event, "phase") == "compile",
+                "search" => matches!(
+                    text(event, "kind").as_str(),
+                    "search_pass"
+                        | "candidate"
+                        | "unification"
+                        | "rule_condition"
+                        | "rule_fire"
+                        | "witness"
+                        | "depth_bound"
+                        | "cycle_cut"
+                        | "short_circuit"
+                ),
+                "memo" => matches!(
+                    text(event, "kind").as_str(),
+                    "cache_hit" | "cache_miss" | "cache_store" | "cache_invalidate"
+                ),
                 "failed" => event_failed(event),
                 "proof" => event_proof_node(event).is_some(),
                 _ => true,
@@ -92,7 +109,7 @@ pub fn Replay() -> Element {
             div { class:"filter-bar",
                 label { r#for:"event-filter", "Show" }
                 select { id:"event-filter", value:"{s.event_filter}", onchange:move |e|state.write().event_filter=e.value(),
-                    option {value:"all","All events"} option {value:"failed","Failed attempts"} option {value:"proof","Linked to proof"}
+                    option {value:"all","All events"} option {value:"compile","Compiler stages"} option {value:"search","Search and rules"} option {value:"memo","Memo operations"} option {value:"failed","Failed attempts"} option {value:"proof","Linked to proof"}
                 }
                 input { r#type:"search", "aria-label":"Search recorded events", placeholder:"Search this recording…", value:"{s.event_search}", oninput:move|e|state.write().event_search=e.value() }
                 span { class:"small muted", "{filtered.len()} matching" }

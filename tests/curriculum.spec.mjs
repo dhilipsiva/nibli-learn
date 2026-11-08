@@ -9,10 +9,10 @@ async function initial(page,family,status){await page.getByTestId('activity-run'
 async function action(page,id,family,status){const button=page.getByTestId(`action-${id}`);await expect(button).toBeEnabled();await button.click();await ready(page);await expect(button).toBeDisabled();if(family)await expect(page.locator('.operation-results').getByTestId('operation-result')).toHaveAttribute('data-family',family);if(status)await expect(page.locator('.operation-results').getByTestId('operation-result').locator('[data-status]')).toHaveAttribute('data-status',status);}
 async function saved(page){await expect(page.getByRole('button',{name:'Saved on this device',exact:true})).toBeVisible();return page.evaluate(async()=>{const p=await import('/nibli-learn/platform/platform.js');const r=JSON.parse(await p.loadWorkspace());if(!r.ok||!r.value)throw Error('No workspace');return r.value.data;});}
 
-test('all fourteen units are navigable and the first learning loop records actual evidence',async({page},testInfo)=>{
+test('all nineteen units are navigable and the first learning loop records actual evidence',async({page},testInfo)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('/nibli-learn/#/course');await ready(page);
- for(const unit of ['F1','F2','F3','F4','F5','F6','U1','U2','U3','U4','I1','I2','I3','I4'])await expect(page.getByTestId(`unit-${unit}`)).toBeVisible();
- await expect(page.locator('[data-testid^="activity-"]')).toHaveCount(76);
+ for(const unit of ['F1','F2','F3','F4','F5','F6','U1','U2','U3','U4','I1','I2','I3','I4','B1','B2','B3','B4','B5'])await expect(page.getByTestId(`unit-${unit}`)).toBeVisible();
+ await expect(page.locator('[data-testid^="activity-"]')).toHaveCount(116);
  await page.getByTestId('activity-found.inputs-given').click();await ready(page);
  await page.getByLabel('Your prediction or diagnosis').fill('FALSE: the safety approval is not accepted.');
  await initial(page,'decision','FALSE');await action(page,'admit-approval','decision','TRUE');

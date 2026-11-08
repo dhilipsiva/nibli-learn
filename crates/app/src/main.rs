@@ -1,6 +1,7 @@
 use dioxus::prelude::*;
 use nibli_learn_model::*;
 
+mod construction;
 mod curriculum;
 mod inspectors;
 mod integration;

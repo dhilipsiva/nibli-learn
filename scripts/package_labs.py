@@ -13,6 +13,8 @@ PUBLIC_INPUTS = (
     'labs/native/src/main.rs', 'labs/native/src/compute.rs',
     'labs/native/src/ontology.rs', 'labs/native/src/measurement.rs',
     'labs/native/src/scoped.rs',
+    'labs/native/src/compiler.rs', 'labs/native/src/store.rs',
+    'labs/native/src/rules.rs', 'labs/native/src/runtime.rs', 'labs/native/src/assurance.rs',
     'flake.nix', 'flake.lock', 'LICENSE-MIT', 'LICENSE-APACHE', 'CONTENT-LICENSE.md',
 )
 

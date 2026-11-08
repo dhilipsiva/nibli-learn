@@ -1,6 +1,6 @@
 {
-  "schema": 3,
-  "version": 3,
+  "schema": 4,
+  "version": 4,
   "entries": [
     {
       "id": "derivable",
@@ -2054,6 +2054,495 @@
       ],
       "related": [],
       "links": []
+    },
+    {
+      "id": "build-compiler-seams",
+      "title": "The compiler has several different boundaries",
+      "category": "construction",
+      "body": "The executable pest grammar recognizes source structure and returns an owned parser tree. The validating emitter resolves vocabulary and places while producing flat predicate, argument and sentence arrays. The semantic compiler resolves scope, closes variables and builds an interned formula tree; flattening produces indexed LogicBuffer nodes. The session then marks registered compute predicates. An unknown dictionary name can parse and still fail emission. Compile inspection can include structural assertion preflight, but actual admission also depends on the current KB and is a separate operation. Locate the first failed boundary before choosing a repair.",
+      "examples": [
+        {
+          "source": "computer(Console4).",
+          "explanation": "Follow this source through the captured stage selector.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "lexical-forms",
+        "compile-admission",
+        "build-flat-ast"
+      ],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-kr/src/lib.rs"
+        }
+      ]
+    },
+    {
+      "id": "build-source-spans",
+      "title": "Source correspondence uses byte spans",
+      "category": "construction",
+      "body": "A period inside a quoted literal does not end a statement. Parser spans identify exact UTF-8 byte intervals, including punctuation; byte positions are not character counts for non-ASCII input. The browser selects fragments using captured spans and validates slice boundaries. It cannot reconstruct a missing artifact or turn a later source edit into the historical input. A parser recovery result can contain valid earlier statements and errors; the session’s atomic text admission does not commit that partial result.",
+      "examples": [
+        {
+          "source": "knows(Emi, \"inspection.v2\"). computer(Console4).",
+          "explanation": "Two real statements despite the period inside the literal.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "atomic-changes",
+        "build-compiler-seams"
+      ],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-kr/src/parser.rs"
+        }
+      ]
+    },
+    {
+      "id": "build-flat-ast",
+      "title": "Array indices are typed references",
+      "category": "construction",
+      "body": "AstBuffer is an internal Rust interchange with separate arrays for predicates, arguments and sentences. An index is interpreted in its field’s array, not in a universal pool. Public compilation validates reachable index bounds and acyclicity before recursive lowering; DAG sharing is legal. Corrupt hand-built roots and cycles are refused. Parsed debug strings help inspect a run but are not a stable AST wire format. LogicBuffer is the separate flattened representation exported by component interfaces.",
+      "examples": [
+        {
+          "source": "python3 labs/run.py compiler-internals --output ../compiler-observation",
+          "explanation": "Run real parser, emitter, corrupt-buffer and admission controls.",
+          "kind": "lab",
+          "run_in": "Pinned local lab kit inside nix develop",
+          "lab": "compiler-internals"
+        }
+      ],
+      "related": [
+        "build-compiler-seams",
+        "build-flat-logic"
+      ],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-types/src/ast.rs"
+        }
+      ]
+    },
+    {
+      "id": "build-lowering",
+      "title": "Follow meaning through connective lowering",
+      "category": "construction",
+      "body": "The semantic IR has explicit XOR and biconditional constructors. Flattening expands them using AND, OR and NOT, reusing child indices inside the resulting graph. An implication is represented through its Boolean shape; recognition as an admissible operational rule is a later responsibility. Quantifier order and lexical regions determine shared variables. A repeated spelling does not license moving a variable across an unsupported negative or modal boundary. Use explicit scope and test a split-identity case.",
+      "examples": [
+        {
+          "source": "dog(Nori) ^ animal(Nori).",
+          "explanation": "Inspect the expanded logic and follow a shared child index.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "operator-grammar",
+        "scope",
+        "build-flat-logic"
+      ],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-semantics/src/lib.rs"
+        }
+      ]
+    },
+    {
+      "id": "build-typed-store",
+      "title": "A store mirrors validated typed facts",
+      "category": "construction",
+      "body": "The FactStore trait offers predicate-bucket lookup, contains, insert, remove, clear, iteration, length and clone_box. The small lab implementation keeps one HashMap of HashSets; it does not duplicate the corpus in a second flat set. The KB owns admission and the assertion registry. Its with_store constructor requires an empty mirror because a preloaded typed fact lacks authoritative source support for replay. A persistent implementation also needs transaction, recovery and durability contracts beyond this in-memory exercise.",
+      "examples": [
+        {
+          "source": "python3 labs/run.py store-search --output ../store-observation",
+          "explanation": "Install the actual small store in a real CoreSession.",
+          "kind": "lab",
+          "run_in": "Pinned local lab kit inside nix develop",
+          "lab": "store-search"
+        }
+      ],
+      "related": [
+        "assertions",
+        "persistence",
+        "build-support-replay"
+      ],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-reason/src/fact_store.rs"
+        }
+      ]
+    },
+    {
+      "id": "build-matching",
+      "title": "One-directional matching preserves repeated bindings",
+      "category": "construction",
+      "body": "unify_facts matches a typed template against a concrete fact. Relation, arity and temporal/deontic wrapper must agree. Each PatternVar acquires a binding, and every later occurrence must match it. Substitution uses that binding map; it does not choose a new witness independently for each argument. Unspecified is an exact stored value, not a wildcard. Generated symbols, constants and numeric bit patterns retain their distinct types. Groundness validation rejects template variables or placeholders at stored-fact ingress.",
+      "examples": [
+        {
+          "source": "owns($person, $person).",
+          "explanation": "A shared variable requires the same entity in both places.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "types",
+        "variables",
+        "identity"
+      ],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-reason/src/kb.rs"
+        }
+      ]
+    },
+    {
+      "id": "build-search-index",
+      "title": "Indexes narrow candidates; rules still need work",
+      "category": "construction",
+      "body": "Predicate lookup narrows the store bucket. Matching, rule conditions, event-role joins and recursive subgoals can still generate substantial work. The lab logs actual store calls and recorder event counts while adding unrelated computer records. Those counts are interface observations, not a claim that the whole query runs in constant time. Read SearchPass, Candidate, Unification, RuleCondition, RuleFire and DepthBound events to locate effort before changing an index or budget.\n\nThe KB also maintains argument-position buckets keyed by relation, place and typed value. The anchored witness path can choose a small bound-argument bucket; unbound or unspecified arguments cannot narrow it. When equality classes are active, this path falls back so a raw-value index cannot silently omit equivalent terms. Predicate signatures and declared argument sorts are admission/type checks, not interchangeable query indexes.",
+      "examples": [
+        {
+          "source": "alive(Nori).",
+          "explanation": "A multi-hop example appears in the Store and search unit.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "depth",
+        "measurement-method",
+        "build-matching"
+      ],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-reason/src/reasoning.rs"
+        }
+      ]
+    },
+    {
+      "id": "build-support-replay",
+      "title": "The registry owns support; derived caches do not",
+      "category": "construction",
+      "body": "Two independent source IDs can support the same fact or canonical rule. Deduplicating a stored conclusion must preserve both sources. Withdrawal rebuilds from surviving authoritative assertions and invalidates materialization and cached consequences; deleting a displayed row without replay is insufficient. An old proof keeps its original revision and citations. Query-local compute memos, proof references, persistent assertion IDs and any retained predicate caches have different lifetimes.",
+      "examples": [],
+      "related": [
+        "revision",
+        "recovery",
+        "build-proof-sharing"
+      ],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-reason/src/lib.rs"
+        }
+      ]
+    },
+    {
+      "id": "build-rule-templates",
+      "title": "Rule conditions and existential heads play different roles",
+      "category": "construction",
+      "body": "Admitted universal rules are templates. Condition-side variables must be joined consistently; a successful condition can license head facts and generated witnesses. A head existential may depend on the universal variables used by that head. Its typed identity includes that dependency, so two owners can receive different generated computers. Canonical template deduplication must retain every source citation. The browser exposes public registration records and recorded rule events; private Rust template fields are not silently reconstructed.\n\nSelective materialization first checks whether rules and their dependencies can be projected to a finite surface relation. Event-role groups can be regrouped when their event identity is local to one atom. Arbitrary existential term generation is not a finite Datalog closure. Eligible relations are completed in stratum order; an incomplete extension must not be used as evidence for a negative answer. Inspect the completed/refused report and retain backward search where saturation is unsupported.",
+      "examples": [
+        {
+          "source": "every person $p: owns($p, some computer).",
+          "explanation": "Inspect different owner-dependent witnesses in the native lab.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "variables",
+        "witness-origins",
+        "build-witness-dependencies"
+      ],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-reason/src/rules.rs"
+        }
+      ]
+    },
+    {
+      "id": "build-witness-dependencies",
+      "title": "A witness name is a display, not its identity",
+      "category": "construction",
+      "body": "Retain the typed witness term and origin when comparing bindings. A dependent Skolem term includes its argument dependencies; a constant that happens to have a similar printed name is still a constant. Two separate existential goals can use different witnesses. Sharing a named variable across conditions requires one joined binding. Collection APIs return a complete result or an explicit unavailability; counting a partial exploration would manufacture a total.",
+      "examples": [
+        {
+          "source": "owns(Emi, $device).",
+          "explanation": "Inspect the typed generated witness, rather than comparing only its printed name.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "witness-origins",
+        "incomplete-collections",
+        "build-rule-templates"
+      ],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-reason/src/kb.rs"
+        }
+      ]
+    },
+    {
+      "id": "build-proof-sharing",
+      "title": "A proof is a graph with actual back-references",
+      "category": "construction",
+      "body": "ProofTrace stores a steps array and a root. Children reference earlier or shared proof steps. ProofRef carries a child pointing at an already recorded successful derivation, avoiding repeated expansion. Several parents can refer to one node; a tree rendering would duplicate it visually. Asserted and derived steps carry source or rule citations. The proof certifies its recorded result and inputs; failed candidates and search chronology belong in execution replay. A truncated event recorder and an incomplete query are separate states.\n\nThe pinned implementation caps a proof at 100,000 steps and refuses a certificate that exceeds its construction limit. Formula-evaluation exhaustion is also non-definitive. The formal-models kit separately runs the engine’s Rust regression with an eight-step test override: the whole proof is refused, then the same query certifies after the override is removed. This exercises the guard without claiming to exhaust the production ceiling.",
+      "examples": [
+        {
+          "source": "python3 labs/run.py rules-witnesses --output ../proof-observation",
+          "explanation": "Inspect actual references, shared incoming edges, citations and the bounded recorder control.",
+          "kind": "lab",
+          "run_in": "Pinned local lab kit inside nix develop",
+          "lab": "rules-witnesses"
+        }
+      ],
+      "related": [
+        "proof-scope",
+        "replay",
+        "build-support-replay"
+      ],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-types/src/logic.rs"
+        }
+      ]
+    },
+    {
+      "id": "build-memo-lifetimes",
+      "title": "A cache key includes the question and its state",
+      "category": "construction",
+      "body": "A reusable result depends on the goal, binding, relevant profile, source revision and supported search context. A negative answer at a shallow search horizon must not become a timeless proof of failure. The engine records typed cache operations and scopes. This course filters those captured events, without treating a missing event as evidence that no cache exists. Duplicate rule support, source withdrawal, profile changes and new top-level compute calls test different invalidation boundaries.",
+      "examples": [],
+      "related": [
+        "compute-transport-contract",
+        "revision",
+        "depth"
+      ],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-reason/src/lib.rs"
+        }
+      ]
+    },
+    {
+      "id": "build-interning",
+      "title": "Intern locally, resolve at the boundary",
+      "category": "construction",
+      "body": "SemanticCompiler uses a per-compilation Rodeo interner. Repeated equal names return the same key within that interner; keys from different instances cannot be interpreted without their own table. The semantic formula tree carries interned keys, while flattening resolves them into owned strings in LogicBuffer. Interning reduces repeated internal name storage, but it does not make all downstream strings or serializations free. The runtime lab uses the actual public interner and observes the boundary.",
+      "examples": [],
+      "related": [
+        "build-compiler-seams",
+        "build-owned-data"
+      ],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-semantics/src/ir.rs"
+        }
+      ]
+    },
+    {
+      "id": "build-owned-data",
+      "title": "Borrowed parsing input and owned syntax coexist",
+      "category": "construction",
+      "body": "pest parsing borrows the source while recognizing it. The public KR parser tree owns strings, Boxes and Vecs and remains valid after the input String is dropped. It is not the retired parser’s arena representation. Flat arrays use integer edges to avoid pointer-shaped transport, but a Vec still owns its allocation. The native experiment drops input text, compiles the owned AST and measures the resulting allocations with the same allocator instrumentation used in Integrate.",
+      "examples": [],
+      "related": [
+        "measurement-method",
+        "build-interning",
+        "build-flat-logic"
+      ],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-kr/src/ast.rs"
+        }
+      ]
+    },
+    {
+      "id": "build-flat-logic",
+      "title": "Graph sharing does not imply shared allocation",
+      "category": "construction",
+      "body": "LogicBuffer has a nodes vector and root indices. Binary connectives reference two child indices; quantifiers reference their body; CountNode contains a variable, a count and a body index. The count is not an edge. split_roots preserves every node index by cloning the full nodes vector into each single-root buffer. Unreachable sibling nodes remain inert. The runtime lab confirms separate allocations, owned clones and JSON round-trip equality; JSON size is not a canonical-ABI cost measurement.",
+      "examples": [
+        {
+          "source": "exactly 2 computer $c: broken($c).",
+          "explanation": "Follow CountNode’s body edge without treating the integer count as an index.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "build-flat-ast",
+        "build-lowering",
+        "build-owned-data"
+      ],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-types/src/logic.rs"
+        }
+      ]
+    },
+    {
+      "id": "build-component-lifecycle",
+      "title": "Resources stay with their owning component store",
+      "category": "construction",
+      "body": "The pinned component exports engine and authorizer session resources. A host instantiates the component, calls a constructor, invokes methods through that resource, and drops it through the owning store. A resource handle is not a portable assertion ID or a serializable KB snapshot. Typed logic, verdicts and proofs are values crossing the interface; host traps are outside ordinary returned error variants. Native and browser surfaces share CoreSession but have different transport and host capabilities. Inspect the actual component artifact before selecting bindings.",
+      "examples": [],
+      "related": [
+        "wit-values-resources",
+        "wit-world",
+        "runtime-artifact-inspection"
+      ],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/wit/world.wit"
+        }
+      ]
+    },
+    {
+      "id": "build-assurance-layers",
+      "title": "Separate an encoding test from an implementation theorem",
+      "category": "construction",
+      "body": "An application counterexample tests a chosen formalization. A metamorphic test checks a relation between executions. An independent finite oracle compares behavior inside an explicit domain. A Lean theorem establishes its stated model proposition. A production extraction receipt must connect particular source bytes, tooling and a proved component contract. None alone certifies every parser, compiler, host, data source and application requirement. Name the proposition and boundary before saying a system is verified.",
+      "examples": [],
+      "related": [
+        "assurance",
+        "adoption-obligations",
+        "build-production-obligations"
+      ],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/proofs/self-check/coverage.toml"
+        }
+      ]
+    },
+    {
+      "id": "build-finite-oracle",
+      "title": "Make the independent oracle small enough to inspect",
+      "category": "construction",
+      "body": "The original finite lab uses three names, unary dog/animal/alive relations, two fixed positive acyclic rules and six possible base facts. It enumerates all 64 base sets, computes an independent Boolean fixed point, and compares all nine named queries with Nibli. The oracle shares neither engine parser nor unifier nor search. It also compares recorded/plain decisions and tests reorder, consistent rename and duplicate-source transformations. These checks cover that exact fragment; they do not cover negation, equality, existential heads, arithmetic or arbitrary rules.",
+      "examples": [
+        {
+          "source": "python3 labs/run.py finite-assurance --output ../finite-observation",
+          "explanation": "Run 576 oracle decisions, 576 recorded/plain comparisons and 192 transformation checks.",
+          "kind": "lab",
+          "run_in": "Pinned local lab kit inside nix develop",
+          "lab": "finite-assurance"
+        }
+      ],
+      "related": [
+        "build-assurance-layers",
+        "counterexamples"
+      ],
+      "links": []
+    },
+    {
+      "id": "build-counterexample-design",
+      "title": "A useful negative control can falsify the claim",
+      "category": "construction",
+      "body": "A happy path satisfying two conditions cannot distinguish AND from OR. A one-condition input can. A wrong fixed-point oracle that omits a rule edge must fail a case that needs the edge. Consistent renaming should preserve identity relationships; renaming just one occurrence deliberately changes the problem. Fuzzing explores many inputs and mutation checks probe test sensitivity, but neither automatically supplies a semantic oracle or proof. Preserve the failing input, profile, engine pin and minimized explanation before repairing it.",
+      "examples": [],
+      "related": [
+        "counterexamples",
+        "build-finite-oracle",
+        "formalization"
+      ],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-verify/src/lib.rs"
+        }
+      ]
+    },
+    {
+      "id": "build-lean-models",
+      "title": "Check the models that actually ran",
+      "category": "construction",
+      "body": "The formal-models lab requires Lean to be present, runs the six pinned top-level Lean files and records their source hashes and the observed Lean version. These cover Combiner, RuleFiring, Scc, Stratification, Trace and Unify models. The engine’s default shell currently supplies Lean 4.28.0; the separate production-extraction project pins its own toolchain. A successful process must not be inferred from a missing-tool skip. Read the exact model definitions and hypotheses before applying a theorem to a different implementation.",
+      "examples": [
+        {
+          "source": "python3 labs/run.py formal-models --engine-root ../nibli-lab-engine --output ../model-observation",
+          "explanation": "Check model files and inspect the current source-bound obligation inventory.",
+          "kind": "lab",
+          "run_in": "Pinned local lab kit inside nix develop",
+          "lab": "formal-models"
+        }
+      ],
+      "related": [
+        "build-assurance-layers",
+        "build-production-obligations"
+      ],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/proofs/Combiner.lean"
+        }
+      ]
+    },
+    {
+      "id": "build-production-obligations",
+      "title": "Read the current source-bound obligation inventory",
+      "category": "construction",
+      "body": "At the selected engine revision, coverage.toml declares certified_target = \"none\". It separately inventories reification, resolution, lowering, quotation identity, ingress, stratification, SCC work and evaluation boundaries, with component proof work where available. Production extraction uses pinned Rust-extraction tooling and Lean, distinct from the top-level model check. A receipt must match the source and toolchain it describes; editing a coverage table or finding a theorem name does not establish implementation refinement. The companion’s model lab reads that inventory but does not issue a production extraction receipt.",
+      "examples": [],
+      "related": [
+        "build-lean-models",
+        "build-assurance-layers"
+      ],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/proofs/self-check/coverage.toml"
+        }
+      ]
+    },
+    {
+      "id": "build-parity",
+      "title": "Compare the same inputs across surfaces",
+      "category": "construction",
+      "body": "A native/browser comparison needs the same engine revision, source order, profile, operation and typed result. Compare error class, Unknown reason and resource kind as well as TRUE/FALSE. A browser-only missing capability is a platform difference to explain. The course fixture harness runs authored observations natively, while browser journeys repeat selected operations through the real worker. The finite lab compares recorded and unrecorded native paths; that alone is not a browser parity result.",
+      "examples": [],
+      "related": [
+        "runtime-capabilities",
+        "build-assurance-layers",
+        "outcomes"
+      ],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-session/src/lib.rs"
+        }
+      ]
     }
   ]
 }

@@ -9,6 +9,8 @@ license = "MIT OR Apache-2.0"
 [workspace]
 
 [dependencies]
+nibli-kr = { git = "https://github.com/dhilipsiva/nibli", rev = "0440db4233f8a8cffbf81be9654a5e54c1f9c836" }
+nibli-semantics = { git = "https://github.com/dhilipsiva/nibli", rev = "0440db4233f8a8cffbf81be9654a5e54c1f9c836" }
 nibli-auth = { git = "https://github.com/dhilipsiva/nibli", rev = "0440db4233f8a8cffbf81be9654a5e54c1f9c836" }
 nibli-engine = { git = "https://github.com/dhilipsiva/nibli", rev = "0440db4233f8a8cffbf81be9654a5e54c1f9c836" }
 nibli-session = { git = "https://github.com/dhilipsiva/nibli", rev = "0440db4233f8a8cffbf81be9654a5e54c1f9c836" }

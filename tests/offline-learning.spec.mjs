@@ -30,7 +30,7 @@ async function runActivity(page, family, status) {
   if (status) await expect(page.getByTestId('operation-result').locator('[data-status]')).toHaveAttribute('data-status', status);
 }
 
-test('an explicitly installed companion runs F1, U2 and F5 with hints, references and fonts on a fresh offline page', async ({ page, context, baseURL }, testInfo) => {
+test('an explicitly installed companion runs Foundation, Use, Integrate and Build with hints, references and fonts on a fresh offline page', async ({ page, context, baseURL }, testInfo) => {
   test.setTimeout(180_000);
   const origin = new URL(baseURL).origin;
   const externalRequests = [];
@@ -76,7 +76,7 @@ test('an explicitly installed companion runs F1, U2 and F5 with hints, reference
   expect(downloaded.installations).toHaveLength(1);
   const installation = downloaded.installations[0];
   expect(installation.complete).toBe(true);
-  expect(installation.content_version).toBe(3);
+  expect(installation.content_version).toBe(4);
   await page.getByRole('button', { name: 'Activate this verified version', exact: true }).click();
   await expect(page.getByText('Installed and verified for offline use.', { exact: true })).toBeVisible();
   expect((await platform(page, '/nibli-learn/', 'offlineStatus')).active.installation_id).toBe(installation.id);
@@ -123,7 +123,7 @@ test('an explicitly installed companion runs F1, U2 and F5 with hints, reference
   expect(records.some(run => run.result.family === 'decision' && run.result.outcome.status === 'FALSE')).toBe(true);
   expect(records.some(run => run.result.family === 'decision' && run.result.outcome.status === 'TRUE')).toBe(true);
   expect(records.some(run => run.result.family === 'aggregated')).toBe(true);
-  expect(records.every(run => run.engine_revision === installation.engine_revision && run.content_version === 3)).toBe(true);
+  expect(records.every(run => run.engine_revision === installation.engine_revision && run.content_version === 4)).toBe(true);
   expect(records.some(run => Array.isArray(run.record.events) && run.record.events.length > 0)).toBe(true);
 
   await offline.getByRole('button', { name: 'Reference', exact: true }).click();
@@ -161,6 +161,16 @@ test('an explicitly installed companion runs F1, U2 and F5 with hints, reference
   const kitPath = testInfo.outputPath('offline-local-labs.tar.gz'); await (await downloadingKit).saveAs(kitPath);
   expect(await readFile(kitPath)).toEqual(await readFile(new URL('../dist/nibli-learn/assets/nibli-labs-v1.tar.gz', import.meta.url)));
   await expect(offline.locator('.local-lab-panel')).toContainText('wasi-runtime');
+
+  await openActivity(offline, 'build.source-spans');
+  await runActivity(offline, 'compiled');
+  await expect(offline.getByTestId('compiler-source-fragment')).toContainText('inspection.v2');
+  await offline.getByLabel('Compiler stage', { exact: true }).selectOption('parsed');
+  await expect(offline.locator('.compiler-inspector')).toContainText('QuotedLiteral');
+  await openActivity(offline, 'build.proof-dag');
+  await runActivity(offline, 'decision', 'TRUE');
+  await offline.getByRole('tab', { name: 'Proof', exact: true }).click();
+  await expect(offline.getByRole('heading', { name: 'Proof inspection', exact: true })).toBeVisible();
 
   const fonts = await offline.evaluate(async () => {
     const samples = ['400 16px "IBM Plex Sans"', '400 16px "IBM Plex Mono"', '600 16px "Space Grotesk"'];

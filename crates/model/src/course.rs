@@ -3,7 +3,7 @@ use crate::{Operation, OperationResult, RunProfile, SeedStatement};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
 
-pub const COURSE_SCHEMA: u32 = 3;
+pub const COURSE_SCHEMA: u32 = 4;
 pub const RELEASE_OBJECTIVES: [&str; 7] = [
     "release.one-approval",
     "release.different-build",
@@ -327,7 +327,7 @@ impl Course {
         self.lesson(lesson)?.activities.iter().find(|a| a.id == id)
     }
     pub fn validate(&self) -> Result<(), String> {
-        if !matches!(self.schema, 2 | COURSE_SCHEMA)
+        if !matches!(self.schema, 2 | 3 | COURSE_SCHEMA)
             || self.version == 0
             || self.lessons.is_empty()
             || self.lessons.len() > 128
@@ -493,7 +493,7 @@ impl ReferenceLibrary {
             return Err("Reference library exceeds 8 MiB.".into());
         }
         let library: Self = serde_json::from_str(text).map_err(|e| e.to_string())?;
-        if !matches!(library.schema, 2 | COURSE_SCHEMA) || library.version == 0 {
+        if !matches!(library.schema, 2 | 3 | COURSE_SCHEMA) || library.version == 0 {
             return Err("Unsupported reference version.".into());
         }
         let mut ids = BTreeSet::new();

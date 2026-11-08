@@ -82,7 +82,7 @@ The content digest hashes the ordered payload inventory (`path`, `sha256`, `byte
 excluding `pack.json` itself. The catalog supplies that manifest's expected hash.
 An installed content ID/version can never later identify different payload bytes;
 runtime identity likewise cannot be rebound to another manifest. Paired content/app
-schemas 2 and 3 are supported; a schema-2 runtime cannot receive schema-3 content,
+schemas 2, 3 and 4 are supported; an older runtime cannot receive newer content,
 and future/incompatible content is refused. Rollback preserves learner workspace bytes;
 an older app can refuse newer local data without deleting it.
 

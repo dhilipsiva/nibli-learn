@@ -1,9 +1,9 @@
 # Nibli Learn
 
 An interactive learning environment for developers learning symbolic and
-neuro-symbolic reasoning. Fourteen original units cover shared foundations,
-using a reasoner and integrating applications through 76 activities. Executable
-exercises use Nibli's browser engine; five pinned local labs expose native and
+neuro-symbolic reasoning. Nineteen original units cover shared foundations,
+using a reasoner and integrating applications and building a reasoner through 116 activities. Executable
+exercises use Nibli's browser engine; eleven pinned local labs expose native and
 WASI capabilities that the browser cannot run.
 
 The learning loop is predict, change evidence, execute, inspect and repair.
@@ -49,8 +49,8 @@ identity. A cancelled run has no completed logical outcome; recovery restores
 the last committed knowledge.
 
 The versioned [content manifest](content/manifest.json) covers foundations F1–F6
-and Use units U1–U4, plus Integrate units I1–I4. Engine-building and specialist
-studio tracks remain planned. [Data contracts](docs/data-contracts.md) describe versioned progress,
+and Use units U1–U4, Integrate units I1–I4 and Build units B1–B5. Specialist
+studios remain planned. [Data contracts](docs/data-contracts.md) describe versioned progress,
 projects, read-only run archives and verified offline installation. The Local Data
 page provides import previews, backup/undo and recovery from storage conflicts.
 
@@ -58,7 +58,8 @@ Integrate includes explicit source review and admission, local document retrieva
 review-capacity calculations, and [optional model connections](docs/model-connections.md).
 Authored hints and the complete learning path remain available without a model.
 The [local lab kit](labs/README.md) runs actual compute, ontology, scoped application,
-measurement and WASI recovery experiments. Imported reports are learner-supplied
+measurement and WASI recovery experiments, plus compiler, custom-store, rule/proof,
+ownership, finite-oracle and Lean-model experiments. Imported reports are learner-supplied
 observations, not authenticated execution certificates.
 
 Offline installation stages and verifies the matching runtime and original course
@@ -67,7 +68,8 @@ The [platform contracts](docs/platform.md) explain version isolation and browser
 storage limits. The five-person learning pilot remains a separate Phase 2 gate;
 automated checks do not establish learner comprehension.
 
-The browser test suite exercises actual WASM and worker messages. Prototype
+The browser test suite exercises actual WASM and worker messages. Run `just ci-native`
+first: one Build journey imports an actual matching report produced by its native lab. Prototype
 fixtures are not an implementation substitute. CI uploads a verified artifact;
 it does not deploy a website or publish a release.
 

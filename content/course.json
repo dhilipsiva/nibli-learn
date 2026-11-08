@@ -1,6 +1,6 @@
 {
-  "schema": 3,
-  "version": 3,
+  "schema": 4,
+  "version": 4,
   "lessons": [
     {
       "id": "found.prediction-derivation",
@@ -6550,6 +6550,2354 @@
           ],
           "local_lab": "wasi-runtime",
           "retrieval": true
+        }
+      ]
+    },
+    {
+      "id": "build.compiler",
+      "version": 1,
+      "unit": "B1",
+      "track": "build",
+      "title": "Build the compiler path",
+      "summary": "Trace original source through parsing, validation, scope and flat logic; repair the boundary that actually failed.",
+      "prerequisites": [
+        "use.relationships-scope"
+      ],
+      "legacy_release": false,
+      "activities": [
+        {
+          "id": "build.source-spans",
+          "version": 1,
+          "title": "A period inside a value is not a separator",
+          "objective": "Align recorded statements with exact source bytes.",
+          "explanation": "A small inspection note contains a quoted version string and a second claim. The engine records the two real statement intervals; a textual split on every period would invent another statement.",
+          "tasks": [
+            "Compile the two claims and select each Source span.",
+            "Compare the selected fragment with Validated flat AST roots."
+          ],
+          "hints": [
+            "Select Statement 1; its literal includes a period."
+          ],
+          "solution": "The parser returns two spans and two roots. Statement boundaries come from grammar, including quoted literals. Keep these offsets with the captured source, especially after edits.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "compile",
+            "source": "knows(Emi, \"inspection.v2\").\ncomputer(Console4).",
+            "structural_preflight": true
+          },
+          "expected": {
+            "family": "compiled"
+          },
+          "question": null,
+          "actions": [],
+          "references": [
+            "build-source-spans",
+            "build-compiler-seams"
+          ],
+          "self_review": [
+            "Explain why naive period splitting loses source correspondence."
+          ],
+          "local_lab": null
+        },
+        {
+          "id": "build.grammar-validation",
+          "version": 1,
+          "title": "Identify which gate refused the input",
+          "objective": "Distinguish grammar errors from vocabulary validation.",
+          "explanation": "A missing statement terminator fails before the validating emitter. After repairing punctuation, try a grammatically shaped unknown predicate and inspect its diagnostic.",
+          "tasks": [
+            "Run the missing-terminator input.",
+            "Repair it, then compare the unknown-word refusal."
+          ],
+          "hints": [
+            "Both failures can have the syntax error class; the stage-specific diagnostic explains their causes."
+          ],
+          "solution": "The repaired computer predicate compiles. The invented inspection word parses in the native lab but fails vocabulary resolution. Defining a compute callback would not add it to the corpus.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "compile",
+            "source": "computer(Console4)",
+            "structural_preflight": true
+          },
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "syntax"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "terminator",
+              "title": "Restore the statement terminator",
+              "instruction": "Keep the same claim and add its final period.",
+              "changes": [],
+              "operation": {
+                "kind": "compile",
+                "source": "computer(Console4).",
+                "structural_preflight": true
+              },
+              "expected": {
+                "family": "compiled"
+              },
+              "scope": "main",
+              "profile": null
+            },
+            {
+              "id": "unknown",
+              "title": "Try a shaped but unknown predicate",
+              "instruction": "Read the actual vocabulary diagnostic.",
+              "changes": [],
+              "operation": {
+                "kind": "compile",
+                "source": "unregistered_inspection_word(Console4).",
+                "structural_preflight": true
+              },
+              "expected": {
+                "family": "failed",
+                "stage": "compile",
+                "error_class": "syntax"
+              },
+              "scope": "main",
+              "profile": null
+            }
+          ],
+          "references": [
+            "build-compiler-seams",
+            "lexical-forms"
+          ],
+          "self_review": [
+            "Name the repair for punctuation and the different repair for unsupported vocabulary."
+          ],
+          "local_lab": "compiler-internals"
+        },
+        {
+          "id": "build.preflight",
+          "version": 1,
+          "title": "A compiled formula can still be query-only",
+          "objective": "Separate lowering, structural preflight and admission.",
+          "explanation": "Arithmetic can be a valid query while remaining unavailable as durable asserted evidence. Inspect the compute-marked node and the refused structural preflight.",
+          "tasks": [
+            "Compile the sum and inspect Compute routing.",
+            "Compare successful compilation with the preflight result and native admission refusal."
+          ],
+          "hints": [
+            "The numeric equality 7 = 3 + 4 is a query calculation."
+          ],
+          "solution": "The source compiles to executable compute nodes. Its assertion preflight is refused, and the native lab separately observes actual admission refusal with no new source record.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "compile",
+            "source": "sum(7, 3, 4).",
+            "structural_preflight": true
+          },
+          "expected": {
+            "family": "compiled",
+            "status": "refused"
+          },
+          "question": null,
+          "actions": [],
+          "references": [
+            "compile-admission",
+            "build-compiler-seams",
+            "numeric-compute-boundaries"
+          ],
+          "self_review": [
+            "Explain why compilation did not create an accepted arithmetic source."
+          ],
+          "local_lab": null
+        },
+        {
+          "id": "build.scope-lowering",
+          "version": 1,
+          "title": "Follow the owner’s dependency",
+          "objective": "Inspect quantified scope before inferring shared identity.",
+          "explanation": "Each computer may have an owner chosen for that computer. An existential inside a universal can vary with the outer binding. The lowering view exposes that nesting.",
+          "tasks": [
+            "Compile the requirement and follow roots into quantifiers.",
+            "Describe a two-computer example that does not need one common owner."
+          ],
+          "hints": [
+            "Trace the body of each quantifier; do not compare variable names in isolation."
+          ],
+          "solution": "An owner selected inside each computer’s requirement may depend on that computer. A single outside owner is a different encoding. Unsupported scope crossings require rewriting, not guessing a reading.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "compile",
+            "source": "every computer $c: owns(some person, $c).",
+            "structural_preflight": true
+          },
+          "expected": {
+            "family": "compiled"
+          },
+          "question": null,
+          "actions": [],
+          "references": [
+            "scope",
+            "build-lowering",
+            "build-witness-dependencies"
+          ],
+          "self_review": [
+            "State the dependency represented by the quantifier order."
+          ],
+          "local_lab": null
+        },
+        {
+          "id": "build.connective-graph",
+          "version": 1,
+          "title": "Find sharing in an expanded connective",
+          "objective": "Follow actual node links after XOR lowering.",
+          "explanation": "Exclusive OR becomes a conjunction of an inclusive alternative and the negation of both. Reused child indices keep one representation of each operand inside this graph.",
+          "tasks": [
+            "Compile XOR and select Lowered logic.",
+            "Follow a child into an operand and inspect its listed parents."
+          ],
+          "hints": [
+            "The two operand graphs participate in both the inclusive and not-both conditions."
+          ],
+          "solution": "XOR expands to (A OR B) AND NOT(A AND B). Multiple parents of a node identify graph sharing. They do not establish that separate buffers share an allocation.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "compile",
+            "source": "dog(Nori) ^ animal(Nori).",
+            "structural_preflight": true
+          },
+          "expected": {
+            "family": "compiled"
+          },
+          "question": null,
+          "actions": [],
+          "references": [
+            "build-lowering",
+            "operator-grammar",
+            "build-flat-logic"
+          ],
+          "self_review": [
+            "Explain the XOR expansion and distinguish a shared index from a shared allocation."
+          ],
+          "local_lab": null
+        },
+        {
+          "id": "build.relative-repair",
+          "version": 1,
+          "title": "Bind the relative to the described object",
+          "objective": "Repair an unused relative placeholder and compare a modifier.",
+          "explanation": "The relative body currently names Console4 instead of referring to the computer being described. The compiler refuses that missing binding. A via tag has a separate event-argument role.",
+          "tasks": [
+            "Run the refused relative.",
+            "Replace its unrelated name with it, then inspect the tagged claim."
+          ],
+          "hints": [
+            "The relative needs the described entity; the via body supplies the supported tag complement."
+          ],
+          "solution": "Using it constrains the described computer. The cause tag in the later example qualifies the matrix event; it is not a free-standing conjunction proving every part independently.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "compile",
+            "source": "owns(Emi, some computer where broken(Console4)).",
+            "structural_preflight": true
+          },
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "syntax"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "relative",
+              "title": "Bind the described computer",
+              "instruction": "Use the relative placeholder.",
+              "changes": [],
+              "operation": {
+                "kind": "compile",
+                "source": "owns(Emi, some computer where broken(it)).",
+                "structural_preflight": true
+              },
+              "expected": {
+                "family": "compiled"
+              },
+              "scope": "main",
+              "profile": null
+            },
+            {
+              "id": "tag",
+              "title": "Inspect a supported event tag",
+              "instruction": "Follow the actual lowered tag structure.",
+              "changes": [],
+              "operation": {
+                "kind": "compile",
+                "source": "ready(CartC, Audit) via cause(some rain).",
+                "structural_preflight": true
+              },
+              "expected": {
+                "family": "compiled"
+              },
+              "scope": "main",
+              "profile": null
+            }
+          ],
+          "references": [
+            "relatives",
+            "events-modifiers",
+            "tags-compounds",
+            "build-lowering"
+          ],
+          "self_review": [
+            "Identify the entity bound by it and the event qualified by via."
+          ],
+          "local_lab": null
+        },
+        {
+          "id": "build.opaque-content",
+          "version": 1,
+          "title": "A fact-content term is not an outer fact",
+          "objective": "Observe opacity at compilation and query boundaries.",
+          "explanation": "The accepted source says that Emi knows a piece of content. The embedded broken claim stays in that content term. Fact, event, property, amount and concept bodies are distinct forms, not automatic execution.",
+          "tasks": [
+            "Ask whether Console4 is broken.",
+            "Compile a property body with its bound slot."
+          ],
+          "hints": [
+            "A property binds slot; a plain fact abstraction does not."
+          ],
+          "solution": "The outer knowledge statement does not independently prove broken(Console4). The property slot is valid only within its property body; compilation reveals the opaque term.",
+          "setup": [
+            {
+              "text": "knows(Emi, fact { broken(Console4) }).",
+              "source": "Knowledge report"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "broken(Console4)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "property",
+              "title": "Inspect a bound property slot",
+              "instruction": "Compile the property without asserting its body.",
+              "changes": [],
+              "operation": {
+                "kind": "compile",
+                "source": "knows(Emi, property { broken(slot) }).",
+                "structural_preflight": true
+              },
+              "expected": {
+                "family": "compiled"
+              },
+              "scope": "main",
+              "profile": null
+            }
+          ],
+          "references": [
+            "abstraction-kinds",
+            "build-lowering"
+          ],
+          "self_review": [
+            "Explain why the embedded body was not added as an ordinary assertion."
+          ],
+          "local_lab": null
+        },
+        {
+          "id": "build.compiler-lab",
+          "version": 1,
+          "title": "Repair the full compiler boundary",
+          "objective": "Run corrupt-buffer, recovery and source-correspondence controls.",
+          "explanation": "The native compiler experiment uses actual parser, emitter, semantic and session APIs. It contrasts a partial recovery result with atomic admission and refuses invalid raw AST/logic indices.",
+          "tasks": [
+            "Run compiler-internals from the matching kit.",
+            "Import its report and explain the refused boundary and available repair for each control."
+          ],
+          "hints": [
+            "Inspect the mixed-input failure and the unchanged assertion count."
+          ],
+          "solution": "A recovering parser can retain a valid earlier root, but atomic session admission refuses the whole bad batch. Fix the source or discard the candidate; never silently commit the partial recovery. Programmatic clients must preserve index and type invariants.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "What can a partial parser result establish?",
+            "choices": [
+              "The whole batch has passed semantic validation.",
+              "Some statements parsed; the batch still contains errors.",
+              "The valid statements were admitted automatically."
+            ],
+            "correct": 1,
+            "feedback": "Recovery is useful for editor diagnostics; admission remains a separate atomic operation."
+          },
+          "actions": [],
+          "references": [
+            "build-flat-ast",
+            "build-source-spans",
+            "atomic-changes"
+          ],
+          "self_review": [
+            "Use the report to distinguish recoverable syntax analysis from a committed source change."
+          ],
+          "local_lab": "compiler-internals"
+        }
+      ]
+    },
+    {
+      "id": "build.store-search",
+      "version": 1,
+      "unit": "B2",
+      "track": "build",
+      "title": "Construct storage and search",
+      "summary": "Implement a real store, inspect typed joins and candidates, then repair support and budget failures.",
+      "prerequisites": [
+        "build.compiler",
+        "use.diagnosing"
+      ],
+      "legacy_release": false,
+      "activities": [
+        {
+          "id": "build.store-mirror",
+          "version": 1,
+          "title": "A fact bucket cannot replace its sources",
+          "objective": "Explain why a custom store starts empty.",
+          "explanation": "The engine rebuilds from source assertions, including rules and independent duplicate support. A preloaded fact mirror omits that authority. The constructor refuses it.",
+          "tasks": [
+            "Run the store-search lab and inspect the preload refusal.",
+            "Compare cloned bucket isolation with shared observation counters."
+          ],
+          "hints": [
+            "FactStore storage is trusted infrastructure beneath admission, not a source-authoring shortcut."
+          ],
+          "solution": "Create an empty mirror and replay authoritative assertions through the engine. The lab copies buckets on clone while sharing only counters for observation. A durable store needs further recovery and transaction work.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "Which input can safely initialize this custom KB?",
+            "choices": [
+              "An empty store followed by authoritative source admission.",
+              "Arbitrary typed rows without their source registry.",
+              "Only the last query’s derived facts."
+            ],
+            "correct": 0,
+            "feedback": "The source registry supplies support and replay; the store mirrors validated facts."
+          },
+          "actions": [],
+          "references": [
+            "build-typed-store",
+            "build-support-replay"
+          ],
+          "self_review": [
+            "Explain the missing provenance in a preloaded fact mirror."
+          ],
+          "local_lab": "store-search"
+        },
+        {
+          "id": "build.repeated-binding",
+          "version": 1,
+          "title": "One variable cannot take two identities",
+          "objective": "Use a counterexample to a broken join.",
+          "explanation": "Emi owns Console4. A query with the same named variable in both places asks for self-ownership, not just any owner and device.",
+          "tasks": [
+            "Predict the repeated-variable query.",
+            "Repair it by keeping distinct variables for distinct roles."
+          ],
+          "hints": [
+            "One binding map must satisfy every occurrence of the same variable."
+          ],
+          "solution": "The initial joined claim is FALSE. Distinct owner and device variables allow the retained pair. Typed matching also checks relation, arity and wrapper in the native lab.",
+          "setup": [
+            {
+              "text": "owns(Emi, Console4).",
+              "source": "Ownership observation"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "owns($x, $x)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "separate",
+              "title": "Give the roles distinct variables",
+              "instruction": "Ask whether some owner-device pair exists.",
+              "changes": [],
+              "operation": {
+                "kind": "decide",
+                "claim": "owns($owner, $device)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main",
+              "profile": null
+            }
+          ],
+          "references": [
+            "build-matching",
+            "variables"
+          ],
+          "self_review": [
+            "Explain which occurrence forced the failed equality."
+          ],
+          "local_lab": null
+        },
+        {
+          "id": "build.typed-groundness",
+          "version": 1,
+          "title": "Stored values are not template variables",
+          "objective": "Distinguish wildcard intuition from typed matching.",
+          "explanation": "GroundTerm::Unspecified is a stored value. PatternVar belongs to a template and cannot enter the active fact corpus as ground evidence. Temporal and deontic wrappers also participate in matching.",
+          "tasks": [
+            "Inspect the lab’s repeated-binding, wrong-arity and wrapper controls.",
+            "Locate the groundness refusal before proposing storage repair."
+          ],
+          "hints": [
+            "A broad match must be expressed as a template variable and then instantiated."
+          ],
+          "solution": "The matcher threads bindings through every argument. Unspecified does not match any arbitrary value; placeholders are refused at stored-fact ingress. Preserve typed values instead of flattening them to display strings.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "What should a store receive after validation?",
+            "choices": [
+              "A display string used as every term’s identity.",
+              "A ground typed fact with source support.",
+              "An unbound PatternVar to fill in during a later query."
+            ],
+            "correct": 1,
+            "feedback": "Typed groundness keeps matching templates out of the stored fact corpus."
+          },
+          "actions": [],
+          "references": [
+            "build-matching",
+            "types",
+            "omitted-arguments"
+          ],
+          "self_review": [
+            "Describe the distinction among an unspecified value, a template variable and a generated witness."
+          ],
+          "local_lab": "store-search"
+        },
+        {
+          "id": "build.predicate-index",
+          "version": 1,
+          "title": "Inspect candidates after bucket lookup",
+          "objective": "Locate real search work after indexing.",
+          "explanation": "The custom store reports actual predicate lookups; the browser recorder exposes candidates and unification. Thirty-two unrelated computer sources appear in the lab so a full-corpus scan is distinguishable from relation lookup.",
+          "tasks": [
+            "Run the multi-hop claim.",
+            "Filter replay to Search and rules; compare with the native query_store_calls report."
+          ],
+          "hints": [
+            "A small predicate bucket does not remove rule-condition joins."
+          ],
+          "solution": "The native lab observes relevant predicate and event-role buckets. Search still evaluates candidates and repeated conditions. Interface counts establish which calls occurred, not asymptotic timing for the whole engine.",
+          "setup": [
+            {
+              "text": "dog(Nori).",
+              "source": "Species observation"
+            },
+            {
+              "text": "animal(every dog).",
+              "source": "Animal rule"
+            },
+            {
+              "text": "alive(every animal).",
+              "source": "Alive rule"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "alive(Nori)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": null,
+          "actions": [],
+          "references": [
+            "build-search-index",
+            "measurement-method"
+          ],
+          "self_review": [
+            "Point to a recorded candidate and the condition that accepted or rejected it."
+          ],
+          "local_lab": "store-search"
+        },
+        {
+          "id": "build.equality-index",
+          "version": 1,
+          "title": "An alias changes the supported search",
+          "objective": "Trace equality through an actual query.",
+          "explanation": "A fact about Nori does not initially establish the same claim about Miso. An admitted equality changes the engine’s identity reasoning and related indexes.",
+          "tasks": [
+            "Run the unsupported Miso query.",
+            "Admit the identity and inspect its proof, then withdraw that source."
+          ],
+          "hints": [
+            "Keep the equality’s source ID separate from the original species observation."
+          ],
+          "solution": "Equality supplies a supported substitution. Removing its source removes that route; it must not leave a stale cached alias. Equality is not a global string rename.",
+          "setup": [
+            {
+              "text": "dog(Nori).",
+              "source": "Nori observation"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "dog(Miso)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "identity",
+              "title": "Admit the identity claim",
+              "instruction": "Keep its source for later withdrawal.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "Nori = Miso.",
+                  "source": "Identity note"
+                }
+              ],
+              "operation": {
+                "kind": "decide",
+                "claim": "dog(Miso)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main",
+              "profile": null
+            },
+            {
+              "id": "remove-identity",
+              "title": "Withdraw the identity note",
+              "instruction": "Preserve the Nori observation.",
+              "changes": [
+                {
+                  "kind": "withdraw_source",
+                  "source": "Identity note"
+                }
+              ],
+              "operation": {
+                "kind": "decide",
+                "claim": "dog(Miso)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main",
+              "profile": null
+            }
+          ],
+          "references": [
+            "identity",
+            "build-support-replay"
+          ],
+          "self_review": [
+            "Explain how the equality source appears in the evidence and why withdrawal matters."
+          ],
+          "local_lab": null
+        },
+        {
+          "id": "build.depth-passes",
+          "version": 1,
+          "title": "A short search is not a negative proof",
+          "objective": "Repair a search-depth exhaustion at its own layer.",
+          "explanation": "A two-hop chain can need a larger operational horizon than one recursive level. Inspect the actual resource result before changing the budget.",
+          "tasks": [
+            "Run with depth 1 and inspect its resource label.",
+            "Raise the reasoner depth and follow SearchPass events."
+          ],
+          "hints": [
+            "Host fuel, host memory and search depth are different controls."
+          ],
+          "solution": "The initial run is RESOURCE_EXCEEDED. Depth 20 allows the supported chain to complete. The first result must remain an exhausted historical run, never be relabeled FALSE.",
+          "setup": [
+            {
+              "text": "dog(Nori).",
+              "source": "Species observation"
+            },
+            {
+              "text": "animal(every dog).",
+              "source": "Animal rule"
+            },
+            {
+              "text": "alive(every animal).",
+              "source": "Alive rule"
+            }
+          ],
+          "profile": {
+            "id": "browser.build-depth-1",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 1
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "alive(Nori)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "RESOURCE_EXCEEDED"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "depth",
+              "title": "Raise only the reasoner horizon",
+              "instruction": "Rerun the same accepted inputs.",
+              "changes": [],
+              "operation": {
+                "kind": "decide",
+                "claim": "alive(Nori)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main",
+              "profile": {
+                "id": "browser.build-depth-20",
+                "version": 1,
+                "strict": false,
+                "existential_import": false,
+                "materialization": false,
+                "max_chain_depth": 20
+              }
+            }
+          ],
+          "references": [
+            "depth",
+            "build-search-index",
+            "budget-origin-contract"
+          ],
+          "self_review": [
+            "Identify the failing layer and the evidence that the repair resolved this query."
+          ],
+          "local_lab": null
+        },
+        {
+          "id": "build.materialize",
+          "version": 1,
+          "title": "Read the materialization report after the query",
+          "objective": "Compare demand-driven results with selective saturation.",
+          "explanation": "Enabling materialization does not claim every relation or every rule is eagerly completed. The report belongs to the latest query and is invalidated by mutation.",
+          "tasks": [
+            "Run the query with the default profile.",
+            "Enable materialization, rerun, and inspect the actual coverage report."
+          ],
+          "hints": [
+            "A TRUE derivation and a completed-relation list describe different observations."
+          ],
+          "solution": "The same named decision should remain TRUE. Read complete and refused relations from the engine instead of inferring them from the switch. The local store lab also verifies report clearing after withdrawal.",
+          "setup": [
+            {
+              "text": "dog(Nori).",
+              "source": "Species observation"
+            },
+            {
+              "text": "animal(every dog).",
+              "source": "Animal rule"
+            },
+            {
+              "text": "alive(every animal).",
+              "source": "Alive rule"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "alive(Nori)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "enable",
+              "title": "Enable selective materialization",
+              "instruction": "Compare the same query under this profile.",
+              "changes": [],
+              "operation": {
+                "kind": "decide",
+                "claim": "alive(Nori)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main",
+              "profile": {
+                "id": "browser.build-materialize",
+                "version": 1,
+                "strict": false,
+                "existential_import": false,
+                "materialization": true,
+                "max_chain_depth": 10
+              }
+            },
+            {
+              "id": "report",
+              "title": "Inspect what was completed",
+              "instruction": "Read the actual report.",
+              "changes": [],
+              "operation": {
+                "kind": "inspect",
+                "view": "materialization"
+              },
+              "expected": {
+                "family": "inspection"
+              },
+              "scope": "main",
+              "profile": null
+            }
+          ],
+          "references": [
+            "materialization",
+            "build-support-replay"
+          ],
+          "self_review": [
+            "Distinguish successful derivation from complete relation saturation."
+          ],
+          "local_lab": null
+        },
+        {
+          "id": "build.support-rebuild",
+          "version": 1,
+          "title": "Withdraw both sources in order",
+          "objective": "Preserve independent support through deduplication and replay.",
+          "explanation": "Two observers supplied the same dog claim. They are independent source assertions even when the fact set stores one logical value.",
+          "tasks": [
+            "Run the derived animal query.",
+            "Withdraw one source, then the other, and inspect the changed proof and revision."
+          ],
+          "hints": [
+            "A logical duplicate does not erase a second source ID."
+          ],
+          "solution": "TRUE survives the first withdrawal because another accepted source remains. It becomes FALSE after the last supporting observation is removed. Rebuild and invalidation must follow the surviving registry.",
+          "setup": [
+            {
+              "text": "dog(Nori).",
+              "source": "Observation A"
+            },
+            {
+              "text": "dog(Nori).",
+              "source": "Observation B"
+            },
+            {
+              "text": "animal(every dog).",
+              "source": "Animal policy"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "animal(Nori)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "first",
+              "title": "Withdraw Observation A",
+              "instruction": "Retain the independent second source.",
+              "changes": [
+                {
+                  "kind": "withdraw_source",
+                  "source": "Observation A"
+                }
+              ],
+              "operation": {
+                "kind": "decide",
+                "claim": "animal(Nori)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main",
+              "profile": null
+            },
+            {
+              "id": "last",
+              "title": "Withdraw Observation B",
+              "instruction": "Now no species observation remains.",
+              "changes": [
+                {
+                  "kind": "withdraw_source",
+                  "source": "Observation B"
+                }
+              ],
+              "operation": {
+                "kind": "decide",
+                "claim": "animal(Nori)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main",
+              "profile": null
+            }
+          ],
+          "references": [
+            "build-support-replay",
+            "assertions",
+            "revision"
+          ],
+          "self_review": [
+            "Explain why the first and second withdrawal have different effects."
+          ],
+          "local_lab": null
+        }
+      ]
+    },
+    {
+      "id": "build.rules-proofs",
+      "version": 1,
+      "unit": "B3",
+      "track": "build",
+      "title": "Build rules, witnesses and explanations",
+      "summary": "Follow a real derivation from templates and bindings into a shared proof graph and source citations.",
+      "prerequisites": [
+        "build.store-search",
+        "use.witnesses-counts"
+      ],
+      "legacy_release": false,
+      "activities": [
+        {
+          "id": "build.rule-records",
+          "version": 1,
+          "title": "Rules have retained sources",
+          "objective": "Inspect registration without inventing private templates.",
+          "explanation": "Universal source statements register rule behavior. The public admission registry and source list expose what was retained; private rule-template structures remain an implementation detail.",
+          "tasks": [
+            "Inspect the registry and accepted source records.",
+            "Compile the animal rule to connect its source with the quantified formula."
+          ],
+          "hints": [
+            "A rule’s source assertion and a derived fact have different identities."
+          ],
+          "solution": "The registered policy remains a source for later citations and withdrawal. The compile view explains its formula; it does not dump the private rule-template struct.",
+          "setup": [
+            {
+              "text": "dog(Nori).",
+              "source": "Species observation"
+            },
+            {
+              "text": "animal(every dog).",
+              "source": "Animal rule"
+            },
+            {
+              "text": "alive(every animal).",
+              "source": "Alive rule"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "inspect",
+            "view": "admission_registry"
+          },
+          "expected": {
+            "family": "inspection"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "compile-rule",
+              "title": "Inspect the policy’s lowered formula",
+              "instruction": "Keep the rule already admitted; this operation only compiles.",
+              "changes": [],
+              "operation": {
+                "kind": "compile",
+                "source": "animal(every dog).",
+                "structural_preflight": true
+              },
+              "expected": {
+                "family": "compiled"
+              },
+              "scope": "main",
+              "profile": null
+            }
+          ],
+          "references": [
+            "build-rule-templates",
+            "assertions"
+          ],
+          "self_review": [
+            "Identify the retained policy source and the later evidence that cites it."
+          ],
+          "local_lab": null
+        },
+        {
+          "id": "build.rule-conditions",
+          "version": 1,
+          "title": "A matching head still needs all conditions",
+          "objective": "Reject a split-case rule match.",
+          "explanation": "Two reviews name different carts. A head that looks plausible is insufficient until the shared cart variable satisfies every condition.",
+          "tasks": [
+            "Run readiness for CartC.",
+            "Add the missing matching review and inspect RuleCondition and RuleFire events."
+          ],
+          "hints": [
+            "Bind the cart once, then test both premises with that binding."
+          ],
+          "solution": "The wrong-cart approval cannot satisfy the second premise. The matching CartC review repairs the join, and the proof should cite that source.",
+          "setup": [
+            {
+              "text": "all $c: approves(Inspector, $c) & approves(Reviewer, $c) -> ready($c).",
+              "source": "Two-review policy"
+            },
+            {
+              "text": "approves(Inspector, CartC).",
+              "source": "Inspection C"
+            },
+            {
+              "text": "approves(Reviewer, CartD).",
+              "source": "Review D"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "ready(CartC)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "matching",
+              "title": "Admit the matching review",
+              "instruction": "Use the same cart as the inspection.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "approves(Reviewer, CartC).",
+                  "source": "Review C"
+                }
+              ],
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(CartC)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main",
+              "profile": null
+            }
+          ],
+          "references": [
+            "build-rule-templates",
+            "build-matching"
+          ],
+          "self_review": [
+            "Explain the shared binding that prevented the first derivation."
+          ],
+          "local_lab": null
+        },
+        {
+          "id": "build.independent-witnesses",
+          "version": 1,
+          "title": "Two existing objects need not be one object",
+          "objective": "Repair separate existential goals when identity matters.",
+          "explanation": "Emi owns Console4, while Console5 is broken. Separate free variables can satisfy those statements independently. Sharing one variable asks for a broken object that Emi owns.",
+          "tasks": [
+            "Run the independent existential conjunction.",
+            "Compare the shared-device query, then add a matching broken observation."
+          ],
+          "hints": [
+            "Follow variable identity across the conjunction."
+          ],
+          "solution": "The independent query is TRUE and the shared query is initially FALSE. A broken(Console4) observation repairs the shared requirement. Separate witnesses were never evidence of a shared one.",
+          "setup": [
+            {
+              "text": "owns(Emi, Console4).",
+              "source": "Ownership"
+            },
+            {
+              "text": "broken(Console5).",
+              "source": "Breakage"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "owns(Emi, $owned) & broken($broken)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "join",
+              "title": "Require the same device",
+              "instruction": "Join the two goals on one variable.",
+              "changes": [],
+              "operation": {
+                "kind": "decide",
+                "claim": "owns(Emi, $device) & broken($device)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main",
+              "profile": null
+            },
+            {
+              "id": "repair",
+              "title": "Supply matching evidence",
+              "instruction": "Record the breakage for the owned device.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "broken(Console4).",
+                  "source": "Matching breakage"
+                }
+              ],
+              "operation": {
+                "kind": "decide",
+                "claim": "owns(Emi, $device) & broken($device)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main",
+              "profile": null
+            }
+          ],
+          "references": [
+            "build-witness-dependencies",
+            "variables"
+          ],
+          "self_review": [
+            "Explain which witness can satisfy each original goal."
+          ],
+          "local_lab": null
+        },
+        {
+          "id": "build.dependent-witnesses",
+          "version": 1,
+          "title": "Generated ownership depends on the person",
+          "objective": "Compare actual typed dependent witnesses.",
+          "explanation": "A policy gives every person some computer. Emi and Rin can have different generated witnesses even when their printed forms look similar.",
+          "tasks": [
+            "Run the native rules-witnesses experiment.",
+            "Compare the typed terms for Emi and Rin and repeat the Emi query."
+          ],
+          "hints": [
+            "Use the dependency-bearing term and origin, not a copied display label."
+          ],
+          "solution": "The observed generated terms differ by owner dependency and remain repeatable within the session. Repeating a query does not create unrelated new durable source assertions.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "Which comparison preserves witness identity?",
+            "choices": [
+              "Treat every generated witness as the same unnamed object.",
+              "Compare typed terms, origins and session provenance.",
+              "Compare only the short printed skolem name."
+            ],
+            "correct": 1,
+            "feedback": "Generated identity carries dependencies; its display is only a presentation."
+          },
+          "actions": [],
+          "references": [
+            "build-rule-templates",
+            "build-witness-dependencies"
+          ],
+          "self_review": [
+            "Explain what makes the two generated witnesses distinct."
+          ],
+          "local_lab": "rules-witnesses"
+        },
+        {
+          "id": "build.proof-dag",
+          "version": 1,
+          "title": "Find one derivation with several parents",
+          "objective": "Inspect real shared proof nodes and source citations.",
+          "explanation": "The dog-to-animal-to-alive chain reuses successful subproofs. The proof graph can point to one stored derivation from several places.",
+          "tasks": [
+            "Run the chain and open Proof.",
+            "Run the local lab and inspect proof_references, shared_nodes and citations."
+          ],
+          "hints": [
+            "A ProofRef child resolves to an already recorded successful step."
+          ],
+          "solution": "The lab verifies at least one shared proof node and every reference target’s successful result. The browser proof and text views preserve the actual certificate. A tree-shaped explanation can duplicate a node visually without changing its identity.",
+          "setup": [
+            {
+              "text": "dog(Nori).",
+              "source": "Species observation"
+            },
+            {
+              "text": "animal(every dog).",
+              "source": "Animal rule"
+            },
+            {
+              "text": "alive(every animal).",
+              "source": "Alive rule"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "alive(Nori)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": null,
+          "actions": [],
+          "references": [
+            "build-proof-sharing",
+            "proof-scope"
+          ],
+          "self_review": [
+            "Trace one shared reference to its target and one citation to its source."
+          ],
+          "local_lab": "rules-witnesses"
+        },
+        {
+          "id": "build.rule-dedup",
+          "version": 1,
+          "title": "One rule shape can have two source supports",
+          "objective": "Withdraw duplicate rule sources without losing the remaining support.",
+          "explanation": "Two policy records contain the same animal rule. Canonical deduplication saves work but must keep both citations.",
+          "tasks": [
+            "Run animal(Nori) and inspect its rule support.",
+            "Withdraw one policy copy, then the second."
+          ],
+          "hints": [
+            "The registry must retain source multiplicity even if the internal rule shape is unique."
+          ],
+          "solution": "One surviving rule source still supports the derivation. Removing both removes that inference route while keeping the dog observation.",
+          "setup": [
+            {
+              "text": "dog(Nori).",
+              "source": "Species"
+            },
+            {
+              "text": "animal(every dog).",
+              "source": "Policy A"
+            },
+            {
+              "text": "animal(every dog).",
+              "source": "Policy B"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "animal(Nori)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "first",
+              "title": "Withdraw Policy A",
+              "instruction": "Keep Policy B active.",
+              "changes": [
+                {
+                  "kind": "withdraw_source",
+                  "source": "Policy A"
+                }
+              ],
+              "operation": {
+                "kind": "decide",
+                "claim": "animal(Nori)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main",
+              "profile": null
+            },
+            {
+              "id": "second",
+              "title": "Withdraw Policy B",
+              "instruction": "Retain only the species observation.",
+              "changes": [
+                {
+                  "kind": "withdraw_source",
+                  "source": "Policy B"
+                }
+              ],
+              "operation": {
+                "kind": "decide",
+                "claim": "animal(Nori)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main",
+              "profile": null
+            }
+          ],
+          "references": [
+            "build-rule-templates",
+            "build-support-replay"
+          ],
+          "self_review": [
+            "Explain the difference between canonical-rule identity and source identity."
+          ],
+          "local_lab": null
+        },
+        {
+          "id": "build.memo-history",
+          "version": 1,
+          "title": "A memo belongs to a particular run and state",
+          "objective": "Inspect cache events without turning them into permanent evidence.",
+          "explanation": "The recorder identifies actual cache operations and their scopes. Repeating a query and changing a source are different experiments; do not infer persistence from a repeated display.",
+          "tasks": [
+            "Run the chain and filter replay to Memo operations.",
+            "Withdraw its species support and inspect the new result."
+          ],
+          "hints": [
+            "The old proof remains historical after the source revision changes."
+          ],
+          "solution": "The initial derivation can reuse query work. After withdrawal the new decision is FALSE. The old record stays attached to its earlier revision, and the engine must invalidate any affected retained state.",
+          "setup": [
+            {
+              "text": "dog(Nori).",
+              "source": "Species observation"
+            },
+            {
+              "text": "animal(every dog).",
+              "source": "Animal rule"
+            },
+            {
+              "text": "alive(every animal).",
+              "source": "Alive rule"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "alive(Nori)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "withdraw",
+              "title": "Remove the species source",
+              "instruction": "Rerun under the changed input revision.",
+              "changes": [
+                {
+                  "kind": "withdraw_source",
+                  "source": "Species observation"
+                }
+              ],
+              "operation": {
+                "kind": "decide",
+                "claim": "alive(Nori)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main",
+              "profile": null
+            }
+          ],
+          "references": [
+            "build-memo-lifetimes",
+            "revision"
+          ],
+          "self_review": [
+            "Point to the memo scope and source revision before and after the change."
+          ],
+          "local_lab": null
+        },
+        {
+          "id": "build.bounded-proof-record",
+          "version": 1,
+          "title": "A short recording can accompany a complete result",
+          "objective": "Separate query completion, proof construction and event retention.",
+          "explanation": "The local lab captures only four events in one run while still obtaining the same TRUE result and real proof. Event retention has its own budget; it is not the search-depth or proof-size budget.",
+          "tasks": [
+            "Import the rules-witnesses report.",
+            "Compare bounded_record with the normal multi-hop proof and failed search."
+          ],
+          "hints": [
+            "A truncated recorder reports what is missing; it must not invent the rest."
+          ],
+          "solution": "The query result remains complete while event status is truncated. This experiment tests event recording, not proof-size exhaustion. Failed search evidence belongs to its FALSE query and does not become a successful reference.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "What follows from a truncated event record?",
+            "choices": [
+              "Some chronology was not retained; inspect the separate query result.",
+              "The query must be FALSE.",
+              "The proof contains every event that search attempted."
+            ],
+            "correct": 0,
+            "feedback": "Recording completeness and logical completion are separate fields."
+          },
+          "actions": [],
+          "references": [
+            "build-proof-sharing",
+            "resource-budgets"
+          ],
+          "self_review": [
+            "State exactly which budget was bounded and which guarantees the observation does not establish."
+          ],
+          "local_lab": "rules-witnesses"
+        }
+      ]
+    },
+    {
+      "id": "build.runtime",
+      "version": 1,
+      "unit": "B4",
+      "track": "build",
+      "title": "Construct the runtime boundary",
+      "summary": "Inspect interning, allocation, flat buffers and typed component resources using actual source and artifacts.",
+      "prerequisites": [
+        "build.compiler",
+        "integrate.runtimes-resources"
+      ],
+      "legacy_release": false,
+      "activities": [
+        {
+          "id": "build.interning",
+          "version": 1,
+          "title": "A symbol key belongs to its interner",
+          "objective": "Observe the actual compiler’s intern-and-resolve boundary.",
+          "explanation": "The semantic compiler interns repeated names within one compilation. Flattening resolves keys to owned strings before the logic buffer reaches the engine.",
+          "tasks": [
+            "Run runtime-buffers and compare first, repeated and other symbol keys.",
+            "Explain where the key becomes a string in the pipeline."
+          ],
+          "hints": [
+            "The same numeric-looking key from another interner has no shared meaning by itself."
+          ],
+          "solution": "Equal names reuse a key in one Rodeo table. That optimization does not eliminate owned strings, clone costs or later serialization.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "Can an interned key be interpreted without its table?",
+            "choices": [
+              "Yes; keys are universal vocabulary IDs.",
+              "Yes; the key is the original UTF-8 string.",
+              "No; keep it with the owning interner or resolve it."
+            ],
+            "correct": 2,
+            "feedback": "Interning is local identity inside a compiler instance."
+          },
+          "actions": [],
+          "references": [
+            "build-interning",
+            "build-owned-data"
+          ],
+          "self_review": [
+            "Describe the lifetime and interpretation of an interned key."
+          ],
+          "local_lab": "runtime-buffers"
+        },
+        {
+          "id": "build.parser-ownership",
+          "version": 1,
+          "title": "Dropping input does not erase the public AST",
+          "objective": "Distinguish temporary borrowed parser input from owned syntax.",
+          "explanation": "The runtime lab parses an owned source String, drops it, then continues using the actual public parser tree and flat AST.",
+          "tasks": [
+            "Run the ownership control.",
+            "Identify the borrowed recognition phase and the later owned representation."
+          ],
+          "hints": [
+            "Flat indices do not say whether an object owns an allocation."
+          ],
+          "solution": "The KR parser’s public tree owns its values. Borrowed pest recognition and owned output are different lifetimes. Do not describe this parser using an older arena implementation.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "What does the observed drop-input control demonstrate?",
+            "choices": [
+              "The compiler performs no allocations.",
+              "This public parser output owns the data it subsequently uses.",
+              "Every parser allocation is shared forever."
+            ],
+            "correct": 1,
+            "feedback": "Ownership is established at the tested boundary, not inferred from a diagram."
+          },
+          "actions": [],
+          "references": [
+            "build-owned-data",
+            "build-flat-ast"
+          ],
+          "self_review": [
+            "Explain why the parsed tree remains usable after the original String is dropped."
+          ],
+          "local_lab": "runtime-buffers"
+        },
+        {
+          "id": "build.buffer-copy",
+          "version": 1,
+          "title": "Splitting roots copies the node arena",
+          "objective": "Measure a real buffer operation and preserve its root meaning.",
+          "explanation": "The two statements produce two roots. split_roots gives each one a cloned full node vector, preserving indices while leaving sibling nodes unreachable.",
+          "tasks": [
+            "Run runtime-buffers and inspect split_roots and allocation measurements.",
+            "Explain why the second source is not admitted through the first root."
+          ],
+          "hints": [
+            "Equal arrays can occupy different allocations."
+          ],
+          "solution": "Both split buffers carry the full node array but distinct roots and separate storage. Reachability determines which nodes participate in admission. This implementation avoids index remapping at the cost of cloning.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": null,
+          "actions": [],
+          "references": [
+            "build-flat-logic",
+            "measurement-method"
+          ],
+          "self_review": [
+            "Distinguish node-index sharing, value equality and allocation sharing."
+          ],
+          "local_lab": "runtime-buffers"
+        },
+        {
+          "id": "build.count-edge",
+          "version": 1,
+          "title": "The count is data, the body is an edge",
+          "objective": "Navigate the actual CountNode representation correctly.",
+          "explanation": "The flat count variant stores a variable, cardinality and body index. Treating its cardinality as a child link would draw a false graph.",
+          "tasks": [
+            "Compile the exact-count query and choose Lowered logic.",
+            "Follow the root’s body link; compare the count value with that index."
+          ],
+          "hints": [
+            "Only the final CountNode tuple field is the body edge."
+          ],
+          "solution": "The inspector follows typed variant fields. It does not treat every integer as a reference. Count queries remain query-only at admission.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "compile",
+            "source": "exactly 2 computer $c: broken($c).",
+            "structural_preflight": true
+          },
+          "expected": {
+            "family": "compiled",
+            "status": "refused"
+          },
+          "question": null,
+          "actions": [],
+          "references": [
+            "build-flat-logic",
+            "counts"
+          ],
+          "self_review": [
+            "Identify the count value and the body node separately."
+          ],
+          "local_lab": null
+        },
+        {
+          "id": "build.serialization",
+          "version": 1,
+          "title": "Transport has a real cost and a type contract",
+          "objective": "Separate local JSON observations from component ABI claims.",
+          "explanation": "The runtime lab records encoded byte length, allocation counts and an actual decode round-trip. It uses native JSON; the component’s typed canonical ABI is a different transport.",
+          "tasks": [
+            "Inspect encode/decode measurements and round-trip equality.",
+            "State which costs are included and which transport was not measured."
+          ],
+          "hints": [
+            "Requested allocation bytes are not retained bytes or peak RSS."
+          ],
+          "solution": "The round-trip preserves this LogicBuffer. Its costs include the measured allocator wrapper and JSON encoding. No conclusion about canonical-ABI latency follows without measuring that path.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": null,
+          "actions": [],
+          "references": [
+            "measurement-method",
+            "build-flat-logic",
+            "wit-values-resources"
+          ],
+          "self_review": [
+            "Write the exact measurement boundary and one excluded cost."
+          ],
+          "local_lab": "runtime-buffers"
+        },
+        {
+          "id": "build.component-resource",
+          "version": 1,
+          "title": "Follow a resource through its owning store",
+          "objective": "Connect engine values and session handles to the actual component.",
+          "explanation": "The component artifact has typed logic values and session resource exports. The host creates and owns the session handle; a journal or recovery image supplies portable state, not the handle itself.",
+          "tasks": [
+            "Run the WASI lab and inspect actual interface identity, imports and exports.",
+            "Trace constructor, query, typed result and resource drop in the linked interface and host source."
+          ],
+          "hints": [
+            "A host trap is outside an ordinary result<nibli-error> return."
+          ],
+          "solution": "The pinned WIT package is nibli:engine@0.12.0. Engine and authorizer export session resources. The host controls their store and capability bindings; resource handles cannot be copied into another instance as state.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "What can recover knowledge in a new component instance?",
+            "choices": [
+              "Replay the validated journal or recovery state.",
+              "Reuse a dropped resource handle from the old store.",
+              "Copy a proof node number into the constructor."
+            ],
+            "correct": 0,
+            "feedback": "Recovery transfers validated state; handles belong to their component store."
+          },
+          "actions": [],
+          "references": [
+            "build-component-lifecycle",
+            "wit-values-resources",
+            "runtime-artifact-inspection"
+          ],
+          "self_review": [
+            "Explain what crosses as a value and what remains an owned resource handle."
+          ],
+          "local_lab": "wasi-runtime"
+        },
+        {
+          "id": "build.authorizer-boundary",
+          "version": 1,
+          "title": "An authorization result still needs host enforcement",
+          "objective": "Inspect policy, ephemeral context and the TRUE-only decision boundary.",
+          "explanation": "The native scoped-application lab executes a real authorizer with correct, wrong and cleared context. The component exports an analogous session interface, including load-policy, can, explain and clear-ephemeral.",
+          "tasks": [
+            "Inspect the native authorizer results in the scoped lab.",
+            "Compare the authorizer interface with the engine’s typed query result."
+          ],
+          "hints": [
+            "An allowed decision is consumed by a host that must still enforce the operation and resource identity."
+          ],
+          "solution": "The correct context allows, wrong context refuses, and cleared context must not leak across calls. The native lab establishes those calls; exported WIT inspection alone does not execute the component authorizer.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": null,
+          "actions": [],
+          "references": [
+            "api-authorizer",
+            "build-component-lifecycle",
+            "agent-action-boundaries"
+          ],
+          "self_review": [
+            "Locate policy loading, context lifetime and the host’s action boundary."
+          ],
+          "local_lab": "scoped-application"
+        },
+        {
+          "id": "build.capability-recovery",
+          "version": 1,
+          "title": "A missing guest import does not sandbox the host",
+          "objective": "Assign capability and recovery responsibility to the correct layer.",
+          "explanation": "The inspected guest lacks filesystem, socket, HTTP and clock imports at this pin. Its native host still owns journal IO and loopback compute transport. Recovery rebuilds a trapped component and replays committed inputs.",
+          "tasks": [
+            "Inspect actual imports and host fuel/memory controls.",
+            "Connect the native separate-session control with the WASI recovery observations."
+          ],
+          "hints": [
+            "Guest memory growth, process RSS, reasoner depth and fuel measure different things."
+          ],
+          "solution": "The interface bounds the guest’s direct requests. Host capabilities and policy still need explicit control. A recovered session must restore committed input identities and avoid treating aborted work as evidence.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": null,
+          "actions": [],
+          "references": [
+            "host-capabilities",
+            "host-journal-recovery",
+            "build-component-lifecycle"
+          ],
+          "self_review": [
+            "Assign each observed resource or capability to its owning layer."
+          ],
+          "local_lab": "wasi-runtime"
+        }
+      ]
+    },
+    {
+      "id": "build.assurance",
+      "version": 1,
+      "unit": "B5",
+      "track": "build",
+      "title": "Test and justify the implementation",
+      "summary": "Design counterexamples, run an independent finite model, and keep claims within observed tests and proof obligations.",
+      "prerequisites": [
+        "build.rules-proofs",
+        "build.runtime"
+      ],
+      "legacy_release": false,
+      "activities": [
+        {
+          "id": "build.wrong-model",
+          "version": 1,
+          "title": "A perfect derivation can expose a wrong policy",
+          "objective": "Use a discriminating application counterexample.",
+          "explanation": "A fictional cart needs both inspection and review, but the draft policy uses OR. One inspection alone distinguishes the draft from the intended requirement.",
+          "tasks": [
+            "Run the faulty policy on the one-condition case.",
+            "Replace OR with AND and rerun the same evidence."
+          ],
+          "hints": [
+            "The engine can faithfully prove the wrong requirement."
+          ],
+          "solution": "The draft yields TRUE; the repaired AND policy yields FALSE until matching review is supplied. This test checks encoding against the stated requirement, not the engine’s general soundness.",
+          "setup": [
+            {
+              "text": "all $c: approves(Inspector, $c) | approves(Reviewer, $c) -> ready($c).",
+              "source": "Draft cart policy"
+            },
+            {
+              "text": "approves(Inspector, CartC).",
+              "source": "Inspection"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "ready(CartC)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "repair",
+              "title": "Replace the faulty policy",
+              "instruction": "Preserve the evidence and change only the required connective.",
+              "changes": [
+                {
+                  "kind": "replace_source",
+                  "source": "Draft cart policy",
+                  "text": "all $c: approves(Inspector, $c) & approves(Reviewer, $c) -> ready($c).",
+                  "replacement_source": "Reviewed cart policy"
+                }
+              ],
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(CartC)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main",
+              "profile": null
+            }
+          ],
+          "references": [
+            "build-counterexample-design",
+            "formalization"
+          ],
+          "self_review": [
+            "Explain why a both-conditions happy path would miss this defect."
+          ],
+          "local_lab": null
+        },
+        {
+          "id": "build.finite-oracle",
+          "version": 1,
+          "title": "Enumerate a domain small enough to inspect",
+          "objective": "Compare all cases of a bounded independent model.",
+          "explanation": "Six optional base facts give 64 possible sets for three names. The finite lab closes two positive unary rules independently and compares all nine named decisions in every set.",
+          "tasks": [
+            "Run finite-assurance.",
+            "Read the domain and counts before interpreting the all-cases result."
+          ],
+          "hints": [
+            "The oracle’s arrays and fixed-point loop do not call the engine."
+          ],
+          "solution": "All 576 named decisions match within this domain. There is no evidence here about negation, equality, existential heads, arithmetic, arbitrary programs or runtime failures.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "What does exhaustive mean in this report?",
+            "choices": [
+              "Every input accepted by the grammar.",
+              "Every possible rule system over three names.",
+              "Every one of the declared 64 base sets and nine named queries."
+            ],
+            "correct": 2,
+            "feedback": "Exhaustiveness is relative to the explicit input domain."
+          },
+          "actions": [],
+          "references": [
+            "build-finite-oracle",
+            "build-assurance-layers"
+          ],
+          "self_review": [
+            "State the complete tested domain and a feature outside it."
+          ],
+          "local_lab": "finite-assurance"
+        },
+        {
+          "id": "build.metamorphic",
+          "version": 1,
+          "title": "Change representation while preserving the question",
+          "objective": "Test reorder, consistent rename and duplicate-source invariants.",
+          "explanation": "The finite lab reruns the same named decision after reordering sources, consistently renaming an entity, and duplicating source support. Each transformation preserves this positive fragment’s meaning.",
+          "tasks": [
+            "Inspect the 192 transformation checks.",
+            "Contrast consistent renaming with changing one isolated occurrence in a join."
+          ],
+          "hints": [
+            "A transformation is an oracle only when its preservation claim is justified."
+          ],
+          "solution": "The tested transformations preserve the selected decision. Partial renaming changes relationships and is not an invariance test. Withdrawal and negation need their own conditions; positive monotonic intuitions do not apply automatically.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": null,
+          "actions": [],
+          "references": [
+            "build-finite-oracle",
+            "build-counterexample-design"
+          ],
+          "self_review": [
+            "Explain why each tested transformation preserves this specific question."
+          ],
+          "local_lab": "finite-assurance"
+        },
+        {
+          "id": "build.negative-controls",
+          "version": 1,
+          "title": "Test that the checker can notice a defect",
+          "objective": "Interpret locally authored faulty-reference and bad-policy controls.",
+          "explanation": "A control omits an edge from the finite reference computation; another real run uses OR where AND is required. Both must be detected before the test procedure is useful.",
+          "tasks": [
+            "Inspect both recorded counterexamples.",
+            "Identify the smallest input that separates correct and faulty behavior."
+          ],
+          "hints": [
+            "A test that never sees a distinguishing input can pass with a broken oracle."
+          ],
+          "solution": "The missing-edge reference fails a dog-to-alive case. The application mutation returns TRUE with only one approval. These are local controls, not evidence that every engine mutation or fuzz input was checked.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": null,
+          "actions": [],
+          "references": [
+            "build-counterexample-design",
+            "build-assurance-layers"
+          ],
+          "self_review": [
+            "Describe what the controls demonstrate about sensitivity and what remains untested."
+          ],
+          "local_lab": "finite-assurance"
+        },
+        {
+          "id": "build.surface-parity",
+          "version": 1,
+          "title": "Compare equivalent observations across runtimes",
+          "objective": "Keep engine pin, profile and typed result aligned.",
+          "explanation": "Native course fixtures and browser journeys run the same authored operations through the shared core and browser worker. The finite lab separately compares native recorded/plain paths. These are three different comparisons.",
+          "tasks": [
+            "Run the browser chain and export its operation record.",
+            "Compare source, profile, engine revision and outcome with the matching native lab evidence."
+          ],
+          "hints": [
+            "A missing browser capability is not a FALSE symbolic answer."
+          ],
+          "solution": "Compare complete typed results and boundary conditions, not just a green label. The delivery checks repeat selected compiler, refusal, depth and derivation observations in a real browser; they do not establish parity for every possible input.",
+          "setup": [
+            {
+              "text": "dog(Nori).",
+              "source": "Species observation"
+            },
+            {
+              "text": "animal(every dog).",
+              "source": "Animal rule"
+            },
+            {
+              "text": "alive(every animal).",
+              "source": "Alive rule"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "alive(Nori)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": null,
+          "actions": [],
+          "references": [
+            "build-parity",
+            "runtime-capabilities",
+            "outcomes"
+          ],
+          "self_review": [
+            "Name the surfaces compared and the fields that make the comparison meaningful."
+          ],
+          "local_lab": null
+        },
+        {
+          "id": "build.lean-model-check",
+          "version": 1,
+          "title": "Require the proof tool to actually run",
+          "objective": "Execute pinned Lean model checks with source identity.",
+          "explanation": "The model lab checks six top-level Lean files and records their hashes and observed Lean version. A missing-tool skip is a failed prerequisite for this lab.",
+          "tasks": [
+            "Run formal-models using the clean pinned engine checkout.",
+            "Read the checked files, tool version and limitations before importing the report."
+          ],
+          "hints": [
+            "A theorem refers to its model’s definitions and hypotheses."
+          ],
+          "solution": "The files check with the pinned default development environment. This establishes those model statements, not a proof of all compiled application behavior. The production extraction project has a separate pinned toolchain.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": null,
+          "actions": [],
+          "references": [
+            "build-lean-models",
+            "build-assurance-layers"
+          ],
+          "self_review": [
+            "Name one checked model and the bridge needed before applying it to production."
+          ],
+          "local_lab": "formal-models"
+        },
+        {
+          "id": "build.production-bridge",
+          "version": 1,
+          "title": "A theorem name is not a production receipt",
+          "objective": "Inspect remaining obligations and source-bound claims.",
+          "explanation": "The current coverage inventory declares no complete certified target while recording component proof work. Production extraction receipts, model checks and conformance tests answer different questions.",
+          "tasks": [
+            "Inspect coverage and extraction toolchain inventory in the formal-model report.",
+            "Explain how a changed source hash would affect a production correspondence claim."
+          ],
+          "hints": [
+            "A coverage row is an inventory entry, not an executed certificate."
+          ],
+          "solution": "The lab checks models and reads inventories. It does not run production extraction or issue that receipt. A production claim must bind exact source/toolchain, theorem, domain and assumptions; unresolved boundaries remain explicit.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "What does certified_target = none mean here?",
+            "choices": [
+              "No complete certified engine target is declared by this inventory.",
+              "No useful component theorem exists.",
+              "All source files are certified by the table itself."
+            ],
+            "correct": 0,
+            "feedback": "Separate useful component proofs from a complete target claim."
+          },
+          "actions": [],
+          "references": [
+            "build-production-obligations",
+            "build-lean-models"
+          ],
+          "self_review": [
+            "Identify the missing implementation bridge without dismissing the narrower checked result."
+          ],
+          "local_lab": "formal-models"
+        },
+        {
+          "id": "build.assurance-capstone",
+          "version": 1,
+          "title": "Write a claim that the evidence supports",
+          "objective": "Assemble a bounded assurance argument and a next test.",
+          "explanation": "Use the actual compiler, store, proof, ownership and finite-model observations to justify one implementation claim. Include the original requirement, tested inputs and a failure that would falsify it.",
+          "tasks": [
+            "Choose one observed failure and explain its repair.",
+            "Record a bounded claim, its evidence, trust boundary and next discriminating test."
+          ],
+          "hints": [
+            "A smaller precise claim is more useful than an unqualified verified label."
+          ],
+          "solution": "An adequate argument names its versioned inputs, result family, assumptions, source identity and untested domain. Model checks do not validate a natural-language requirement; a wrong accepted encoding can still yield a correct derivation.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "Which claim is supported by the finite lab?",
+            "choices": [
+              "The entire engine is proved correct for every source.",
+              "The application’s ordinary-language requirements are automatically true.",
+              "These 576 decisions agree with this independent finite model."
+            ],
+            "correct": 2,
+            "feedback": "Match the scope of the claim to the scope of the evidence."
+          },
+          "actions": [],
+          "references": [
+            "build-assurance-layers",
+            "build-production-obligations",
+            "adoption-obligations"
+          ],
+          "self_review": [
+            "Connect a specific claim to observed evidence and one meaningful remaining obligation."
+          ],
+          "local_lab": null
         }
       ]
     }

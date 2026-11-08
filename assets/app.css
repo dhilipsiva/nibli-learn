@@ -36,3 +36,13 @@
 
 .local-lab-panel{border:1px solid var(--line);border-radius:10px;padding:20px;margin:20px 0}.local-lab-panel p,.local-lab-panel h3{margin:16px 0}.local-lab-panel pre{max-height:440px;overflow:auto;background:var(--card);padding:16px;margin:16px 0}.local-lab-panel label{display:block;margin:16px 0}.local-lab-panel textarea{width:100%;display:block;background:var(--bg);color:var(--text);border:1px solid var(--line-strong);padding:12px}.drawer-header{position:sticky;top:-24px;z-index:2;background:var(--raised);padding-top:12px}
 .retrieval-panel,.cost-panel{border:1px solid var(--line);border-radius:10px;padding:20px;margin:20px 0;min-width:0}.retrieval-panel>p,.cost-panel>p{margin:16px 0;line-height:1.8}.retrieval-panel label,.cost-panel label{display:grid;gap:8px;margin:16px 0;font-size:.85rem}.retrieval-panel label.choice{display:flex;align-items:flex-start}.retrieval-panel input:not([type=checkbox]),.retrieval-panel select,.cost-panel input{width:100%;min-width:0;padding:10px;color:var(--text);background:var(--bg);border:1px solid var(--line-strong);border-radius:5px}.retrieval-result{border-top:1px solid var(--line);padding:18px 0}.retrieval-result h3{margin-bottom:12px}.cost-panel dl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px 18px;padding:16px;background:var(--card);border-radius:6px}.cost-panel dt{color:var(--muted);font-size:.83rem}.cost-panel dd{margin:0;font-family:var(--mono);overflow-wrap:anywhere}@media(max-width:767px){.retrieval-panel,.cost-panel{padding:14px}.cost-panel dl{grid-template-columns:minmax(0,1fr)}.cost-panel dd{margin-bottom:12px}}
+
+/* Compiler values remain readable in keyboard and text-only inspection. */
+.compiler-inspector { margin-top: 24px; border-top: 1px solid var(--line); padding-top: 18px; }
+.compiler-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+.compiler-controls select { max-width: 100%; }
+.compiler-array { padding-left: 32px; overflow-wrap: anywhere; }
+.compiler-array li { padding: 6px 8px; }
+.node-selector { display: flex; gap: 12px; align-items: center; margin-top: 14px; }
+.node-selector input { width: 110px; }
+.compiler-inspector .button-row { margin: 10px 0; }

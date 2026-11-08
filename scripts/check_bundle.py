@@ -70,14 +70,14 @@ catalog = json.loads((root / "offline/catalog.json").read_text())
 assert catalog["schema"] == 1 and catalog["kind"] == "nibli-offline-catalog"
 assert len(catalog["entries"]) == 1
 entry = catalog["entries"][0]
-assert entry["id"] == manifest["runtime_id"] and entry["app_schema"] == 3
+assert entry["id"] == manifest["runtime_id"] and entry["app_schema"] == 4
 for kind in ["runtime", "content"]:
     ref = entry[kind]
     assert ref["url"].startswith("/nibli-learn/offline/")
     path = root / ref["url"].removeprefix("/nibli-learn/")
     assert hashlib.sha256(path.read_bytes()).hexdigest() == ref["sha256"]
     part = json.loads(path.read_text())
-    assert part["app_schema"] == 3
+    assert part["app_schema"] == 4
     assert part["engine_revision"] == manifest["engine_identity"]
     assert part["development"] == entry["development"] == manifest["development"]
     assert part["base_path"].startswith("/nibli-learn/")
@@ -93,7 +93,7 @@ for kind in ["runtime", "content"]:
         for css in (part_root / "assets").glob("*.css"):
             assert "/nibli-learn/assets/" not in css.read_text()
     else:
-        assert part["content_version"] == content["content_version"] == 3
+        assert part["content_version"] == content["content_version"] == 4
         rows = [{key: file[key] for key in ("path", "sha256", "bytes")} for file in sorted(part["files"], key=lambda f: f["path"])]
         assert hashlib.sha256(json.dumps(rows, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest() == part["content_digest"]
 print(f"Bundle verified: {len(actual)} files, /nibli-learn/ mount, actual worker WASM and matching hashes")

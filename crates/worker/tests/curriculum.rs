@@ -82,7 +82,8 @@ fn every_authored_engine_observation_and_repair_executes() {
     assert_eq!(
         units,
         [
-            "F1", "F2", "F3", "F4", "F5", "F6", "U1", "U2", "U3", "U4", "I1", "I2", "I3", "I4"
+            "F1", "F2", "F3", "F4", "F5", "F6", "U1", "U2", "U3", "U4", "I1", "I2", "I3", "I4",
+            "B1", "B2", "B3", "B4", "B5"
         ]
         .into_iter()
         .collect()

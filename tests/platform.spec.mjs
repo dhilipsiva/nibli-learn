@@ -29,12 +29,20 @@ async function fixture(label, { changedContent = false, version = 2, appSchema =
     course.lessons = course.lessons.filter(lesson => ['foundations', 'use'].includes(lesson.track));
     references.entries = references.entries.filter(entry => !entry.examples.some(example => example.kind && example.kind !== 'kr'));
   }
+  if (appSchema < 4) {
+    course.lessons = course.lessons.filter(lesson => lesson.track !== 'build');
+    references.entries = references.entries.filter(entry => !entry.id.startsWith('build-'));
+  }
   if (changedContent) course.lessons[0].summary += ' Changed bytes without a content-version bump.';
   const contentPayload = {
     'manifest.json': jsonBytes({ schema: appSchema, kind: 'nibli-learn-content-manifest', content_version: version, minimum_app_schema: appSchema }),
     'course.json': jsonBytes(course), 'references.json': jsonBytes(references),
   };
-  if (appSchema >= 3) contentPayload['labs.json'] = await readFile(path.join(root, 'content/labs.json'));
+  if (appSchema >= 3) {
+    const labs = JSON.parse(await readFile(path.join(root, 'content/labs.json'), 'utf8'));
+    if (appSchema === 3) labs.entries = labs.entries.slice(0, 5);
+    contentPayload['labs.json'] = jsonBytes(labs);
+  }
   async function files(payload, base) {
     const result = [];
     for (const [name, bytes] of Object.entries(payload).sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0)) {
@@ -179,7 +187,7 @@ test('changed bytes at the same content version and future content are refused',
   expect((await call(page, 'installOffline', changed.id, 'changed-content', null)).error.kind).toBe('version_conflict');
   const future = await fixture('future', { version: 3 });
   expect((await call(page, 'installOffline', future.id, 'future-content', null)).error.kind).toBe('incompatible');
-  const unsupported = await fixture('unsupported', { version: 4, appSchema: 4 });
+  const unsupported = await fixture('unsupported', { version: 5, appSchema: 5 });
   expect((await call(page, 'installOffline', unsupported.id, 'unsupported-schema', null)).error.kind).toBe('invalid');
   expect((await ok(page, 'offlineStatus')).active.installation_id).toBe('runtime-a');
 });
@@ -287,4 +295,25 @@ test('local engine snapshots require explicit development metadata and keep that
   expect(downloaded.development).toBe(true);
   expect(downloaded.engine_revision).toBe(`local-${'a'.repeat(40)}-source-${'c'.repeat(16)}`);
   expect((await ok(page, 'offlineStatus')).installed).toBe(false);
+});
+
+
+test('schema 4 Build content activates offline and restores schema 3 without rewriting learner data', async ({ page, context }) => {
+  const previous = await fixture('integrate-before-build', { version: 3, appSchema: 3 });
+  await open(page); await register(page); await install(page, previous); await ok(page, 'activateOffline', previous.id, null);
+  const workspace = { schema: 2, progress: { course_version: 3, marker: 'retain original evidence' }, projects: {} };
+  await ok(page, 'saveWorkspace', null, JSON.stringify(workspace), false);
+  const next = await fixture('build', { version: 4, appSchema: 4 });
+  await install(page, next); await ok(page, 'activateOffline', next.id, '1');
+  await context.setOffline(true);
+  const fresh = await context.newPage(); await fresh.goto('/nibli-learn/');
+  await expect(fresh.locator('#runtime')).toHaveText('Runtime build');
+  const installed = await ok(fresh, 'installedContent', next.id);
+  expect(installed.course.lessons.filter(l => l.track === 'build')).toHaveLength(5);
+  expect(installed.labs.entries).toHaveLength(11);
+  expect((await ok(fresh, 'loadWorkspace')).data).toEqual(workspace);
+  await ok(page, 'undoOffline', '2');
+  const restored = await context.newPage(); await restored.goto('/nibli-learn/');
+  await expect(restored.locator('#runtime')).toHaveText('Runtime integrate-before-build');
+  expect((await ok(restored, 'loadWorkspace')).data).toEqual(workspace);
 });

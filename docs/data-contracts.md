@@ -1,8 +1,8 @@
 # Versioned content and local data
 
-The [content manifest](../content/manifest.json) identifies fourteen available lessons,
-76 stable activities, and the planned later learning tracks. Content version 3
-requires application schema 3; the installer also retains support for paired schema-2
+The [content manifest](../content/manifest.json) identifies nineteen available lessons,
+116 stable activities, and the planned specialist studios. Content version 4
+requires application schema 4; the installer also retains support for paired schema-2/3
 runtimes and content. The registry and references are original learning
 material; `just check-content` verifies their IDs, versions, objectives and links.
 The build manifest binds these bytes to the exact application and engine inputs.
@@ -58,7 +58,7 @@ main operation. Candidate assertion IDs and profile settings are not transplante
 ## Verified offline pack contract
 
 The [pack schema](../content/offline-pack.schema.json) defines the declarative content
-inventory for application schemas 2 and 3. Schema 3 includes the local-lab catalog;
+inventory for application schemas 2, 3 and 4. Schema 3 includes the local-lab catalog;
 its source-kit download belongs to the matching runtime inventory. The first-party catalog separately pins runtime
 and content manifests by SHA-256; payload inventories exclude their own manifests.
 Content packs contain lessons, references and permitted images, never executable
@@ -99,3 +99,10 @@ Reference examples distinguish KR compilation from Rust APIs, WIT, data and loca
 commands. Local report import creates no browser operation, proof or source assertion.
 Failed or incompatible reports remain inspectable but do not satisfy a lab requirement.
 Optional model keys and replies are excluded from all these serializable documents.
+
+
+Build uses paired content/application schema 4. It preserves all F/U/I lesson and
+activity identities and their versions, adds B1–B5 and six local experiment types,
+and supplies views for captured compiler values. Readers retain schema-2/3 support;
+progress/project/operation schemas remain 2. Imported lab reports keep their original
+kit digest and do not count as matching evidence after the kit changes.

@@ -304,7 +304,7 @@ function validateCatalog(catalog) {
   if (catalog.schema !== 1 || catalog.kind !== 'nibli-offline-catalog' || !Array.isArray(catalog.entries) || catalog.entries.length > 64) throw fault('invalid', 'Offline catalog schema is incompatible.');
   const ids = new Set();
   for (const entry of catalog.entries) {
-    if (!ID.test(entry.id) || ids.has(entry.id) || ![2, 3].includes(entry.app_schema) || !entry.runtime || !entry.content) throw fault('invalid', 'Offline catalog entry is invalid.');
+    if (!ID.test(entry.id) || ids.has(entry.id) || ![2, 3, 4].includes(entry.app_schema) || !entry.runtime || !entry.content) throw fault('invalid', 'Offline catalog entry is invalid.');
     ids.add(entry.id);
     for (const ref of [entry.runtime, entry.content]) { sameOriginUrl(ref.url); if (!SHA.test(ref.sha256)) throw fault('invalid', 'Offline catalog lacks a valid manifest hash.'); }
   }
@@ -361,16 +361,16 @@ export function installOffline(entryId, jobId, callback) {
       const engineIdentityValid = /^[a-f0-9]{40}$/.test(runtime.engine_revision)
         || (runtime.development === true && pack.development === true && entry.development === true
           && /^local-[a-f0-9]{40}-source-[a-f0-9]{16}$/.test(runtime.engine_revision));
-      if (runtime.schema !== 1 || runtime.kind !== 'nibli-runtime' || !ID.test(runtime.id) || ![2, 3].includes(runtime.app_schema) || runtime.app_schema !== entry.app_schema || !engineIdentityValid
+      if (runtime.schema !== 1 || runtime.kind !== 'nibli-runtime' || !ID.test(runtime.id) || ![2, 3, 4].includes(runtime.app_schema) || runtime.app_schema !== entry.app_schema || !engineIdentityValid
         || pack.schema !== 1 || pack.kind !== 'nibli-content-pack' || !PACK_ID.test(pack.id) || pack.app_schema !== runtime.app_schema || pack.engine_revision !== runtime.engine_revision
-        || !Number.isSafeInteger(pack.version) || pack.version < 1 || ![2, 3].includes(pack.content_version) || pack.content_version > pack.app_schema || !SHA.test(pack.content_digest)) {
+        || !Number.isSafeInteger(pack.version) || pack.version < 1 || ![2, 3, 4].includes(pack.content_version) || pack.content_version > pack.app_schema || !SHA.test(pack.content_digest)) {
         throw fault('incompatible', 'Runtime, engine or content versions are incompatible. The active installation was retained.');
       }
       if (runtime.base_path !== `${BASE}runtime/${runtime.id}/` || pack.base_path !== `${BASE}packs/${pack.id}/${pack.version}/`) throw fault('invalid', 'Manifest asset namespace does not match its versioned identity.');
       const requiredRuntime = ['index.html', 'worker/bootstrap.js', 'worker/pkg/nibli_learn_worker.js', 'worker/pkg/nibli_learn_worker_bg.wasm'];
       const totalBytes = validateFiles(runtime, false) + validateFiles(pack, true);
       if (totalBytes > MAX_INSTALL_BYTES || requiredRuntime.some(path => !runtime.files.some(file => file.path === path))
-        || !['manifest.json', 'course.json', 'references.json'].every(path => pack.files.some(file => file.path === path)) || (pack.app_schema === 3 && !pack.files.some(file => file.path === 'labs.json')) || pack.content_manifest !== 'manifest.json') {
+        || !['manifest.json', 'course.json', 'references.json'].every(path => pack.files.some(file => file.path === path)) || (pack.app_schema >= 3 && !pack.files.some(file => file.path === 'labs.json')) || pack.content_manifest !== 'manifest.json') {
         throw fault('invalid', 'A complete runtime and lesson content inventory is required.');
       }
       const digestBytes = encoder.encode(JSON.stringify([...pack.files].sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0).map(({ path, sha256, bytes }) => ({ path, sha256, bytes }))));

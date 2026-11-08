@@ -1,8 +1,8 @@
 {
-  "schema": 3,
+  "schema": 4,
   "kind": "nibli-learn-content-manifest",
-  "content_version": 3,
-  "minimum_app_schema": 3,
+  "content_version": 4,
+  "minimum_app_schema": 4,
   "license": "CC-BY-4.0",
   "registry": "content/course.json",
   "references": "content/references.json",
@@ -25,7 +25,7 @@
     {
       "id": "build",
       "title": "Build a Reasoner",
-      "availability": "planned"
+      "availability": "available"
     },
     {
       "id": "studio",
@@ -769,6 +769,346 @@
           "version": 1,
           "title": "Rebuild a scoped evidence workflow",
           "objective": "Combine explicit source admission, case isolation, citations and recovery."
+        }
+      ]
+    },
+    {
+      "id": "build.compiler",
+      "version": 1,
+      "track": "build",
+      "unit": "B1",
+      "title": "Build the compiler path",
+      "availability": "available",
+      "route": "#/lesson/build.compiler/activity/build.source-spans",
+      "execution": "local-wasm-worker-and-optional-local-labs",
+      "steps": [
+        {
+          "number": 1,
+          "id": "build.source-spans",
+          "version": 1,
+          "title": "A period inside a value is not a separator",
+          "objective": "Align recorded statements with exact source bytes."
+        },
+        {
+          "number": 2,
+          "id": "build.grammar-validation",
+          "version": 1,
+          "title": "Identify which gate refused the input",
+          "objective": "Distinguish grammar errors from vocabulary validation."
+        },
+        {
+          "number": 3,
+          "id": "build.preflight",
+          "version": 1,
+          "title": "A compiled formula can still be query-only",
+          "objective": "Separate lowering, structural preflight and admission."
+        },
+        {
+          "number": 4,
+          "id": "build.scope-lowering",
+          "version": 1,
+          "title": "Follow the owner’s dependency",
+          "objective": "Inspect quantified scope before inferring shared identity."
+        },
+        {
+          "number": 5,
+          "id": "build.connective-graph",
+          "version": 1,
+          "title": "Find sharing in an expanded connective",
+          "objective": "Follow actual node links after XOR lowering."
+        },
+        {
+          "number": 6,
+          "id": "build.relative-repair",
+          "version": 1,
+          "title": "Bind the relative to the described object",
+          "objective": "Repair an unused relative placeholder and compare a modifier."
+        },
+        {
+          "number": 7,
+          "id": "build.opaque-content",
+          "version": 1,
+          "title": "A fact-content term is not an outer fact",
+          "objective": "Observe opacity at compilation and query boundaries."
+        },
+        {
+          "number": 8,
+          "id": "build.compiler-lab",
+          "version": 1,
+          "title": "Repair the full compiler boundary",
+          "objective": "Run corrupt-buffer, recovery and source-correspondence controls."
+        }
+      ]
+    },
+    {
+      "id": "build.store-search",
+      "version": 1,
+      "track": "build",
+      "unit": "B2",
+      "title": "Construct storage and search",
+      "availability": "available",
+      "route": "#/lesson/build.store-search/activity/build.store-mirror",
+      "execution": "local-wasm-worker-and-optional-local-labs",
+      "steps": [
+        {
+          "number": 1,
+          "id": "build.store-mirror",
+          "version": 1,
+          "title": "A fact bucket cannot replace its sources",
+          "objective": "Explain why a custom store starts empty."
+        },
+        {
+          "number": 2,
+          "id": "build.repeated-binding",
+          "version": 1,
+          "title": "One variable cannot take two identities",
+          "objective": "Use a counterexample to a broken join."
+        },
+        {
+          "number": 3,
+          "id": "build.typed-groundness",
+          "version": 1,
+          "title": "Stored values are not template variables",
+          "objective": "Distinguish wildcard intuition from typed matching."
+        },
+        {
+          "number": 4,
+          "id": "build.predicate-index",
+          "version": 1,
+          "title": "Inspect candidates after bucket lookup",
+          "objective": "Locate real search work after indexing."
+        },
+        {
+          "number": 5,
+          "id": "build.equality-index",
+          "version": 1,
+          "title": "An alias changes the supported search",
+          "objective": "Trace equality through an actual query."
+        },
+        {
+          "number": 6,
+          "id": "build.depth-passes",
+          "version": 1,
+          "title": "A short search is not a negative proof",
+          "objective": "Repair a search-depth exhaustion at its own layer."
+        },
+        {
+          "number": 7,
+          "id": "build.materialize",
+          "version": 1,
+          "title": "Read the materialization report after the query",
+          "objective": "Compare demand-driven results with selective saturation."
+        },
+        {
+          "number": 8,
+          "id": "build.support-rebuild",
+          "version": 1,
+          "title": "Withdraw both sources in order",
+          "objective": "Preserve independent support through deduplication and replay."
+        }
+      ]
+    },
+    {
+      "id": "build.rules-proofs",
+      "version": 1,
+      "track": "build",
+      "unit": "B3",
+      "title": "Build rules, witnesses and explanations",
+      "availability": "available",
+      "route": "#/lesson/build.rules-proofs/activity/build.rule-records",
+      "execution": "local-wasm-worker-and-optional-local-labs",
+      "steps": [
+        {
+          "number": 1,
+          "id": "build.rule-records",
+          "version": 1,
+          "title": "Rules have retained sources",
+          "objective": "Inspect registration without inventing private templates."
+        },
+        {
+          "number": 2,
+          "id": "build.rule-conditions",
+          "version": 1,
+          "title": "A matching head still needs all conditions",
+          "objective": "Reject a split-case rule match."
+        },
+        {
+          "number": 3,
+          "id": "build.independent-witnesses",
+          "version": 1,
+          "title": "Two existing objects need not be one object",
+          "objective": "Repair separate existential goals when identity matters."
+        },
+        {
+          "number": 4,
+          "id": "build.dependent-witnesses",
+          "version": 1,
+          "title": "Generated ownership depends on the person",
+          "objective": "Compare actual typed dependent witnesses."
+        },
+        {
+          "number": 5,
+          "id": "build.proof-dag",
+          "version": 1,
+          "title": "Find one derivation with several parents",
+          "objective": "Inspect real shared proof nodes and source citations."
+        },
+        {
+          "number": 6,
+          "id": "build.rule-dedup",
+          "version": 1,
+          "title": "One rule shape can have two source supports",
+          "objective": "Withdraw duplicate rule sources without losing the remaining support."
+        },
+        {
+          "number": 7,
+          "id": "build.memo-history",
+          "version": 1,
+          "title": "A memo belongs to a particular run and state",
+          "objective": "Inspect cache events without turning them into permanent evidence."
+        },
+        {
+          "number": 8,
+          "id": "build.bounded-proof-record",
+          "version": 1,
+          "title": "A short recording can accompany a complete result",
+          "objective": "Separate query completion, proof construction and event retention."
+        }
+      ]
+    },
+    {
+      "id": "build.runtime",
+      "version": 1,
+      "track": "build",
+      "unit": "B4",
+      "title": "Construct the runtime boundary",
+      "availability": "available",
+      "route": "#/lesson/build.runtime/activity/build.interning",
+      "execution": "local-wasm-worker-and-optional-local-labs",
+      "steps": [
+        {
+          "number": 1,
+          "id": "build.interning",
+          "version": 1,
+          "title": "A symbol key belongs to its interner",
+          "objective": "Observe the actual compiler’s intern-and-resolve boundary."
+        },
+        {
+          "number": 2,
+          "id": "build.parser-ownership",
+          "version": 1,
+          "title": "Dropping input does not erase the public AST",
+          "objective": "Distinguish temporary borrowed parser input from owned syntax."
+        },
+        {
+          "number": 3,
+          "id": "build.buffer-copy",
+          "version": 1,
+          "title": "Splitting roots copies the node arena",
+          "objective": "Measure a real buffer operation and preserve its root meaning."
+        },
+        {
+          "number": 4,
+          "id": "build.count-edge",
+          "version": 1,
+          "title": "The count is data, the body is an edge",
+          "objective": "Navigate the actual CountNode representation correctly."
+        },
+        {
+          "number": 5,
+          "id": "build.serialization",
+          "version": 1,
+          "title": "Transport has a real cost and a type contract",
+          "objective": "Separate local JSON observations from component ABI claims."
+        },
+        {
+          "number": 6,
+          "id": "build.component-resource",
+          "version": 1,
+          "title": "Follow a resource through its owning store",
+          "objective": "Connect engine values and session handles to the actual component."
+        },
+        {
+          "number": 7,
+          "id": "build.authorizer-boundary",
+          "version": 1,
+          "title": "An authorization result still needs host enforcement",
+          "objective": "Inspect policy, ephemeral context and the TRUE-only decision boundary."
+        },
+        {
+          "number": 8,
+          "id": "build.capability-recovery",
+          "version": 1,
+          "title": "A missing guest import does not sandbox the host",
+          "objective": "Assign capability and recovery responsibility to the correct layer."
+        }
+      ]
+    },
+    {
+      "id": "build.assurance",
+      "version": 1,
+      "track": "build",
+      "unit": "B5",
+      "title": "Test and justify the implementation",
+      "availability": "available",
+      "route": "#/lesson/build.assurance/activity/build.wrong-model",
+      "execution": "local-wasm-worker-and-optional-local-labs",
+      "steps": [
+        {
+          "number": 1,
+          "id": "build.wrong-model",
+          "version": 1,
+          "title": "A perfect derivation can expose a wrong policy",
+          "objective": "Use a discriminating application counterexample."
+        },
+        {
+          "number": 2,
+          "id": "build.finite-oracle",
+          "version": 1,
+          "title": "Enumerate a domain small enough to inspect",
+          "objective": "Compare all cases of a bounded independent model."
+        },
+        {
+          "number": 3,
+          "id": "build.metamorphic",
+          "version": 1,
+          "title": "Change representation while preserving the question",
+          "objective": "Test reorder, consistent rename and duplicate-source invariants."
+        },
+        {
+          "number": 4,
+          "id": "build.negative-controls",
+          "version": 1,
+          "title": "Test that the checker can notice a defect",
+          "objective": "Interpret locally authored faulty-reference and bad-policy controls."
+        },
+        {
+          "number": 5,
+          "id": "build.surface-parity",
+          "version": 1,
+          "title": "Compare equivalent observations across runtimes",
+          "objective": "Keep engine pin, profile and typed result aligned."
+        },
+        {
+          "number": 6,
+          "id": "build.lean-model-check",
+          "version": 1,
+          "title": "Require the proof tool to actually run",
+          "objective": "Execute pinned Lean model checks with source identity."
+        },
+        {
+          "number": 7,
+          "id": "build.production-bridge",
+          "version": 1,
+          "title": "A theorem name is not a production receipt",
+          "objective": "Inspect remaining obligations and source-bound claims."
+        },
+        {
+          "number": 8,
+          "id": "build.assurance-capstone",
+          "version": 1,
+          "title": "Write a claim that the evidence supports",
+          "objective": "Assemble a bounded assurance argument and a next test."
         }
       ]
     }
