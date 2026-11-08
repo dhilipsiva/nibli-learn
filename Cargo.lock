@@ -1850,7 +1850,7 @@ dependencies = [
 [[package]]
 name = "nibli-kr"
 version = "0.2.0"
-source = "git+https://github.com/dhilipsiva/nibli?rev=274eb4ff0a066c10903df607ea300a1a73357c5b#274eb4ff0a066c10903df607ea300a1a73357c5b"
+source = "git+https://github.com/dhilipsiva/nibli?rev=803caefcfdeafb8d6d8a2dabfa5f2f4bb4cc6840#803caefcfdeafb8d6d8a2dabfa5f2f4bb4cc6840"
 dependencies = [
  "nibli-lexicon",
  "nibli-types",
@@ -1915,12 +1915,12 @@ dependencies = [
 [[package]]
 name = "nibli-lexicon"
 version = "0.2.0"
-source = "git+https://github.com/dhilipsiva/nibli?rev=274eb4ff0a066c10903df607ea300a1a73357c5b#274eb4ff0a066c10903df607ea300a1a73357c5b"
+source = "git+https://github.com/dhilipsiva/nibli?rev=803caefcfdeafb8d6d8a2dabfa5f2f4bb4cc6840#803caefcfdeafb8d6d8a2dabfa5f2f4bb4cc6840"
 
 [[package]]
 name = "nibli-protocol"
 version = "0.2.0"
-source = "git+https://github.com/dhilipsiva/nibli?rev=274eb4ff0a066c10903df607ea300a1a73357c5b#274eb4ff0a066c10903df607ea300a1a73357c5b"
+source = "git+https://github.com/dhilipsiva/nibli?rev=803caefcfdeafb8d6d8a2dabfa5f2f4bb4cc6840#803caefcfdeafb8d6d8a2dabfa5f2f4bb4cc6840"
 dependencies = [
  "nibli-types",
  "serde",
@@ -1930,7 +1930,7 @@ dependencies = [
 [[package]]
 name = "nibli-reason"
 version = "0.2.0"
-source = "git+https://github.com/dhilipsiva/nibli?rev=274eb4ff0a066c10903df607ea300a1a73357c5b#274eb4ff0a066c10903df607ea300a1a73357c5b"
+source = "git+https://github.com/dhilipsiva/nibli?rev=803caefcfdeafb8d6d8a2dabfa5f2f4bb4cc6840#803caefcfdeafb8d6d8a2dabfa5f2f4bb4cc6840"
 dependencies = [
  "nibli-lexicon",
  "nibli-types",
@@ -1939,7 +1939,7 @@ dependencies = [
 [[package]]
 name = "nibli-render"
 version = "0.2.0"
-source = "git+https://github.com/dhilipsiva/nibli?rev=274eb4ff0a066c10903df607ea300a1a73357c5b#274eb4ff0a066c10903df607ea300a1a73357c5b"
+source = "git+https://github.com/dhilipsiva/nibli?rev=803caefcfdeafb8d6d8a2dabfa5f2f4bb4cc6840#803caefcfdeafb8d6d8a2dabfa5f2f4bb4cc6840"
 dependencies = [
  "nibli-lexicon",
  "nibli-protocol",
@@ -1949,7 +1949,7 @@ dependencies = [
 [[package]]
 name = "nibli-semantics"
 version = "0.2.0"
-source = "git+https://github.com/dhilipsiva/nibli?rev=274eb4ff0a066c10903df607ea300a1a73357c5b#274eb4ff0a066c10903df607ea300a1a73357c5b"
+source = "git+https://github.com/dhilipsiva/nibli?rev=803caefcfdeafb8d6d8a2dabfa5f2f4bb4cc6840#803caefcfdeafb8d6d8a2dabfa5f2f4bb4cc6840"
 dependencies = [
  "lasso",
  "nibli-lexicon",
@@ -1959,7 +1959,7 @@ dependencies = [
 [[package]]
 name = "nibli-session"
 version = "0.2.0"
-source = "git+https://github.com/dhilipsiva/nibli?rev=274eb4ff0a066c10903df607ea300a1a73357c5b#274eb4ff0a066c10903df607ea300a1a73357c5b"
+source = "git+https://github.com/dhilipsiva/nibli?rev=803caefcfdeafb8d6d8a2dabfa5f2f4bb4cc6840#803caefcfdeafb8d6d8a2dabfa5f2f4bb4cc6840"
 dependencies = [
  "nibli-kr",
  "nibli-lexicon",
@@ -1972,7 +1972,7 @@ dependencies = [
 [[package]]
 name = "nibli-types"
 version = "0.2.0"
-source = "git+https://github.com/dhilipsiva/nibli?rev=274eb4ff0a066c10903df607ea300a1a73357c5b#274eb4ff0a066c10903df607ea300a1a73357c5b"
+source = "git+https://github.com/dhilipsiva/nibli?rev=803caefcfdeafb8d6d8a2dabfa5f2f4bb4cc6840#803caefcfdeafb8d6d8a2dabfa5f2f4bb4cc6840"
 dependencies = [
  "serde",
 ]
