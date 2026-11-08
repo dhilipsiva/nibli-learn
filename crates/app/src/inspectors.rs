@@ -1,5 +1,6 @@
 use crate::state::*;
 use dioxus::prelude::*;
+use nibli_learn_model::{APP_REVISION, ENGINE_REVISION};
 use serde_json::{Value, json};
 use std::collections::{HashMap, HashSet};
 
@@ -49,15 +50,15 @@ pub fn Replay() -> Element {
             }
         })
         .collect();
-    let has_query = s.run().is_some();
+    let has_query = s.execution_record().is_some();
     let recording = if s.show_change {
         s.change_record
             .as_ref()
             .map(|r| text(r, "status"))
             .unwrap_or_default()
     } else {
-        s.run()
-            .map(|r| r.recording_status().to_owned())
+        s.execution_record()
+            .map(|r| text(r, "status"))
             .unwrap_or_default()
     };
     rsx! {
@@ -76,7 +77,7 @@ pub fn Replay() -> Element {
         } else {
             div { class:"button-row",span { class:if recording=="complete" {"badge ok"} else {"badge warn"}, "Recording · {recording}" }
                 span { class:"small muted", "{total} recorded events" }
-                button { class:"text-action", onclick:move |_| { let record=if state.peek().show_change {state.peek().change_record.clone()}else{state.peek().run().map(|r|r.record.clone())};if let Some(record)=record {download("nibli-execution-record.json",serde_json::to_string_pretty(&record).unwrap_or_default());} }, "Export record ↓" }
+                button { class:"text-action", onclick:move |_| { let record=if state.peek().show_change {state.peek().change_record.clone()}else{state.peek().execution_record().cloned()};if let Some(record)=record {download("nibli-execution-record.json",serde_json::to_string_pretty(&record).unwrap_or_default());} }, "Export record ↓" }
             }
             if recording!="complete" { p {class:"notice",style:"margin-top:14px","The recording is {recording}. The available events may not cover the entire operation. Recording completeness is separate from the query outcome."} }
             div { class:"playback interactive-only", "aria-label":"Playback controls",
@@ -191,9 +192,9 @@ fn Snapshot() -> Element {
         })
         .unwrap_or_default();
     let can_link = s
-        .run()
+        .execution_epoch()
         .zip(s.session.as_ref())
-        .is_some_and(|(r, session)| r.epoch == session.epoch);
+        .is_some_and(|(epoch, session)| epoch == session.epoch);
     let artifact_id = event
         .get("source")
         .map(|source| text(source, "artifact_id"))
@@ -201,7 +202,7 @@ fn Snapshot() -> Element {
     let record = if s.show_change {
         s.change_record.as_ref()
     } else {
-        s.run().map(|r| &r.record)
+        s.execution_record()
     };
     let source_text = record
         .and_then(|r| r.get("artifacts"))
@@ -314,7 +315,7 @@ pub fn Proof() -> Element {
         p{class:"explanation-line","{run.why}"}
         div{class:"proof-toolbar interactive-only",
             div{class:"segmented",button{"aria-pressed":!s.proof_text&&!s.proof_raw,onclick:move |_|{let mut s=state.write();s.proof_text=false;s.proof_raw=false;},"Explanation"}button{"aria-pressed":!s.proof_text&&s.proof_raw,"data-testid":"raw-proof-toggle",onclick:move |_|{let mut s=state.write();s.proof_text=false;s.proof_raw=true;},"Raw graph"}button{"aria-pressed":s.proof_text,onclick:move |_|state.write().proof_text=true,"Text"}}
-            button{class:"button small","data-testid":"proof-export",onclick:move |_|{if let Some(run)=state.peek().run(){download("nibli-proof-record.json",serde_json::to_string_pretty(&json!({"schema":1,"kind":"proof-record","run":run})).unwrap_or_default());}},"Export proof ↓"}
+            button{class:"button small","data-testid":"proof-export",onclick:move |_|{if let Some(run)=state.peek().run(){download("nibli-proof-record.json",serde_json::to_string_pretty(&json!({"schema":1,"kind":"proof-record","engine_revision":ENGINE_REVISION,"app_revision":APP_REVISION,"content_version":state.peek().learning.course.version,"profile":run.record.get("profile"),"run":run})).unwrap_or_default());}},"Export proof ↓"}
         }
         if s.proof_text{div{class:"proof-text","data-testid":"proof-text",pre{"{proof_text}"}}}
         else if !s.proof_raw{

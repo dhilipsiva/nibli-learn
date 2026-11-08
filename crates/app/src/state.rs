@@ -86,6 +86,7 @@ struct LocalState {
 }
 
 pub struct AppState {
+    pub learning: crate::curriculum::LearningState,
     pub client: Option<WorkerClient>,
     pub session: Option<SessionView>,
     pub progress: Progress,
@@ -140,7 +141,6 @@ pub struct AppState {
     pub storage_locked: bool,
     pub import_text: String,
     pub import_error: String,
-    pub import_preview: Option<Progress>,
     pub export_message: String,
     pub sandbox_claim: String,
 }
@@ -170,7 +170,9 @@ impl AppState {
                 ),
                 Err(e) => (Progress::default(), None, "dark".into(), e, vec![], 0, true),
             };
+        let learning = crate::curriculum::LearningState::new(&progress, session.is_some());
         let mut state = Self {
+            learning,
             client: None,
             session,
             progress,
@@ -225,7 +227,6 @@ impl AppState {
             storage_locked,
             import_text: String::new(),
             import_error: String::new(),
-            import_preview: None,
             export_message: String::new(),
             sandbox_claim: CLAIM.into(),
         };
@@ -326,12 +327,38 @@ impl AppState {
                 && self.step() != 4
                 && (self.prediction().is_none() || !self.change_done()))
     }
+    pub fn execution_record(&self) -> Option<&Value> {
+        if self.learning.failure.is_some() {
+            return self.change_record.as_ref();
+        }
+        if !self.learning.is_legacy() || self.screen == Screen::Reference {
+            self.learning.selected().map(|r| &r.record)
+        } else {
+            self.run().map(|r| &r.record)
+        }
+    }
+    pub fn execution_epoch(&self) -> Option<&str> {
+        if !self.learning.is_legacy() || self.screen == Screen::Reference {
+            self.learning.selected().map(|r| r.epoch.as_str())
+        } else {
+            self.run().map(|r| r.epoch.as_str())
+        }
+    }
     pub fn events(&self) -> &[Value] {
         if self.show_change {
             return self
                 .change_record
                 .as_ref()
                 .and_then(|v| v.get("events"))
+                .and_then(Value::as_array)
+                .map(Vec::as_slice)
+                .unwrap_or(&[]);
+        }
+        if !self.learning.is_legacy() || self.screen == Screen::Reference {
+            return self
+                .learning
+                .selected()
+                .and_then(|r| r.record.get("events"))
                 .and_then(Value::as_array)
                 .map(Vec::as_slice)
                 .unwrap_or(&[]);
@@ -359,7 +386,7 @@ impl AppState {
             );
         }
     }
-    fn abort_active_attempt(&mut self) {
+    pub fn abort_active_attempt(&mut self) {
         if let Some(mut attempt) = self.active_attempt.take() {
             attempt.status = "aborted".into();
             self.aborted.push(attempt);
@@ -370,36 +397,8 @@ impl AppState {
     }
 }
 
-pub fn boot(mut state: Signal<AppState>) {
-    let client = match WorkerClient::new() {
-        Ok(client) => client,
-        Err(message) => {
-            let mut s = state.write();
-            s.busy = false;
-            s.operation = "error".into();
-            s.diagnostic = Some(WorkerError {
-                kind: "operational".into(),
-                message,
-                record: None,
-            });
-            return;
-        }
-    };
-    let command = {
-        let mut s = state.write();
-        s.client = Some(client);
-        s.busy = false;
-        if let Some(session) = s.session.clone() {
-            Command::Restore { session }
-        } else {
-            Command::Initialize {
-                epoch: epoch(),
-                statements: lesson_setup(s.step()),
-                settings: RunSettings::default(),
-            }
-        }
-    };
-    send(state, command, Purpose::Initialize);
+pub fn boot(state: Signal<AppState>) {
+    crate::local::boot(state);
 }
 
 pub fn send(mut state: Signal<AppState>, command: Command, purpose: Purpose) {
@@ -518,11 +517,7 @@ pub fn send(mut state: Signal<AppState>, command: Command, purpose: Purpose) {
                 }
                 if error.kind == "cancelled" {
                     s.operation = "cancelled".into();
-                } else if error.kind == "admission"
-                    || error.kind == "refusal"
-                    || error.message.contains("derived-only")
-                    || error.message.contains("derived_only")
-                {
+                } else if error.kind == "admission" || error.kind == "refusal" {
                     s.operation = "ready".into();
                     s.refusal = Some(error.message.clone());
                     s.diagnostic = Some(error);
@@ -593,6 +588,22 @@ pub fn open_step(mut state: Signal<AppState>, step: usize, force: bool) {
     if state.peek().busy || !(1..=7).contains(&step) {
         return;
     }
+    crate::local::capture(state);
+    let release_project = {
+        let s = state.peek();
+        if s.learning.is_legacy() {
+            s.learning.workspace.active_project.clone().filter(|id| {
+                s.learning
+                    .workspace
+                    .projects
+                    .get(id)
+                    .is_some_and(|p| p.lesson.as_deref() == Some(LESSON_ID))
+            })
+        } else {
+            None
+        }
+    }
+    .unwrap_or_else(|| "original-release".into());
     let preserve = {
         let s = state.peek();
         !force
@@ -608,6 +619,11 @@ pub fn open_step(mut state: Signal<AppState>, step: usize, force: bool) {
     };
     {
         let mut s = state.write();
+        s.learning.workspace.progress.current = LearningSelection {
+            lesson: LESSON_ID.into(),
+            activity: RELEASE_OBJECTIVES[step - 1].into(),
+        };
+        s.learning.workspace.active_project = Some(release_project);
         s.progress.current_step = step;
         s.screen = Screen::Lesson;
         s.complete = false;
@@ -677,6 +693,11 @@ pub fn update_route(state: Signal<AppState>) {
     let s = state.peek();
     let route = match s.screen {
         Screen::Course => "#/course".into(),
+        Screen::Lesson if !s.learning.is_legacy() => format!(
+            "#/lesson/{}/activity/{}",
+            s.learning.workspace.progress.current.lesson,
+            s.learning.workspace.progress.current.activity
+        ),
         Screen::Lesson => format!(
             "#/lesson/{LESSON_ID}/step/{}?tab={}",
             s.step(),
@@ -699,25 +720,8 @@ pub fn update_route(state: Signal<AppState>) {
     let _ = route;
 }
 
-pub fn persist(mut state: Signal<AppState>) {
-    if state.peek().storage_locked {
-        return;
-    }
-    let text = {
-        let s = state.peek();
-        serde_json::to_string(&LocalState {
-            schema: 1,
-            progress: s.progress.clone(),
-            session: s.session.clone(),
-            theme: s.theme.clone(),
-            aborted: s.aborted.clone(),
-            support_stage: s.support_stage,
-        })
-    };
-    let result = text
-        .map_err(|e| e.to_string())
-        .and_then(|text| save_text(&text));
-    state.write().storage_error = result.err().unwrap_or_default();
+pub fn persist(state: Signal<AppState>) {
+    crate::local::persist(state, false);
 }
 
 fn load_local() -> Result<Option<LocalState>, String> {
@@ -750,24 +754,7 @@ fn load_local() -> Result<Option<LocalState>, String> {
     }
 }
 
-fn save_text(text: &str) -> Result<(), String> {
-    #[cfg(target_arch = "wasm32")]
-    {
-        let storage = web_sys::window()
-            .ok_or("Browser storage is unavailable.")?
-            .local_storage()
-            .map_err(|_| "Browser storage is unavailable.")?
-            .ok_or("Browser storage is unavailable.")?;
-        storage.set_item(STORAGE_KEY, text).map_err(|_| "Not saved: local storage is full or unavailable. Export your progress and project to keep this work.".into())
-    }
-    #[cfg(not(target_arch = "wasm32"))]
-    {
-        let _ = text;
-        Ok(())
-    }
-}
-
-fn current_hash() -> String {
+pub fn current_hash() -> String {
     #[cfg(target_arch = "wasm32")]
     {
         web_sys::window()
@@ -835,22 +822,13 @@ pub fn download(filename: &str, json: String) {
 
 pub fn focus(id: &str) {
     let id = serde_json::to_string(id).unwrap_or_else(|_| "\"\"".into());
-    spawn(async move {
+    spawn_forever(async move {
+        gloo_timers::future::TimeoutFuture::new(0).await;
         let _ = document::eval(&format!(
             "document.getElementById({id})?.focus(); return true;"
         ))
         .await;
     });
-}
-
-pub fn export_raw_storage() {
-    #[cfg(target_arch = "wasm32")]
-    if let Some(text) = web_sys::window()
-        .and_then(|w| w.local_storage().ok().flatten())
-        .and_then(|s| s.get_item(STORAGE_KEY).ok().flatten())
-    {
-        download("nibli-retained-browser-data.json", text);
-    }
 }
 
 #[cfg(target_arch = "wasm32")]
@@ -887,6 +865,14 @@ pub fn install_navigation(mut state: Signal<AppState>) -> Navigation {
         } else {
             Screen::Course
         };
+        if let Some((lesson, activity)) = crate::curriculum::selection_from_hash(&hash) {
+            if state.peek().learning.workspace.progress.current.activity != activity
+                || state.peek().learning.workspace.progress.current.lesson != lesson
+            {
+                crate::curriculum::open_activity(state, &lesson, &activity, false);
+            }
+            return;
+        }
         let step = hash
             .split("/step/")
             .nth(1)
@@ -894,7 +880,7 @@ pub fn install_navigation(mut state: Signal<AppState>) -> Navigation {
             .and_then(|v| v.parse::<usize>().ok())
             .filter(|n| (1..=7).contains(n));
         if let Some(step) = step
-            && step != state.peek().step()
+            && (step != state.peek().step() || !state.peek().learning.is_legacy())
         {
             if state.peek().busy {
                 update_route(state);

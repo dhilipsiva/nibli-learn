@@ -1,8 +1,9 @@
 # Nibli Learn
 
 An interactive learning environment for developers learning symbolic and
-neuro-symbolic reasoning. The first implementation focuses on an original
-software-release readiness lesson, using Nibli's real browser engine.
+neuro-symbolic reasoning. Ten original units cover shared foundations and using
+a reasoner through 44 activities, with executable exercises backed by Nibli's
+real browser engine.
 
 The learning loop is predict, change evidence, execute, inspect and repair.
 Execution recordings describe actual operations; proofs describe derivations.
@@ -20,6 +21,7 @@ just ci-native
 just build
 just check-bundle
 just test-browser
+just test-platform
 just serve
 ```
 
@@ -40,15 +42,22 @@ worker, original public assets and a hash manifest. Engine dependencies must be
 pinned to reachable Git commits for a release; local path dependencies are a
 development convenience and fail the release-input check.
 
-Reasoning runs locally in the browser. The first lesson requires no account,
-server, analytics or model key. Run history preserves input revision and session
+Reasoning runs locally in the browser. Lessons require no account, analytics
+or model key. Run history preserves input revision and session
 identity. A cancelled run has no completed logical outcome; recovery restores
 the last committed knowledge.
 
-The versioned [content manifest](content/manifest.json) covers one available lesson
-and seven stable objectives. [Data contracts](docs/data-contracts.md) describe
-progress/project/proof exports and the reserved offline-pack format. External pack
-installation and verified offline activation are not implemented in Phase 1.
+The versioned [content manifest](content/manifest.json) covers foundations F1–F6
+and Use units U1–U4. Later integration, engine-building and studio tracks remain
+planned. [Data contracts](docs/data-contracts.md) describe versioned progress,
+projects, read-only run archives and verified offline installation. The Local Data
+page provides import previews, backup/undo and recovery from storage conflicts.
+
+Offline installation stages and verifies the matching runtime and original course
+before explicit activation. It preserves the previous active version on failure.
+The [platform contracts](docs/platform.md) explain version isolation and browser
+storage limits. The five-person learning pilot remains a separate Phase 2 gate;
+automated checks do not establish learner comprehension.
 
 The browser test suite exercises actual WASM and worker messages. Prototype
 fixtures are not an implementation substitute. CI uploads a verified artifact;

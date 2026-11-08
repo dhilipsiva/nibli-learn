@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 export default defineConfig({
   testDir: '.',
   testMatch: '*.spec.mjs',
+  testIgnore: 'platform.spec.mjs',
   fullyParallel: false,
   workers: 1,
   timeout: 60_000,

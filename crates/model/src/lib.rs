@@ -2,6 +2,15 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
+pub mod course;
+pub mod operations;
+pub mod progress;
+pub mod projects;
+pub use course::*;
+pub use operations::*;
+pub use progress::*;
+pub use projects::*;
+
 pub const SCHEMA_VERSION: u32 = 1;
 pub const LESSON_ID: &str = "found.investigate-release";
 pub const LESSON_VERSION: u32 = 1;
@@ -84,6 +93,10 @@ pub struct SessionView {
     pub epoch: String,
     pub revision: String,
     pub settings: RunSettings,
+    #[serde(default)]
+    pub profile: Option<RunProfile>,
+    #[serde(default)]
+    pub engine_revision: Option<String>,
     pub assertions: Vec<Assertion>,
     /// Versioned engine image; public project import revalidates this boundary.
     pub recovery: Value,
@@ -150,6 +163,40 @@ pub enum Command {
     Restore {
         session: SessionView,
     },
+    InitializeProfile {
+        epoch: String,
+        statements: Vec<SeedStatement>,
+        profile: RunProfile,
+        recording: RecordingLevel,
+    },
+    Execute {
+        operation: Operation,
+        #[serde(default)]
+        activity_id: Option<String>,
+        content_version: u32,
+    },
+    SetProfile {
+        profile: RunProfile,
+    },
+    Hypothetical {
+        candidate_epoch: String,
+        source_epoch: String,
+        source_revision: String,
+        changes: Vec<Change>,
+        profile: Option<RunProfile>,
+        operation: Option<Operation>,
+        #[serde(default)]
+        activity_id: Option<String>,
+        content_version: u32,
+    },
+    ApplyDelta {
+        source_epoch: String,
+        source_revision: String,
+        changes: Vec<Change>,
+    },
+    ValidateProject {
+        session: SessionView,
+    },
     Change {
         changes: Vec<Change>,
     },
@@ -189,6 +236,12 @@ pub struct Reply {
     pub run: Option<RunRecord>,
     pub change_record: Option<Value>,
     pub checks: Vec<CaseCheck>,
+    #[serde(default)]
+    pub operation: Option<OperationRun>,
+    #[serde(default)]
+    pub hypothetical: Option<HypotheticalResult>,
+    #[serde(default)]
+    pub validated_session: Option<SessionView>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -197,6 +250,10 @@ pub struct WorkerError {
     pub message: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub record: Option<Value>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub error_class: Option<Box<str>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub stage: Option<Box<str>>,
 }
 impl std::fmt::Display for WorkerError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -204,6 +261,15 @@ impl std::fmt::Display for WorkerError {
     }
 }
 impl std::error::Error for WorkerError {}
+impl WorkerError {
+    pub fn as_operation_failure(&self, fallback_stage: &str) -> OperationResult {
+        OperationResult::Failed {
+            stage: self.stage.as_deref().unwrap_or(fallback_stage).into(),
+            error_class: self.error_class.as_deref().unwrap_or("protocol").into(),
+            message: self.message.clone(),
+        }
+    }
+}
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Response {
@@ -213,6 +279,7 @@ pub struct Response {
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct StepProgress {
     pub predicted: Option<String>,
     pub checked: bool,
@@ -274,6 +341,7 @@ impl Progress {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct ProjectExport {
     pub schema: u32,
     pub kind: String,

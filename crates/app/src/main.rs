@@ -1,9 +1,12 @@
 use dioxus::prelude::*;
 use nibli_learn_model::*;
 
+mod curriculum;
 mod inspectors;
 mod lesson;
-mod pages;
+mod local;
+mod offline;
+mod operations;
 mod state;
 use state::*;
 
@@ -15,6 +18,7 @@ fn main() {
 fn App() -> Element {
     let state = use_signal(AppState::new);
     use_context_provider(|| state);
+    use_hook(move || std::rc::Rc::new(local::subscribe(state)));
     #[cfg(target_arch = "wasm32")]
     use_hook(move || std::rc::Rc::new(install_navigation(state)));
     use_future(move || async move {
@@ -29,6 +33,22 @@ fn App() -> Element {
         } else {
             "The reasoning worker is running.".into()
         }
+    } else if s.operation == "candidate_complete" {
+        s.learning
+            .candidate
+            .as_ref()
+            .and_then(|c| c.run.as_ref())
+            .map(|r| {
+                format!(
+                    "Detached candidate completed. {}. Main-project evidence is unchanged.",
+                    crate::operations::announce(&r.result)
+                )
+            })
+            .unwrap_or_else(|| "Candidate operation completed.".into())
+    } else if (!s.learning.is_legacy() || s.screen == Screen::Reference)
+        && s.learning.selected().is_some()
+    {
+        crate::operations::announce(&s.learning.selected().unwrap().result)
     } else if let Some(run) = s.run() {
         format!(
             "Run complete. Engine outcome {}. Recording {}.",
@@ -40,20 +60,22 @@ fn App() -> Element {
     };
     rsx! {
         document::Title { "Nibli Learn · learn by investigating" }
-        document::Link { rel: "stylesheet", href: "/nibli-learn/assets/app.css" }
+        document::Link { rel: "stylesheet", href: runtime_asset_url("assets/app.css") }
         div { class: "app", "data-theme": "{s.theme}",
             a { class: "skip-link", href: "#main-content", "Skip to learning workspace" }
             TopBar {}
             div { class: "sr-only", role: "status", "aria-live": "polite", "aria-atomic": "true", "{announcement}" }
             match s.screen {
-                Screen::Course => rsx!{ pages::Course {} },
+                Screen::Course => rsx!{ curriculum::CoursePage {} },
+                Screen::Lesson if !s.learning.is_legacy() => rsx!{ curriculum::ActivityWorkspace {} },
                 Screen::Lesson | Screen::Sandbox => rsx!{ LessonWorkspace {} },
-                Screen::Reference => rsx!{ pages::ReferencePage {} },
-                Screen::Data => rsx!{ pages::DataPage {} },
-                Screen::Packs => rsx!{ pages::PacksPage {} },
+                Screen::Reference => rsx!{ curriculum::ReferencePage {} },
+                Screen::Data => rsx!{ local::DataPage {} },
+                Screen::Packs => rsx!{ offline::OfflinePage {} },
             }
             Footer {}
             if s.reset_dialog { ResetDialog {} }
+            if s.learning.apply_dialog { operations::ApplyDialog {} }
         }
     }
 }
@@ -63,23 +85,26 @@ fn TopBar() -> Element {
     let mut state = use_context::<Signal<AppState>>();
     let s = state.read();
     let light = s.theme == "light";
-    let saved = s.storage_error.is_empty();
+    let saved = !s.storage_locked
+        && s.storage_error.is_empty()
+        && !s.learning.save_busy
+        && !s.learning.save_dirty;
     rsx! {
         header { class: "topbar",
             a { class: "brand", href: "#/course", onclick: move |_| navigate(state,Screen::Course),
                 span { class: "brand-mark", "aria-hidden": "true", "∴" } "nibli learn"
             }
             nav { class: "breadcrumbs", "aria-label": "Breadcrumb",
-                a { href: "#/course", onclick: move |_| navigate(state,Screen::Course), "Shared foundations" }
-                if s.screen == Screen::Lesson { " / Investigating and revising a decision / Release readiness" }
+                a { href: "#/course", onclick: move |_| navigate(state,Screen::Course), "Course" }
+                if s.screen == Screen::Lesson { " / {s.learning.lesson_title()}" }
                 if s.screen == Screen::Sandbox { " / Open sandbox" }
             }
             div { class: "top-actions",
-                button { class: "button quiet optional-link", id: "reference-trigger", onclick: move |_| { if matches!(state.peek().screen,Screen::Lesson|Screen::Sandbox){state.write().drawer=Some("reference".into());}else{navigate(state,Screen::Reference);} }, "Reference" }
-                button { class: "button quiet optional-link", id: "tutor-trigger", onclick: move |_| { navigate(state,Screen::Lesson);state.write().drawer=Some("tutor".into()); }, "Tutor · optional" }
+                button { class: "button quiet optional-link", id: "reference-trigger", onclick: move |_| { if state.peek().learning.is_legacy() && matches!(state.peek().screen,Screen::Lesson|Screen::Sandbox){state.write().drawer=Some("reference".into());}else{navigate(state,Screen::Reference);} }, "Reference" }
+                if s.learning.is_legacy() {button { class: "button quiet optional-link", id: "tutor-trigger", onclick: move |_| { navigate(state,Screen::Lesson);state.write().drawer=Some("tutor".into()); }, "Tutor · optional" }}
                 button { class: "button quiet small", title: if light { "Switch to dark theme" } else { "Switch to light theme" }, "data-testid": "theme-toggle", onclick: move |_| { state.write().theme=if light {"dark".into()} else {"light".into()}; persist(state); }, if light { "◐ Dark" } else { "◑ Light" } }
                 button { class: if saved { "badge ok" } else { "badge warn" }, onclick: move |_| navigate(state,Screen::Data),
-                    span { class: "dot", "aria-hidden": "true" } if saved { "Saved on this device" } else { "Not saved · export work" }
+                    span { class: "dot", "aria-hidden": "true" } if saved { "Saved on this device" } else if s.learning.save_busy { "Saving locally…" } else { "Not saved · export work" }
                 }
             }
         }

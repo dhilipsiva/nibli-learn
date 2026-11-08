@@ -1,19 +1,21 @@
 {
-  "schema": 1,
+  "schema": 2,
   "kind": "nibli-learn-content-manifest",
-  "content_version": 1,
-  "minimum_app_schema": 1,
+  "content_version": 2,
+  "minimum_app_schema": 2,
   "license": "CC-BY-4.0",
+  "registry": "content/course.json",
+  "references": "content/references.json",
   "tracks": [
     {
       "id": "foundations",
       "title": "Shared foundations",
-      "availability": "partial"
+      "availability": "available"
     },
     {
-      "id": "build",
-      "title": "Build Nibli",
-      "availability": "planned"
+      "id": "use",
+      "title": "Use a Reasoner",
+      "availability": "available"
     },
     {
       "id": "integrate",
@@ -21,8 +23,13 @@
       "availability": "planned"
     },
     {
-      "id": "choose",
-      "title": "Choose an Approach",
+      "id": "build",
+      "title": "Build a Reasoner",
+      "availability": "planned"
+    },
+    {
+      "id": "studio",
+      "title": "Specialist studios",
       "availability": "planned"
     }
   ],
@@ -30,22 +37,26 @@
     {
       "id": "F1",
       "title": "Prediction versus derivation",
-      "availability": "planned"
+      "availability": "available",
+      "lesson": "found.prediction-derivation"
     },
     {
       "id": "F2",
       "title": "Precise claims",
-      "availability": "planned"
+      "availability": "available",
+      "lesson": "found.precise-claims"
     },
     {
       "id": "F3",
       "title": "Evidence",
-      "availability": "planned"
+      "availability": "available",
+      "lesson": "found.evidence"
     },
     {
       "id": "F4",
       "title": "Reasoning outcomes",
-      "availability": "planned"
+      "availability": "available",
+      "lesson": "found.reasoning-outcomes"
     },
     {
       "id": "F5",
@@ -56,10 +67,129 @@
     {
       "id": "F6",
       "title": "Comparing neuro-symbolic approaches",
-      "availability": "planned"
+      "availability": "available",
+      "lesson": "found.compare-approaches"
     }
   ],
   "lessons": [
+    {
+      "id": "found.prediction-derivation",
+      "version": 1,
+      "track": "foundations",
+      "unit": "F1",
+      "title": "Prediction versus derivation",
+      "availability": "available",
+      "route": "#/lesson/found.prediction-derivation/activity/found.inputs-given",
+      "execution": "local-wasm-worker",
+      "steps": [
+        {
+          "number": 1,
+          "id": "found.inputs-given",
+          "version": 1,
+          "title": "The remark at the desk",
+          "objective": "Distinguish information in a story from an accepted premise."
+        },
+        {
+          "number": 2,
+          "id": "found.rules-given",
+          "version": 1,
+          "title": "Evidence needs a connecting rule",
+          "objective": "Distinguish a missing rule from a missing fact."
+        }
+      ]
+    },
+    {
+      "id": "found.precise-claims",
+      "version": 1,
+      "track": "foundations",
+      "unit": "F2",
+      "title": "Precise claims",
+      "availability": "available",
+      "route": "#/lesson/found.precise-claims/activity/found.argument-order",
+      "execution": "local-wasm-worker",
+      "steps": [
+        {
+          "number": 1,
+          "id": "found.argument-order",
+          "version": 1,
+          "title": "Who owns the instrument?",
+          "objective": "Repair reversed argument roles without changing the intended fact."
+        },
+        {
+          "number": 2,
+          "id": "found.shared-variable",
+          "version": 1,
+          "title": "The unrelated broken item",
+          "objective": "Repair a rule whose conditions refer to different objects."
+        },
+        {
+          "number": 3,
+          "id": "found.connectives-scope",
+          "version": 2,
+          "title": "Either, both, and the boundary of a claim",
+          "objective": "Read conjunction, disjunction and quantifier scope deliberately."
+        }
+      ]
+    },
+    {
+      "id": "found.evidence",
+      "version": 1,
+      "track": "foundations",
+      "unit": "F3",
+      "title": "Evidence",
+      "availability": "available",
+      "route": "#/lesson/found.evidence/activity/found.source-mismatch",
+      "execution": "local-wasm-worker",
+      "steps": [
+        {
+          "number": 1,
+          "id": "found.source-mismatch",
+          "version": 1,
+          "title": "The wrong cart in the note",
+          "objective": "Identify and repair a source-to-statement mismatch while preserving the policy."
+        },
+        {
+          "number": 2,
+          "id": "found.assurance-boundaries",
+          "version": 1,
+          "title": "Three questions about one result",
+          "objective": "Separate source, encoding and implementation assurance."
+        }
+      ]
+    },
+    {
+      "id": "found.reasoning-outcomes",
+      "version": 1,
+      "track": "foundations",
+      "unit": "F4",
+      "title": "Reasoning outcomes",
+      "availability": "available",
+      "route": "#/lesson/found.reasoning-outcomes/activity/found.four-outcomes",
+      "execution": "local-wasm-worker",
+      "steps": [
+        {
+          "number": 1,
+          "id": "found.four-outcomes",
+          "version": 1,
+          "title": "Missing evidence and an undecided computation",
+          "objective": "Distinguish a closed-world FALSE from UNKNOWN with a reported reason."
+        },
+        {
+          "number": 2,
+          "id": "found.depth-boundary",
+          "version": 2,
+          "title": "A decision stopped by its budget",
+          "objective": "Recover from actual depth exhaustion without turning it into FALSE."
+        },
+        {
+          "number": 3,
+          "id": "found.input-versus-outcome",
+          "version": 1,
+          "title": "Compilation is not a verdict",
+          "objective": "Locate an input error and repair it without calling it FALSE."
+        }
+      ]
+    },
     {
       "id": "found.investigate-release",
       "version": 1,
@@ -67,76 +197,316 @@
       "unit": "F5",
       "title": "Investigating and revising a decision",
       "availability": "available",
-      "route": "#/lesson/found.investigate-release/step/1",
+      "route": "#/lesson/found.investigate-release/activity/release.one-approval",
       "execution": "local-wasm-worker",
-      "coverage": [
-        "claims",
-        "shared-variables",
-        "closed-world",
-        "assertion-provenance",
-        "independent-support",
-        "execution-versus-proof",
-        "derived-only-admission",
-        "policy-repair"
-      ],
       "steps": [
         {
           "number": 1,
           "id": "release.one-approval",
+          "version": 1,
           "title": "One approval",
-          "objective": "Predict whether BuildA is ready with only its automated-check approval.",
-          "check": "prediction"
+          "objective": "Predict whether BuildA is ready with only its automated-check approval."
         },
         {
           "number": 2,
           "id": "release.different-build",
+          "version": 1,
           "title": "A different build",
-          "objective": "Add Reviewer's approval of BuildB, then predict again.",
-          "check": "prediction"
+          "objective": "Add Reviewer's approval of BuildB, then predict again."
         },
         {
           "number": 3,
           "id": "release.same-build",
+          "version": 1,
           "title": "Same build, both approvals",
-          "objective": "Add Reviewer's approval of BuildA and inspect what supports the result.",
-          "check": "prediction"
+          "objective": "Add Reviewer's approval of BuildA and inspect what supports the result."
         },
         {
           "number": 4,
           "id": "release.execution-and-proof",
+          "version": 1,
           "title": "Replay and proof",
-          "objective": "Distinguish the operations the engine attempted from the derivation it returned.",
-          "check": "inspection-and-understanding"
+          "objective": "Distinguish the operations the engine attempted from the derivation it returned."
         },
         {
           "number": 5,
           "id": "release.independent-support",
+          "version": 1,
           "title": "Independent support",
-          "objective": "Add a second review assertion, withdraw one, then withdraw the last.",
-          "check": "three-predictions"
+          "objective": "Add a second review assertion, withdraw one, then withdraw the last."
         },
         {
           "number": 6,
           "id": "release.protected-conclusion",
+          "version": 1,
           "title": "Assert readiness directly",
-          "objective": "Try to assert the protected conclusion and explain the refusal.",
-          "check": "refusal-and-understanding"
+          "objective": "Try to assert the protected conclusion and explain the refusal."
         },
         {
           "number": 7,
           "id": "release.repair-policy",
+          "version": 1,
           "title": "Repair a flawed policy",
-          "objective": "Repair an OR policy so both approvals are required for the same build.",
-          "check": "four-engine-cases-and-self-review"
+          "objective": "Repair an OR policy so both approvals are required for the same build."
+        }
+      ]
+    },
+    {
+      "id": "found.compare-approaches",
+      "version": 1,
+      "track": "foundations",
+      "unit": "F6",
+      "title": "Comparing neuro-symbolic approaches",
+      "availability": "available",
+      "route": "#/lesson/found.compare-approaches/activity/found.architecture-comparison",
+      "execution": "local-wasm-worker",
+      "steps": [
+        {
+          "number": 1,
+          "id": "found.architecture-comparison",
+          "version": 1,
+          "title": "A confident answer is a different artifact",
+          "objective": "Compare authored model output with an actual symbolic decision."
+        },
+        {
+          "number": 2,
+          "id": "found.maintenance-choice",
+          "version": 1,
+          "title": "Who will maintain the knowledge?",
+          "objective": "Choose an architecture using explicit maintenance and review responsibilities."
+        },
+        {
+          "number": 3,
+          "id": "found.assurance-repair",
+          "version": 2,
+          "title": "Repair an assurance claim",
+          "objective": "Replace an unconditional promise with a scoped, testable assurance statement."
+        }
+      ]
+    },
+    {
+      "id": "use.relationships-scope",
+      "version": 1,
+      "track": "use",
+      "unit": "U1",
+      "title": "Relationships and scope",
+      "availability": "available",
+      "route": "#/lesson/use.relationships-scope/activity/use.places-omissions",
+      "execution": "local-wasm-worker",
+      "steps": [
+        {
+          "number": 1,
+          "id": "use.places-omissions",
+          "version": 2,
+          "title": "A gift has three roles",
+          "objective": "Distinguish fixed roles, unspecified places and existential witnesses without silently changing who did what."
+        },
+        {
+          "number": 2,
+          "id": "use.descriptions",
+          "version": 2,
+          "title": "A name is not an existential",
+          "objective": "Distinguish a fixed description from a quantified requirement."
+        },
+        {
+          "number": 3,
+          "id": "use.quantifier-existence",
+          "version": 1,
+          "title": "A rule does not create a member",
+          "objective": "Distinguish a universal rule from evidence that its domain has members."
+        },
+        {
+          "number": 4,
+          "id": "use.relative-scope",
+          "version": 2,
+          "title": "Restriction or extra assertion?",
+          "objective": "Distinguish restrictive and incidental relatives and repair missing attachment."
+        },
+        {
+          "number": 5,
+          "id": "use.event-modifiers",
+          "version": 2,
+          "title": "A modifier is not just AND",
+          "objective": "Inspect event/modifier structure instead of treating word sequences as conjunction."
+        },
+        {
+          "number": 6,
+          "id": "use.temporal-modal",
+          "version": 2,
+          "title": "Happened, happens, and ought to happen",
+          "objective": "Keep temporal facts and obligations distinct from unmarked facts."
+        },
+        {
+          "number": 7,
+          "id": "use.opaque-types",
+          "version": 2,
+          "title": "A statement inside a statement",
+          "objective": "Keep abstract content opaque and distinguish syntax from domain typing."
+        }
+      ]
+    },
+    {
+      "id": "use.witnesses-counts",
+      "version": 1,
+      "track": "use",
+      "unit": "U2",
+      "title": "Witnesses, counts and candidate worlds",
+      "availability": "available",
+      "route": "#/lesson/use.witnesses-counts/activity/use.shared-witness",
+      "execution": "local-wasm-worker",
+      "steps": [
+        {
+          "number": 1,
+          "id": "use.shared-witness",
+          "version": 1,
+          "title": "One person must satisfy both clauses",
+          "objective": "Distinguish one shared answer from two independent answers."
+        },
+        {
+          "number": 2,
+          "id": "use.dependent-witness",
+          "version": 1,
+          "title": "A supplied computer for each pair",
+          "objective": "Read generated witnesses without turning their display names into identifiers."
+        },
+        {
+          "number": 3,
+          "id": "use.identity-count",
+          "version": 1,
+          "title": "Three records, two computers",
+          "objective": "Count distinct answer bindings under accepted equality."
+        },
+        {
+          "number": 4,
+          "id": "use.count-query-boundary",
+          "version": 2,
+          "title": "A count is a question, not inventory",
+          "objective": "Keep exact-count checks out of asserted evidence."
+        },
+        {
+          "number": 5,
+          "id": "use.aggregate-results",
+          "version": 1,
+          "title": "Empty is different from zero",
+          "objective": "Interpret aggregate values and failures without inventing a numeric result."
+        },
+        {
+          "number": 6,
+          "id": "use.incomplete-collection",
+          "version": 1,
+          "title": "Withhold an unfinished total",
+          "objective": "Distinguish a complete empty answer from a refused incomplete collection."
+        }
+      ]
+    },
+    {
+      "id": "use.diagnosing",
+      "version": 1,
+      "track": "use",
+      "unit": "U3",
+      "title": "Surprising answers and admission",
+      "availability": "available",
+      "route": "#/lesson/use.diagnosing/activity/use.absence-policy",
+      "execution": "local-wasm-worker",
+      "steps": [
+        {
+          "number": 1,
+          "id": "use.absence-policy",
+          "version": 2,
+          "title": "Permission that depends on no breakage record",
+          "objective": "Recognize a conclusion that depends on negation as failure."
+        },
+        {
+          "number": 2,
+          "id": "use.negative-source",
+          "version": 1,
+          "title": "A denial has its own source",
+          "objective": "Distinguish a negative source assertion from a negative query succeeding by absence."
+        },
+        {
+          "number": 3,
+          "id": "use.domain-boundary",
+          "version": 1,
+          "title": "Every listed computer",
+          "objective": "Explain the domain boundary of a universal query."
+        },
+        {
+          "number": 4,
+          "id": "use.negative-cycle",
+          "version": 1,
+          "title": "Repair a circular default",
+          "objective": "Inspect and repair an unstratifiable negative dependency."
+        },
+        {
+          "number": 5,
+          "id": "use.vocabulary-signatures",
+          "version": 2,
+          "title": "A plausible name is not a predicate",
+          "objective": "Repair vocabulary and place-signature errors at the compiler boundary."
+        },
+        {
+          "number": 6,
+          "id": "use.constraint-scan",
+          "version": 1,
+          "title": "A scan can finish with violations or remain unresolved",
+          "objective": "Read violations and unresolved checks as separate dimensions."
+        }
+      ]
+    },
+    {
+      "id": "use.changing-knowledge",
+      "version": 1,
+      "track": "use",
+      "unit": "U4",
+      "title": "Changing knowledge without losing the record",
+      "availability": "available",
+      "route": "#/lesson/use.changing-knowledge/activity/use.support-withdrawal",
+      "execution": "local-wasm-worker",
+      "steps": [
+        {
+          "number": 1,
+          "id": "use.support-withdrawal",
+          "version": 1,
+          "title": "Two inspections support one conclusion",
+          "objective": "Withdraw source identities without confusing them with duplicate text."
+        },
+        {
+          "number": 2,
+          "id": "use.atomic-replacement",
+          "version": 1,
+          "title": "A replacement must succeed as a whole",
+          "objective": "Verify that failed multi-change batches preserve the acknowledged project."
+        },
+        {
+          "number": 3,
+          "id": "use.detached-what-if",
+          "version": 2,
+          "title": "Try a correction in a candidate world",
+          "objective": "Keep hypothetical evidence separate until its reviewed delta is admitted."
+        },
+        {
+          "number": 4,
+          "id": "use.profiles-materialization",
+          "version": 2,
+          "title": "A profile belongs to the result",
+          "objective": "Inspect configuration changes without turning diagnostics into a guarantee."
+        },
+        {
+          "number": 5,
+          "id": "use.recovery-persistence",
+          "version": 1,
+          "title": "Recover a project, preserve an investigation",
+          "objective": "Separate browser recovery from native host persistence."
         }
       ]
     }
   ],
   "offline_packs": {
-    "installation": "not-implemented",
+    "installation": "verified-staging-and-explicit-activation",
     "contract_schema": 1
   },
-  "progress_schema": 1,
-  "project_schema": 1,
-  "proof_record_schema": 1
+  "progress_schema": 2,
+  "project_schema": 2,
+  "proof_record_schema": 1,
+  "operation_record_schema": 2
 }

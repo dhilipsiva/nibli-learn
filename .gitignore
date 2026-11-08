@@ -1,7 +1,8 @@
-/target/
-/dist/
-/node_modules/
-/test-results/
-/playwright-report/
-/artifacts/
+/target
+/dist
+/node_modules
+/test-results
+/playwright-report
+/artifacts
+__pycache__/
 .DS_Store

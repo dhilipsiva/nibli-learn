@@ -307,3 +307,59 @@ test('a bounded recording can truncate without changing an admitted batch or log
   expect(supported.run.outcome.status).toBe('TRUE');
   await run(page, 'FALSE');
 });
+
+test('typed operations and detached validation preserve the acknowledged WASM session', async ({page}) => {
+  await start(page);
+  const base = (await initialize(page)).session;
+  const compile = await ok(page, {kind:'execute', operation:{kind:'compile',source:'approves(Reviewer, BuildA).',structural_preflight:true}, content_version:2});
+  expect(compile.operation.result.family).toBe('compiled');
+  expect(compile.operation.proof).toBeNull();
+  expect(compile.session).toEqual(base);
+  const source = structuredClone(base);
+  source.epoch = 'fresh-import-preview';
+  source.revision = '0';
+  const validated = await ok(page, {kind:'validate_project',session:source});
+  expect(validated.session).toEqual(base);
+  expect(validated.validated_session.epoch).toBe('fresh-import-preview');
+  const presentation = structuredClone(source);
+  presentation.assertions[0].text = 'dog(Adam).';
+  const normalized = await ok(page,{kind:'validate_project',session:presentation});
+  expect(normalized.validated_session.assertions).toEqual(base.assertions);
+  expect(normalized.session).toEqual(base);
+  const bad = structuredClone(source);
+  bad.recovery.sources[Object.keys(bad.recovery.sources)[0]].text = 'dog(Adam).';
+  expect((await request(page,{kind:'validate_project',session:bad})).result.Err).toBeDefined();
+  expect((await ok(page,{kind:'inspect'})).session).toEqual(base);
+
+  const changes = [{kind:'assert',text:'approves(Reviewer, BuildA).',source:'Candidate review'}];
+  const candidate = await ok(page,{kind:'hypothetical',candidate_epoch:'detached-wasm',source_epoch:base.epoch,source_revision:base.revision,changes,operation:{kind:'decide',claim},content_version:2});
+  expect(candidate.session).toEqual(base);
+  expect(candidate.hypothetical.run.result.outcome.status).toBe('TRUE');
+  expect(candidate.hypothetical.run.scope).toEqual({kind:'hypothetical',source_epoch:base.epoch,source_revision:base.revision});
+  expect(candidate.hypothetical.candidate.epoch).not.toBe(base.epoch);
+  await change(page,[{kind:'assert',text:'dog(Adam).',source:'Main changed after preview'}]);
+  const current = (await ok(page,{kind:'inspect'})).session;
+  const stale = await request(page,{kind:'apply_delta',source_epoch:base.epoch,source_revision:base.revision,changes});
+  expect(stale.result.Err).toBeDefined();
+  expect((await ok(page,{kind:'inspect'})).session).toEqual(current);
+  await run(page,'FALSE');
+});
+
+test('profile changes bind WASM results and recording preferences do not change logical revision', async ({page}) => {
+  await start(page);
+  const base = (await initialize(page)).session;
+  const recording = await ok(page,{kind:'settings',settings:{...base.settings,recording:'standard'}});
+  expect(recording.session.revision).toBe(base.revision);
+  const profile = {...base.profile,strict:true,max_chain_depth:15};
+  const changed = await ok(page,{kind:'set_profile',profile});
+  expect(changed.session.profile).toEqual(profile);
+  expect(changed.session.revision).not.toBe(base.revision);
+  const decision = await ok(page,{kind:'execute',operation:{kind:'decide',claim},content_version:2});
+  expect(decision.operation.profile).toEqual(profile);
+  expect(decision.operation.record.profile.strict).toBe(true);
+  expect(decision.operation.result.outcome.status).toBe('FALSE');
+  expect(decision.operation.engine_revision).toBe(changed.session.engine_revision);
+  const bad = await request(page,{kind:'set_profile',profile:{...profile,max_chain_depth:0}});
+  expect(bad.result.Err).toBeDefined();
+  expect((await ok(page,{kind:'inspect'})).session).toEqual(changed.session);
+});

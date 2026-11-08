@@ -1,148 +1,9 @@
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
-
-const lesson = '/nibli-learn/#/lesson/found.investigate-release/step/1';
-const policy = 'all $build: approves(TestRunner, $build) & approves(Reviewer, $build) -> ready($build, Release).';
-
-async function openLesson(page, step = 1) {
-  await page.addInitScript(() => {
-    const NativeWorker = globalThis.Worker;
-    globalThis.workerMessages = [];
-    globalThis.Worker = class extends NativeWorker {
-      postMessage(message, ...rest) {
-        const data = typeof message === 'string' ? JSON.parse(message) : message;
-        globalThis.workerMessages.push({ id: data.id, command: data.command?.kind });
-        return super.postMessage(message, ...rest);
-      }
-    };
-  });
-  await page.goto(lesson.replace('/step/1', `/step/${step}`));
-  await ready(page);
-  await expect(page.getByTestId(`step-${step}`)).toHaveAttribute('aria-current', 'step');
-}
-async function ready(page) {
-  await expect(page.getByTestId('worker-status')).toHaveAttribute('data-state', 'ready');
-}
-async function run(page, prediction, outcome = prediction) {
-  const result = page.getByTestId('outcome');
-  const previous = await result.getAttribute('data-run-id');
-  if (prediction) await page.getByTestId(`prediction-${prediction.toLowerCase()}`).check();
-  await page.getByTestId('run-claim').click();
-  await expect(result).toHaveAttribute('data-status', outcome);
-  await expect.poll(() => result.getAttribute('data-run-id')).not.toBe(previous);
-  await ready(page);
-}
-async function suggested(page) {
-  await page.getByTestId('use-suggestion').click();
-  await page.getByTestId('composer-assert').click();
-  await expect(page.getByTestId('composer-text')).toHaveValue('');
-  await ready(page);
-}
-async function next(page, step) {
-  await page.getByTestId('next-step').click();
-  await expect(page.getByTestId(`step-${step}`)).toHaveAttribute('aria-current', 'step');
-  await ready(page);
-}
-async function checked(page, step) {
-  await expect(page.getByTestId(`step-${step}`).getByLabel('Checked', { exact: true })).toBeVisible();
-}
+import { runReleaseJourney, workspace, localView, openLesson, ready, run } from './helpers/release-journey.mjs';
 
 test('the real seven-step lesson connects prediction, evidence, replay, proof and repair', async ({ page }, testInfo) => {
-  const errors = [];
-  page.on('pageerror', error => errors.push(error.message));
-  await openLesson(page);
-  await expect(page.getByTestId('run-claim')).toBeDisabled();
-  await expect(page.locator('[data-statement="approves(TestRunner, BuildA)."]')).toHaveAttribute('data-active', 'true');
-  await run(page, 'FALSE');
-  await checked(page, 1);
-
-  await next(page, 2);
-  await suggested(page);
-  await run(page, 'FALSE');
-  await checked(page, 2);
-
-  await next(page, 3);
-  await suggested(page);
-  await run(page, 'TRUE');
-  await checked(page, 3);
-
-  await next(page, 4);
-  await run(page, null, 'TRUE');
-  const requestCount = await page.evaluate(() => globalThis.workerMessages.length);
-  const originalRunId = await page.getByTestId('outcome').getAttribute('data-run-id');
-  await page.getByTestId('replay-tab').click();
-  const position = await page.getByTestId('replay-position').textContent();
-  await page.getByTestId('replay-next').click();
-  await expect(page.getByTestId('replay-position')).not.toHaveText(position);
-  await page.getByTestId('replay-prev').click();
-  await expect(page.getByTestId('replay-position')).toHaveText(position);
-  await page.getByTestId('proof-tab').click();
-  await expect(page.getByTestId('proof-export')).toBeVisible();
-  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  const downloadEvent = page.waitForEvent('download');
-  await page.getByTestId('proof-export').click();
-  const download = await downloadEvent;
-  const proofFile = testInfo.outputPath('real-proof.json');
-  await download.saveAs(proofFile);
-  const exported = JSON.parse(await readFile(proofFile, 'utf8'));
-  expect(exported.kind).toBe('proof-record');
-  expect(exported.run.id).toBe(originalRunId);
-  expect(exported.run.outcome.status).toBe('TRUE');
-  expect(exported.run.record.events.length).toBeGreaterThan(0);
-  expect(exported.run.proof_text.length).toBeGreaterThan(0);
-  expect(exported.run.record).not.toEqual(exported.run.proof);
-  await expect(page.getByTestId('outcome')).toHaveAttribute('data-run-id', originalRunId);
-  expect(await page.evaluate(() => globalThis.workerMessages.length)).toBe(requestCount);
-  await page.getByTestId('quiz-0').check();
-  await page.getByTestId('check-understanding').click();
-  await checked(page, 4);
-  await page.screenshot({ path: testInfo.outputPath('proof-dark-desktop.png'), fullPage: true });
-
-  await next(page, 5);
-  await suggested(page);
-  await run(page, 'TRUE');
-  const reviews = page.locator('[data-statement="approves(Reviewer, BuildA)."][data-active="true"]');
-  await expect(reviews).toHaveCount(2);
-  await reviews.filter({ hasText: 'Review A1' }).getByRole('button', { name: 'Withdraw', exact: true }).click();
-  await expect(reviews).toHaveCount(1);
-  await run(page, 'TRUE');
-  await reviews.filter({ hasText: 'Review A2' }).getByRole('button', { name: 'Withdraw', exact: true }).click();
-  await expect(reviews).toHaveCount(0);
-  await run(page, 'FALSE');
-  await checked(page, 5);
-
-  await next(page, 6);
-  const revisionBeforeRefusal = await page.locator('.footer').getByText(/Input revision/).textContent();
-  await page.getByTestId('use-suggestion').click();
-  await page.getByTestId('composer-assert').click();
-  await expect(page.getByTestId('admission-refusal')).toBeVisible();
-  await expect(page.locator('.footer').getByText(/Input revision/)).toHaveText(revisionBeforeRefusal);
-  await page.getByTestId('quiz-0').check();
-  await page.getByTestId('check-understanding').click();
-  await checked(page, 6);
-
-  await next(page, 7);
-  await page.getByTestId('open-exercise').click();
-  await page.getByTestId('run-cases').click();
-  await expect(page.getByTestId('case-results')).toContainText('Differs');
-  await page.getByTestId('policy-editor').fill(policy);
-  await page.getByTestId('apply-policy').click();
-  await page.getByTestId('run-cases').click();
-  await expect(page.getByTestId('case-results').getByText('✓ Matches', { exact: true })).toHaveCount(4);
-  const rows = page.getByTestId('case-results').locator('tbody tr');
-  for (let index = 0; index < 4; index++) {
-    const cells = rows.nth(index).locator('td');
-    const expected = (await cells.nth(1).textContent()).trim();
-    await expect(cells.nth(2).locator('[data-status]')).toHaveAttribute('data-status', expected);
-  }
-  await page.getByTestId('repair-explanation').fill('Both approvals must apply to the same build. AND needs both conditions. The cross-build control detects a rule that matches approvals for different builds.');
-  await page.getByTestId('check-repair').click();
-  await checked(page, 7);
-  await expect(page.getByText('Behavior verified: all four cases match.', { exact: false })).toBeVisible();
-  await page.screenshot({ path: testInfo.outputPath('repair-dark-desktop.png'), fullPage: true });
-  const progress = await page.evaluate(() => JSON.parse(localStorage.getItem('nibli-learn.local.v1')).progress);
-  expect(progress.steps.every(step => step.checked)).toBe(true);
-  expect(errors).toEqual([]);
+  await runReleaseJourney(page, testInfo);
 });
 
 test('reset is explicit, themes and responsive reading preserve access', async ({ page }, testInfo) => {
@@ -179,10 +40,10 @@ test('reset is explicit, themes and responsive reading preserve access', async (
 test('progress export and validated replacement keep accepted knowledge separate', async ({ page }, testInfo) => {
   await openLesson(page);
   await run(page, 'FALSE');
-  const before = await page.evaluate(() => JSON.parse(localStorage.getItem('nibli-learn.local.v1')));
+  const before = await workspace(page);
   await page.getByRole('link', { name: 'Local data · no account · no analytics', exact: true }).click();
   const downloadEvent = page.waitForEvent('download');
-  await page.getByTestId('progress-export').click();
+  await page.getByRole('button', { name: 'Export progress', exact: true }).click();
   const download = await downloadEvent;
   const filename = testInfo.outputPath('progress.json');
   await download.saveAs(filename);
@@ -190,22 +51,21 @@ test('progress export and validated replacement keep accepted knowledge separate
   expect(progress).toEqual(before.progress);
   expect(progress.session).toBeUndefined();
   expect(JSON.stringify(progress)).not.toContain('approves(');
-  const invalid = { ...progress, schema: 999999 };
-  await page.getByTestId('progress-import').fill(JSON.stringify(invalid));
-  await page.getByTestId('progress-validate').click();
+  await page.getByLabel('Exported JSON', { exact: true }).fill(JSON.stringify({ ...progress, schema: 999999 }));
+  await page.getByRole('button', { name: 'Validate and preview', exact: true }).click();
   await expect(page.getByRole('alert')).toBeVisible();
-  await expect(page.getByTestId('progress-import-confirm')).toHaveCount(0);
-  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('nibli-learn.local.v1')).progress)).toEqual(before.progress);
-  progress.steps[0].checked = false;
-  await page.getByTestId('progress-import').fill(JSON.stringify(progress));
-  await page.getByTestId('progress-validate').click();
-  await expect(page.getByTestId('progress-import-confirm')).toBeVisible();
-  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('nibli-learn.local.v1')).progress)).toEqual(before.progress);
-  await page.getByTestId('progress-import-confirm').click();
-  await expect(page.getByText('Imported validated progress.', { exact: false })).toBeVisible();
-  const after = await page.evaluate(() => JSON.parse(localStorage.getItem('nibli-learn.local.v1')));
-  expect(after.progress).toEqual(progress);
-  expect(after.session).toEqual(before.session);
+  await expect(page.getByRole('button', { name: 'Apply this validated import', exact: true })).toHaveCount(0);
+  expect((await workspace(page)).progress).toEqual(before.progress);
+  progress.lessons['found.investigate-release']['1']['release.one-approval']['1'].checked = false;
+  await page.getByLabel('Exported JSON', { exact: true }).fill(JSON.stringify(progress));
+  await page.getByRole('button', { name: 'Validate and preview', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Apply this validated import', exact: true })).toBeVisible();
+  expect((await workspace(page)).progress).toEqual(before.progress);
+  await page.getByRole('button', { name: 'Apply this validated import', exact: true }).click();
+  await expect.poll(async () => (await workspace(page)).progress).toEqual(progress);
+  const after = await workspace(page);
+  expect(after.projects).toEqual(before.projects);
+  await expect(page.getByRole('button', { name: 'Undo last replacement', exact: true })).toBeEnabled();
 });
 
 test('unreadable stored data is retained while the learner can still investigate', async ({ page }) => {
@@ -217,7 +77,7 @@ test('unreadable stored data is retained while the learner can still investigate
   await run(page, 'FALSE');
   expect(await page.evaluate(() => localStorage.getItem('nibli-learn.local.v1'))).toBe(malformed);
   await page.getByRole('link', { name: 'Local data · no account · no analytics', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Export existing browser data ↓', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Export retained raw data', exact: true })).toBeVisible();
 });
 
 test('cancellation keeps aborted metadata and a delayed old-generation response cannot complete a new run', async ({ page }) => {
@@ -251,7 +111,7 @@ test('cancellation keeps aborted metadata and a delayed old-generation response 
     };
   });
   await openLesson(page);
-  const committed = await page.evaluate(() => JSON.parse(localStorage.getItem('nibli-learn.local.v1')).session);
+  const committed = (await localView(page)).session;
   await page.getByTestId('prediction-false').check();
   // Cancel through the real control as soon as the pending request renders it.
   // No artificial outcome or engine phase is substituted for this operation.
@@ -268,7 +128,7 @@ test('cancellation keeps aborted metadata and a delayed old-generation response 
   await expect(page.getByTestId('outcome')).toHaveAttribute('data-status', 'No completed outcome');
   await expect(page.getByTestId('outcome')).toHaveAttribute('data-run-id', '');
   await expect(page.getByTestId('aborted-attempt')).toHaveCount(1);
-  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('nibli-learn.local.v1')));
+  const saved = await localView(page);
   expect(saved.session).toEqual(committed);
   expect(saved.aborted[0]).toMatchObject({ status: 'aborted', claim: 'ready(BuildA, Release).', epoch: committed.epoch, revision: committed.revision, settings: committed.settings });
   expect(saved.aborted[0].outcome).toBeUndefined();

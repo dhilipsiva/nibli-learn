@@ -11,6 +11,8 @@ use serde_json::{Value, json};
 use std::{cell::RefCell, collections::BTreeMap};
 use wasm_bindgen::prelude::*;
 
+mod operations;
+
 // Reviewed display frames for the original release exercise. These only phrase
 // already-derived proof facts; they do not change parsing, evidence, or reasoning.
 static RELEASE_GLOSS: nibli_render::DomainGloss = nibli_render::DomainGloss {
@@ -33,16 +35,28 @@ fn fail(kind: &str, message: impl Into<String>) -> WorkerError {
         kind: kind.into(),
         message: message.into(),
         record: None,
+        error_class: None,
+        stage: None,
     }
 }
 fn engine_error(error: NibliError) -> WorkerError {
-    let kind = match &error {
-        NibliError::Syntax(_) => "parse",
-        NibliError::Semantic(_) => "validation",
-        NibliError::Reasoning(_) => "admission",
-        NibliError::Backend(_) => "operational",
-    };
-    fail(kind, error.to_string())
+    let class = engine_error_class(&error);
+    let mut result = fail(class, error.to_string());
+    result.error_class = Some(class.into());
+    result
+}
+fn engine_error_at(stage: &str, error: NibliError) -> WorkerError {
+    let mut error = engine_error(error);
+    error.stage = Some(stage.into());
+    error
+}
+fn engine_error_class(error: &NibliError) -> &'static str {
+    match error {
+        NibliError::Syntax(_) => "syntax",
+        NibliError::Semantic(_) => "semantic",
+        NibliError::Reasoning(_) => "reasoning",
+        NibliError::Backend(_) => "backend",
+    }
 }
 fn recording(level: RecordingLevel) -> RecordingOptions {
     match level {
@@ -112,6 +126,7 @@ struct Session {
     epoch: String,
     revision: u64,
     settings: RunSettings,
+    profile: RunProfile,
     sources: BTreeMap<String, SourceInfo>,
 }
 impl Session {
@@ -121,27 +136,47 @@ impl Session {
         settings: RunSettings,
         observer: Option<ExecutionObserverHandle>,
     ) -> Result<Self, WorkerError> {
+        Self::initialize_profile(
+            epoch,
+            statements,
+            RunProfile {
+                max_chain_depth: settings.depth,
+                ..RunProfile::default()
+            },
+            settings.recording,
+            observer,
+        )
+    }
+
+    fn initialize_profile(
+        epoch: String,
+        statements: Vec<SeedStatement>,
+        profile: RunProfile,
+        recording: RecordingLevel,
+        observer: Option<ExecutionObserverHandle>,
+    ) -> Result<Self, WorkerError> {
         if epoch.is_empty() || epoch.len() > 128 {
             return Err(fail(
                 "validation",
                 "Session identity must contain 1–128 bytes.",
             ));
         }
-        if settings.depth == 0 {
-            return Err(fail("validation", "Depth must be a positive integer."));
-        }
+        profile
+            .validate()
+            .map_err(|error| fail("validation", error))?;
         let core = CoreSession::new();
-        // The teaching profile exposes demand-driven search rather than hidden materialized reuse.
-        core.set_materialization(false);
-        core.set_strict(false);
-        core.set_existential_import(false).map_err(engine_error)?;
-        core.set_max_chain_depth(settings.depth)
-            .map_err(engine_error)?;
+        // Profile is installed BEFORE seed admission or witness generation.
+        core.set_profile(&operations::engine_profile(&profile))
+            .map_err(|error| engine_error_at("profile", error))?;
         let mut session = Self {
             core,
             epoch,
             revision: 0,
-            settings,
+            settings: RunSettings {
+                depth: profile.max_chain_depth,
+                recording,
+            },
+            profile,
             sources: BTreeMap::new(),
         };
         let changes = statements
@@ -170,18 +205,51 @@ impl Session {
                 "Recovery schema or depth does not match this session.",
             ));
         }
-        if recovery.engine.profile.existential_import
-            || recovery.engine.profile.materialization
-            || recovery.engine.profile.strict
-        {
-            return Err(fail(
-                "validation",
-                "This lesson profile requires existential import, materialization and strict mode off.",
-            ));
-        }
-        let core = CoreSession::from_snapshot(&recovery.engine)
-            .map_err(|e| fail("validation", format!("Recovery image was rejected: {e}")))?;
-        let records = core.list_assertion_records().map_err(engine_error)?;
+        let profile = if let Some(profile) = view.profile {
+            profile
+                .validate()
+                .map_err(|error| fail("validation", error))?;
+            if operations::engine_profile(&profile) != recovery.engine.profile
+                || view.engine_revision.as_deref() != Some(ENGINE_REVISION)
+            {
+                return Err(fail(
+                    "validation",
+                    "Project profile or engine revision does not match the recovery image and current runtime.",
+                ));
+            }
+            profile
+        } else {
+            if recovery.engine.profile.existential_import
+                || recovery.engine.profile.materialization
+                || recovery.engine.profile.strict
+                || view
+                    .engine_revision
+                    .as_deref()
+                    .is_some_and(|revision| revision != ENGINE_REVISION)
+            {
+                return Err(fail(
+                    "validation",
+                    "Legacy projects require the original teaching profile and compatible engine metadata.",
+                ));
+            }
+            let profile = RunProfile {
+                max_chain_depth: view.settings.depth,
+                ..RunProfile::default()
+            };
+            profile
+                .validate()
+                .map_err(|error| fail("validation", error))?;
+            profile
+        };
+        let core = CoreSession::from_snapshot(&recovery.engine).map_err(|error| {
+            let mut error = engine_error_at("restore", error);
+            error.kind = "validation".into();
+            error.message = format!("Recovery image was rejected: {}", error.message);
+            error
+        })?;
+        let records = core
+            .list_assertion_records()
+            .map_err(|error| engine_error_at("restore", error))?;
         for (id, source) in &recovery.sources {
             let value = decimal(id, "assertion identity")?;
             let Some(record) = records.iter().find(|r| r.id == value) else {
@@ -200,6 +268,7 @@ impl Session {
             epoch: view.epoch,
             revision,
             settings: view.settings,
+            profile,
             sources: recovery.sources,
         })
     }
@@ -208,7 +277,7 @@ impl Session {
         let assertions = self
             .core
             .list_assertion_records()
-            .map_err(engine_error)?
+            .map_err(|error| engine_error_at("inspect", error))?
             .into_iter()
             .map(|record| {
                 let id = record.id.to_string();
@@ -235,13 +304,18 @@ impl Session {
             .collect();
         let recovery = Recovery {
             schema: SCHEMA_VERSION,
-            engine: self.core.snapshot().map_err(engine_error)?,
+            engine: self
+                .core
+                .snapshot()
+                .map_err(|error| engine_error_at("snapshot", error))?,
             sources: self.sources.clone(),
         };
         Ok(SessionView {
             epoch: self.epoch.clone(),
             revision: self.revision.to_string(),
             settings: self.settings.clone(),
+            profile: Some(self.profile.clone()),
+            engine_revision: Some(ENGINE_REVISION.into()),
             assertions,
             recovery: serde_json::to_value(recovery)
                 .map_err(|e| fail("serialization", e.to_string()))?,
@@ -291,7 +365,13 @@ impl Session {
         let record = serde_json::to_value(&observed.record)
             .map_err(|e| fail("serialization", e.to_string()))?;
         let result = observed.outcome.map_err(|error| {
-            let mut error = engine_error(error);
+            let admission = matches!(error, NibliError::Reasoning(_));
+            let mut error = engine_error_at("change", error);
+            if admission {
+                // Preserve the Phase 1 mutation-refusal boundary; query failures
+                // use their actual operation and engine error class instead.
+                error.kind = "admission".into();
+            }
             error.record = Some(record.clone());
             error
         })?;
@@ -334,7 +414,7 @@ impl Session {
         let record = serde_json::to_value(&observed.record)
             .map_err(|e| fail("serialization", e.to_string()))?;
         let (result, trace) = observed.outcome.map_err(|e| {
-            let mut e = engine_error(e);
+            let mut e = engine_error_at("query", e);
             e.record = Some(record.clone());
             e
         })?;
@@ -431,7 +511,9 @@ impl Runtime {
         }
         if !matches!(
             request.command,
-            Command::Initialize { .. } | Command::Restore { .. }
+            Command::Initialize { .. }
+                | Command::InitializeProfile { .. }
+                | Command::Restore { .. }
         ) {
             let current = self
                 .session
@@ -451,6 +533,9 @@ impl Runtime {
         let mut run = None;
         let mut change_record = None;
         let mut checks = vec![];
+        let mut operation = None;
+        let mut hypothetical = None;
+        let mut validated_session = None;
         match request.command.clone() {
             Command::Initialize {
                 epoch,
@@ -458,6 +543,21 @@ impl Runtime {
                 settings,
             } => {
                 let candidate = Session::initialize(epoch, statements, settings, observer.clone())?;
+                self.session = Some(candidate);
+            }
+            Command::InitializeProfile {
+                epoch,
+                statements,
+                profile,
+                recording,
+            } => {
+                let candidate = Session::initialize_profile(
+                    epoch,
+                    statements,
+                    profile,
+                    recording,
+                    observer.clone(),
+                )?;
                 self.session = Some(candidate);
             }
             Command::Restore { session } => {
@@ -478,19 +578,91 @@ impl Runtime {
                         change_record = Some(session.change(&changes, observer.clone())?)
                     }
                     Command::Settings { settings } => {
-                        if settings.depth == 0 {
-                            return Err(fail("validation", "Depth must be positive."));
-                        }
-                        let next = session
-                            .revision
-                            .checked_add(1)
-                            .ok_or_else(|| fail("validation", "Revision exhausted."))?;
-                        session
-                            .core
-                            .set_max_chain_depth(settings.depth)
-                            .map_err(engine_error)?;
+                        let profile = RunProfile {
+                            max_chain_depth: settings.depth,
+                            ..session.profile.clone()
+                        };
+                        change_record = session.set_profile(profile, observer.clone())?;
                         session.settings = settings;
-                        session.revision = next;
+                    }
+                    Command::SetProfile { profile } => {
+                        change_record = session.set_profile(profile, observer.clone())?;
+                    }
+                    Command::Execute {
+                        operation: requested,
+                        activity_id,
+                        content_version,
+                    } => {
+                        operation = Some(session.execute_operation(
+                            requested,
+                            request,
+                            RunScope::Main,
+                            activity_id,
+                            content_version,
+                            observer.clone(),
+                        )?);
+                    }
+                    Command::Hypothetical {
+                        candidate_epoch,
+                        source_epoch,
+                        source_revision,
+                        changes,
+                        profile,
+                        operation,
+                        activity_id,
+                        content_version,
+                    } => {
+                        session.require_base(&source_epoch, &source_revision)?;
+                        if candidate_epoch == session.epoch
+                            || candidate_epoch.is_empty()
+                            || candidate_epoch.len() > 128
+                        {
+                            return Err(fail(
+                                "validation",
+                                "A hypothetical needs a distinct bounded session identity.",
+                            ));
+                        }
+                        let mut candidate = Session::restore(session.view()?)?;
+                        candidate.epoch = candidate_epoch;
+                        candidate.revision = 0;
+                        if let Some(profile) = profile {
+                            candidate.set_profile(profile, observer.clone())?;
+                        }
+                        candidate.change(&changes, observer.clone())?;
+                        let run = operation
+                            .map(|operation| {
+                                candidate.execute_operation(
+                                    operation,
+                                    request,
+                                    RunScope::Hypothetical {
+                                        source_epoch: source_epoch.clone(),
+                                        source_revision: source_revision.clone(),
+                                    },
+                                    activity_id,
+                                    content_version,
+                                    observer.clone(),
+                                )
+                            })
+                            .transpose()?;
+                        hypothetical = Some(HypotheticalResult {
+                            source_epoch,
+                            source_revision,
+                            proposed_delta: changes,
+                            candidate: candidate.view()?,
+                            profile: candidate.profile.clone(),
+                            run,
+                        });
+                    }
+                    Command::ApplyDelta {
+                        source_epoch,
+                        source_revision,
+                        changes,
+                    } => {
+                        session.require_base(&source_epoch, &source_revision)?;
+                        change_record = Some(session.change(&changes, observer.clone())?);
+                    }
+                    Command::ValidateProject { session: proposed } => {
+                        validated_session = Some(Session::restore(proposed)?.view()?);
                     }
                     Command::Run { claim } => {
                         run = Some(session.run(claim, run_id, observer.clone())?)
@@ -558,7 +730,9 @@ impl Runtime {
                         }
                     }
                     Command::Inspect => {}
-                    Command::Initialize { .. } | Command::Restore { .. } => unreachable!(),
+                    Command::Initialize { .. }
+                    | Command::InitializeProfile { .. }
+                    | Command::Restore { .. } => unreachable!(),
                 }
             }
         }
@@ -567,6 +741,9 @@ impl Runtime {
             run,
             change_record,
             checks,
+            operation,
+            hypothetical,
+            validated_session,
         })
     }
 }
@@ -584,5 +761,7 @@ pub fn handle_request(text: &str) -> String {
     }
 }
 
+#[cfg(test)]
+mod operations_tests;
 #[cfg(test)]
 mod tests;

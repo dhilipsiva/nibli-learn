@@ -2,6 +2,12 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
+# Capture first so a rejected local engine cannot be hidden by process substitution.
+NIBLI_IDENTITIES_TEXT="$(python3 scripts/runtime_identity.py)"
+mapfile -t NIBLI_BUILD_IDENTITIES <<< "$NIBLI_IDENTITIES_TEXT"
+export NIBLI_APP_REVISION="${NIBLI_BUILD_IDENTITIES[0]}"
+export NIBLI_RUNTIME_ID="${NIBLI_BUILD_IDENTITIES[1]}"
+export NIBLI_BUILD_ENGINE_REVISION="${NIBLI_BUILD_IDENTITIES[2]}"
 python3 scripts/check_content.py
 for tool in cargo dx wasm-pack python3; do
   command -v "$tool" >/dev/null || { echo "Missing $tool; enter nix develop first." >&2; exit 1; }
@@ -9,6 +15,9 @@ done
 dx --version | grep -Eq 'dioxus 0\.7\.3([[:space:]]|$)' || {
   echo 'The build requires Dioxus CLI 0.7.3, matching the app dependency.' >&2; exit 1;
 }
+# Preserve caller flags while remapping Rust source/panic locations in both WASM
+# builds. Removing debug symbols alone does not remove these embedded paths.
+export CARGO_ENCODED_RUSTFLAGS="$(python3 scripts/build_paths.py rustflags)"
 STAGE="$ROOT/target/nibli-learn-stage"
 WORKER_PKG="$ROOT/target/nibli-learn-worker-pkg"
 UI_OUT="$ROOT/target/dx/nibli-learn-app/release/web/public"
@@ -23,6 +32,7 @@ rm -rf "$UI_OUT"
 )
 test -f "$UI_OUT/index.html" || { echo "Missing Dioxus bundle: $UI_OUT" >&2; exit 1; }
 cp -R "$UI_OUT/." "$STAGE/"
+python3 scripts/build_paths.py sanitize-js "$STAGE" "$UI_OUT/wasm/nibli-learn-app.js"
 mkdir -p "$STAGE/worker/pkg"
 cp crates/worker/bootstrap.js "$STAGE/worker/bootstrap.js"
 cp "$WORKER_PKG/nibli_learn_worker.js" "$WORKER_PKG/nibli_learn_worker_bg.wasm" "$STAGE/worker/pkg/"
@@ -30,6 +40,10 @@ cp -R assets "$STAGE/"
 cp -R content "$STAGE/"
 mkdir -p "$STAGE/licenses"
 cp LICENSE-MIT LICENSE-APACHE CONTENT-LICENSE.md "$STAGE/licenses/"
+mkdir -p "$STAGE/platform"
+cp crates/client/js/platform.js "$STAGE/platform/platform.js"
+cp scripts/service-worker.js "$STAGE/service-worker.js"
+python3 scripts/build_offline.py "$STAGE"
 python3 scripts/build_manifest.py "$STAGE"
 python3 scripts/check_bundle.py "$STAGE"
 mkdir -p dist

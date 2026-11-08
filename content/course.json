@@ -1,0 +1,4431 @@
+{
+  "schema": 2,
+  "version": 2,
+  "lessons": [
+    {
+      "id": "found.prediction-derivation",
+      "version": 1,
+      "unit": "F1",
+      "track": "foundations",
+      "title": "Prediction versus derivation",
+      "summary": "Separate your expectation from what follows from the accepted inputs. Predict first, inspect what was supplied, and repair the actual gap.",
+      "prerequisites": [],
+      "legacy_release": false,
+      "activities": [
+        {
+          "id": "found.inputs-given",
+          "version": 1,
+          "title": "The remark at the desk",
+          "objective": "Distinguish information in a story from an accepted premise.",
+          "explanation": "At a fictional repair workshop, Ari belongs to the workshop team. A colleague says Ari has completed the safety check, but that remark has not been entered. The written permission policy requires both membership and the safety lead’s approval. Decide what the workspace can establish now.",
+          "tasks": [
+            "Read the rule and accepted statements.",
+            "Predict Ari’s permission before running.",
+            "Find the unsupported condition, then admit the provided approval and rerun."
+          ],
+          "hints": [
+            "Look for an accepted statement naming both SafetyLead and Ari.",
+            "A sentence in this lesson is not an assertion until the workspace admits its formal statement."
+          ],
+          "solution": "Membership alone does not satisfy the two-condition rule. Ari’s permission is initially not derivable. Adding the safety lead’s approval supplies the missing condition. The original FALSE described the inputs, not Ari’s real training history.",
+          "setup": [
+            {
+              "text": "all $p: member($p, Workshop) & approves(SafetyLead, $p) -> authorized($p, Use, Drill).",
+              "source": "Workshop permission policy"
+            },
+            {
+              "text": "member(Ari, Workshop).",
+              "source": "Team roster"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "authorized(Ari, Use, Drill)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": {
+            "prompt": "Why did the first result differ from what the colleague expected?",
+            "choices": [
+              "The workspace lacked an accepted approval premise.",
+              "The engine proved that Ari never trained.",
+              "Membership automatically grants every permission."
+            ],
+            "correct": 0,
+            "feedback": "The formal rule needed an approval premise that the original workspace did not contain."
+          },
+          "actions": [
+            {
+              "id": "admit-approval",
+              "title": "Add the supplied approval",
+              "instruction": "The fictional safety log now confirms the approval. Add it, then check the same claim.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "approves(SafetyLead, Ari).",
+                  "source": "Safety log Ari"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "authorized(Ari, Use, Drill)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "derivable",
+            "closed-world",
+            "sources"
+          ],
+          "self_review": [
+            "Name the missing premise and the evidence that justified adding it.",
+            "Explain why the initial FALSE was not a claim about the entire world."
+          ]
+        },
+        {
+          "id": "found.rules-given",
+          "version": 1,
+          "title": "Evidence needs a connecting rule",
+          "objective": "Distinguish a missing rule from a missing fact.",
+          "explanation": "A separate workshop project contains a review and a team membership record for Bea. The operator expects permission to follow, but has not supplied the policy connecting those records to permission. A reasoner does not invent that connection from familiar words.",
+          "tasks": [
+            "Predict the permission claim.",
+            "Identify whether evidence or a rule is missing.",
+            "Add the supplied policy and rerun."
+          ],
+          "hints": [
+            "Both evidence records are already present.",
+            "Search for a rule whose conclusion is authorized; names alone do not define a policy."
+          ],
+          "solution": "The two records do not imply permission without a connecting policy. Admitting the reviewed policy supplies the inference step. Retrieving a document or generating a fluent explanation may help a person find the policy, but neither silently adds it to accepted knowledge.",
+          "setup": [
+            {
+              "text": "member(Bea, Workshop).",
+              "source": "Bea roster"
+            },
+            {
+              "text": "approves(SafetyLead, Bea).",
+              "source": "Bea safety log"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "authorized(Bea, Use, Drill)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": {
+            "prompt": "Which artifact can establish this formal connection in the current project?",
+            "choices": [
+              "Any confident prose answer.",
+              "An accepted rule that expresses the policy.",
+              "The fact that both names appear in retrieved text."
+            ],
+            "correct": 1,
+            "feedback": "A derivation uses accepted formal premises and rules; a retrieved passage still needs interpretation and admission."
+          },
+          "actions": [
+            {
+              "id": "add-policy",
+              "title": "Admit the reviewed policy",
+              "instruction": "Add the workshop’s supplied requirement rather than guessing a rule from the result you want.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "all $p: member($p, Workshop) & approves(SafetyLead, $p) -> authorized($p, Use, Drill).",
+                  "source": "Reviewed workshop policy"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "authorized(Bea, Use, Drill)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "derivable",
+            "architecture",
+            "formalization"
+          ],
+          "self_review": [
+            "Separate source retrieval, a proposed explanation and an admitted inference rule."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "found.precise-claims",
+      "version": 1,
+      "unit": "F2",
+      "track": "foundations",
+      "title": "Precise claims",
+      "summary": "Express the intended roles, shared variables, connectives and scope, then test cases that distinguish competing encodings.",
+      "prerequisites": [
+        "found.prediction-derivation"
+      ],
+      "legacy_release": false,
+      "activities": [
+        {
+          "id": "found.argument-order",
+          "version": 1,
+          "title": "Who owns the instrument?",
+          "objective": "Repair reversed argument roles without changing the intended fact.",
+          "explanation": "A fictional equipment note says Ari owns Meter7. The draft below puts Meter7 in the owner place. It is syntactically valid: a plausible-looking line can still encode the wrong relationship.",
+          "tasks": [
+            "Read the predicate’s named places in the reference.",
+            "Predict whether the intended ownership claim follows.",
+            "Replace the reversed assertion and inspect the new reading."
+          ],
+          "hints": [
+            "The first place of owns is the owner; the second is the owned object.",
+            "A valid parse does not compare a statement with the source note."
+          ],
+          "solution": "owns(Meter7, Ari) and owns(Ari, Meter7) describe opposite directions. Replacing the former repairs the encoding. The engine’s compiler can check vocabulary and structure, but source fidelity needs review.",
+          "setup": [
+            {
+              "text": "owns(Meter7, Ari).",
+              "source": "Reversed equipment note"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "owns(Ari, Meter7)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": {
+            "prompt": "What did successful parsing establish?",
+            "choices": [
+              "The note was accurately formalized.",
+              "Ownership is symmetric.",
+              "The input used supported syntax and vocabulary, not that its roles matched the note."
+            ],
+            "correct": 2,
+            "feedback": "Structural validity and faithfulness to the intended relationship are different checks."
+          },
+          "actions": [
+            {
+              "id": "correct-roles",
+              "title": "Correct the two places",
+              "instruction": "Replace the draft with the intended owner-first statement.",
+              "changes": [
+                {
+                  "kind": "replace_source",
+                  "source": "Reversed equipment note",
+                  "text": "owns(Ari, Meter7).",
+                  "replacement_source": "Reviewed equipment note"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "owns(Ari, Meter7)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "places",
+            "formalization",
+            "compile-admission"
+          ],
+          "self_review": [
+            "Identify the source meaning and both argument roles."
+          ]
+        },
+        {
+          "id": "found.shared-variable",
+          "version": 1,
+          "title": "The unrelated broken item",
+          "objective": "Repair a rule whose conditions refer to different objects.",
+          "explanation": "The repair desk invites an owner when that owner’s item is broken. The draft uses $item for ownership and $other for damage. Ari owns Lamp7, while the only damage record concerns Vase2. Test this discriminating case before trusting the draft.",
+          "tasks": [
+            "Predict whether the draft makes Ari ready for a repair visit.",
+            "Locate the two variables that should identify the same item.",
+            "Repair the rule; then test a genuine broken-owned-item case."
+          ],
+          "hints": [
+            "A variable’s spelling controls whether two conditions share a binding.",
+            "The damage record can satisfy $other even when it says nothing about $item."
+          ],
+          "solution": "The flawed rule can combine Ari’s ownership with somebody else’s broken object. Sharing $item removes that accidental connection. Adding a real damage record for Lamp7 then supplies the intended positive case.",
+          "setup": [
+            {
+              "text": "all $p, $item, $other: owns($p, $item) & broken($other) -> ready($p, RepairVisit).",
+              "source": "Loose repair rule"
+            },
+            {
+              "text": "owns(Ari, Lamp7).",
+              "source": "Lamp ownership"
+            },
+            {
+              "text": "broken(Vase2).",
+              "source": "Vase inspection"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "ready(Ari, RepairVisit)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": {
+            "prompt": "Why was the unrelated vase a useful test?",
+            "choices": [
+              "It distinguishes shared-item intent from a rule that combines unrelated evidence.",
+              "It proves the repair desk policy is complete for every future case.",
+              "It makes argument order irrelevant."
+            ],
+            "correct": 0,
+            "feedback": "A discriminating negative control exposes a rule that a happy example alone would not expose."
+          },
+          "actions": [
+            {
+              "id": "share-item",
+              "title": "Use the same item variable",
+              "instruction": "Replace the permissive rule and rerun the unrelated-damage control.",
+              "changes": [
+                {
+                  "kind": "replace_source",
+                  "source": "Loose repair rule",
+                  "text": "all $p, $item: owns($p, $item) & broken($item) -> ready($p, RepairVisit).",
+                  "replacement_source": "Shared-item repair rule"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(Ari, RepairVisit)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "positive-control",
+              "title": "Supply matching damage evidence",
+              "instruction": "The new inspection concerns Lamp7 itself; check that the repaired rule still admits its intended positive case.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "broken(Lamp7).",
+                  "source": "Lamp inspection"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(Ari, RepairVisit)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "variables",
+            "connectives",
+            "counterexamples"
+          ],
+          "self_review": [
+            "Explain the wrong binding, not merely the changed character.",
+            "Identify both a negative and a positive control."
+          ]
+        },
+        {
+          "id": "found.connectives-scope",
+          "version": 2,
+          "title": "Either, both, and the boundary of a claim",
+          "objective": "Read conjunction, disjunction and quantifier scope deliberately.",
+          "explanation": "One inspector has approved Parcel7. First ask whether at least one of two approvals exists, then ask whether both exist. Finally inspect two ownership sentences whose quantifiers occur in a different order. A connective or scope change is a change in meaning, not a cosmetic edit. Run a split-owner inventory that separates those meanings, then repair a free variable that crosses a negative scope using a supported scoped description.",
+          "tasks": [
+            "Predict the OR claim and compare it with AND.",
+            "Compile the two scope orders and read their structures.",
+            "Explain the difference between one shared owner and a possibly different owner per object.",
+            "Use different owners for two computers as a counterexample to the one-owner reading.",
+            "Compare a refused cross-scope free variable with a relative condition attached to the selected witness.",
+            "Compile the precedence pair, XOR, biconditional, and right-associated implication examples; repair the refused compound negation using the supplied atomic expansion."
+          ],
+          "hints": [
+            "OR needs a supported alternative; AND requires both conditions.",
+            "A variable introduced inside another quantifier can depend on the outer entity.",
+            "Shared free names are factored within one ordinary connected region. Crossing negation, modal, quantified or abstraction boundaries can require an explicit scope and can be refused."
+          ],
+          "solution": "The one-approval setup supports OR but not AND. In the scope comparison, “some person owns every computer” asks for one owner covering the computers; “every computer is owned by some person” permits different owners. Compilation exposes the structure without admitting either sentence. In the supplied two-computer inventory, no single person owns both, so the one-owner query is FALSE; an owner for each computer is TRUE. Reusing a free $p across a negative boundary is refused rather than silently choosing its scope. The repaired description attaches the negative approval condition to its own person witness using it; that same witness fills the owner place. Not every explicit binder shape bypasses the co-reference restriction. Distinct period-terminated statements have independent scopes.",
+          "setup": [
+            {
+              "text": "approves(InspectorA, Parcel7).",
+              "source": "Inspector A record"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "approves(InspectorA, Parcel7) | approves(InspectorB, Parcel7)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": {
+            "prompt": "What is the safest way to compare two plausible encodings?",
+            "choices": [
+              "Run only the example both already accept.",
+              "Read their structures and run cases where their meanings differ.",
+              "Choose the shorter sentence."
+            ],
+            "correct": 1,
+            "feedback": "A structural reading and a discriminating case reveal different kinds of encoding error."
+          },
+          "actions": [
+            {
+              "id": "require-both",
+              "title": "Ask for both approvals",
+              "instruction": "Run the conjunction on unchanged inputs.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "approves(InspectorA, Parcel7) & approves(InspectorB, Parcel7)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "one-owner",
+              "title": "Inspect one owner for every computer",
+              "instruction": "Compile this source; inspect the quantifier nesting without admitting it.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "compile",
+                "source": "owns(some person, every computer).",
+                "structural_preflight": false
+              },
+              "expected": {
+                "family": "compiled"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "owners-may-differ",
+              "title": "Inspect an owner per computer",
+              "instruction": "Compare the written-order scope using an explicit outer computer variable.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "compile",
+                "source": "every computer $c: owns(some person, $c).",
+                "structural_preflight": false
+              },
+              "expected": {
+                "family": "compiled"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "split-owner-counterexample",
+              "title": "Test the one-owner claim",
+              "instruction": "Admit the supplied inventory and ownership records, then ask whether one person owns every computer.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "person(Ari).",
+                  "source": "Ari person classification"
+                },
+                {
+                  "kind": "assert",
+                  "text": "person(Bea).",
+                  "source": "Bea person classification"
+                },
+                {
+                  "kind": "assert",
+                  "text": "computer(TerminalA).",
+                  "source": "TerminalA inventory"
+                },
+                {
+                  "kind": "assert",
+                  "text": "computer(TerminalB).",
+                  "source": "TerminalB inventory"
+                },
+                {
+                  "kind": "assert",
+                  "text": "owns(Ari, TerminalA).",
+                  "source": "Ari ownership record"
+                },
+                {
+                  "kind": "assert",
+                  "text": "owns(Bea, TerminalB).",
+                  "source": "Bea ownership record"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "owns(some person, every computer)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "per-computer-owners",
+              "title": "Allow an owner for each computer",
+              "instruction": "Use the same inventory with the computer quantifier outside the owner requirement.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "every computer $c: owns(some person, $c)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "refused-free-scope",
+              "title": "Inspect a free variable across negation",
+              "instruction": "Compile a draft that repeats an unbound name across a negative boundary. This unsupported scope choice must be diagnosed, not treated as FALSE.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "compile",
+                "source": "owns($p, TerminalA) & ~approves(InspectorA, $p).",
+                "structural_preflight": false
+              },
+              "expected": {
+                "family": "failed",
+                "stage": "compile",
+                "error_class": "semantic"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "scoped-description-repair",
+              "title": "Attach the condition to its witness",
+              "instruction": "Ask whether TerminalA has some person owner without a derived InspectorA approval. The relative it refers to the selected person, keeping the negative condition attached to that witness.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "owns(some person where ~approves(InspectorA, it), TerminalA)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "connectives",
+            "scope",
+            "compile-admission",
+            "operator-grammar"
+          ],
+          "self_review": [
+            "State the OR/AND difference.",
+            "State which scope requires one owner and which allows owner dependence.",
+            "Read the formula grouping rather than relying on English precedence, and keep compilation separate from truth and admission."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "found.evidence",
+      "version": 1,
+      "unit": "F3",
+      "track": "foundations",
+      "title": "Evidence",
+      "summary": "Follow a conclusion to the assertions and sources it used, review those inputs, and explain what the proof establishes.",
+      "prerequisites": [
+        "found.precise-claims"
+      ],
+      "legacy_release": false,
+      "activities": [
+        {
+          "id": "found.source-mismatch",
+          "version": 1,
+          "title": "The wrong cart in the note",
+          "objective": "Identify and repair a source-to-statement mismatch while preserving the policy.",
+          "explanation": "Fictional note: “Inspector approved Cart2 for checkout; Cart1 still awaits inspection.” A draft incorrectly asserts approval of Cart1. The policy derives checkout readiness from that approval. Run the draft, then review the input rather than treating the proof as authentication of the note.",
+          "tasks": [
+            "Predict and inspect Cart1’s readiness.",
+            "Follow the proof to the approval assertion and read the supplied note.",
+            "Withdraw the unsupported assertion, then encode the cart the note actually names."
+          ],
+          "hints": [
+            "A derivation can be valid for an incorrectly entered premise.",
+            "Compare Cart1 and Cart2 in the exact source sentence."
+          ],
+          "solution": "The first derivation uses the erroneous Cart1 assertion. Withdrawing it makes Cart1’s readiness not derivable. The corrected Cart2 assertion supports Cart2, while preserving the original inspection requirement. Changing the policy to retain the desired Cart1 answer would conceal the source error.",
+          "setup": [
+            {
+              "text": "all $c: approves(Inspector, $c) -> ready($c, Checkout).",
+              "source": "Checkout requirement"
+            },
+            {
+              "text": "approves(Inspector, Cart1).",
+              "source": "Misread inspection note"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "ready(Cart1, Checkout)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": {
+            "prompt": "Which check found the error?",
+            "choices": [
+              "The proof automatically authenticated the source.",
+              "A TRUE outcome made source review unnecessary.",
+              "Comparing the admitted statement with its source."
+            ],
+            "correct": 2,
+            "feedback": "The proof showed the consequence of the inputs; source comparison exposed the mis-encoding."
+          },
+          "actions": [
+            {
+              "id": "withdraw-mismatch",
+              "title": "Withdraw the unsupported assertion",
+              "instruction": "Remove only the assertion the note does not support.",
+              "changes": [
+                {
+                  "kind": "withdraw_source",
+                  "source": "Misread inspection note"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(Cart1, Checkout)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "encode-correct-cart",
+              "title": "Encode the note faithfully",
+              "instruction": "The note names Cart2. Assert that approval and inspect its readiness.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "approves(Inspector, Cart2).",
+                  "source": "Reviewed inspection note"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(Cart2, Checkout)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "sources",
+            "proof-scope",
+            "assertions"
+          ],
+          "self_review": [
+            "Locate the exact assertion used.",
+            "Explain what changed and why the requirement stayed fixed."
+          ]
+        },
+        {
+          "id": "found.assurance-boundaries",
+          "version": 1,
+          "title": "Three questions about one result",
+          "objective": "Separate source, encoding and implementation assurance.",
+          "explanation": "A colleague supplies a clean proof and asks whether it settles the whole engineering decision. Review three independent questions: was the inspection reliable and current; did the formal statement capture the intended observation; and does the implemented reasoner meet its stated contracts? Evidence for one question does not automatically settle the others.",
+          "tasks": [
+            "Run the supplied readiness claim and inspect its actual support.",
+            "Identify which concern belongs to the source, the encoding and the implementation.",
+            "Write a concrete follow-up check for each concern."
+          ],
+          "hints": [
+            "A proof cites a source label; the label does not authenticate the underlying inspection.",
+            "Engine regression tests and correspondence arguments address implementation behavior, not the truth of this inspection."
+          ],
+          "solution": "The run establishes a derivation under its inputs and profile. A source review checks the inspection; a formalization review checks the statement; engine tests and scoped assurance arguments check implementation properties. Record the evidence actually available at each boundary instead of calling the whole decision verified.",
+          "setup": [
+            {
+              "text": "approves(Inspector, Cart3).",
+              "source": "Cart3 inspection"
+            },
+            {
+              "text": "all $c: approves(Inspector, $c) -> ready($c, Checkout).",
+              "source": "Checkout requirement"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "ready(Cart3, Checkout)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": {
+            "prompt": "“The record names Cart3, but the statement names Cart4” is primarily which issue?",
+            "choices": [
+              "An encoding mismatch.",
+              "A proof that the inspector lied.",
+              "An exhausted search budget."
+            ],
+            "correct": 0,
+            "feedback": "The discrepancy is visible between source and formal statement; it does not by itself establish a source or engine defect."
+          },
+          "actions": [],
+          "references": [
+            "proof-scope",
+            "assurance",
+            "sources"
+          ],
+          "self_review": [
+            "Name evidence still needed at each boundary.",
+            "Avoid claiming implementation soundness from a single successful run."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "found.reasoning-outcomes",
+      "version": 1,
+      "unit": "F4",
+      "track": "foundations",
+      "title": "Reasoning outcomes",
+      "summary": "Interpret the engine’s four outcomes and their reasons, separately from input errors, refusals, cancellation and your learning check.",
+      "prerequisites": [
+        "found.evidence"
+      ],
+      "legacy_release": false,
+      "activities": [
+        {
+          "id": "found.four-outcomes",
+          "version": 1,
+          "title": "Missing evidence and an undecided computation",
+          "objective": "Distinguish a closed-world FALSE from UNKNOWN with a reported reason.",
+          "explanation": "A project records one approval. Ask about a different reviewer, then inspect a computation that cannot be resolved by the browser’s local arithmetic path. Missing ordinary evidence and unavailable computation cross different boundaries.",
+          "tasks": [
+            "Predict the missing-approval claim.",
+            "Run the supplied computation and read its actual UNKNOWN detail.",
+            "Choose a next action appropriate to each boundary."
+          ],
+          "hints": [
+            "An ordinary unsupported approval is not UNKNOWN under this closed-world profile.",
+            "Do not guess why a computation is unresolved: read the returned reason."
+          ],
+          "solution": "The absent approval gives a closed-world FALSE. The nonnumeric arithmetic example requires a path this browser session cannot resolve, so the engine reports UNKNOWN with its actual reason. Supplying the missing approval repairs the first issue; valid numeric inputs repair the local arithmetic example without an external model.",
+          "setup": [
+            {
+              "text": "approves(ReviewerA, Package7).",
+              "source": "Review A"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "approves(ReviewerB, Package7)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": {
+            "prompt": "Which statement is accurate?",
+            "choices": [
+              "Every unsupported approval is UNKNOWN.",
+              "UNKNOWN needs its reported reason; it is not the name for any missing fact.",
+              "UNKNOWN is automatically an operational crash."
+            ],
+            "correct": 1,
+            "feedback": "Reasoning outcomes and operational failures are different, and missing ordinary support is FALSE in this profile."
+          },
+          "actions": [
+            {
+              "id": "add-missing-review",
+              "title": "Supply the missing review",
+              "instruction": "A new source now supplies the previously absent review.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "approves(ReviewerB, Package7).",
+                  "source": "Review B"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "approves(ReviewerB, Package7)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "unresolved-compute",
+              "title": "Inspect an unresolved computation",
+              "instruction": "Run the nonnumeric result term and retain the reported reason.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "sum(Label, 2, 3)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "UNKNOWN"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "numeric-repair",
+              "title": "Use a numeric result claim",
+              "instruction": "Ask whether 5 is the sum of 2 and 3; this can use the local numeric path.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "sum(5, 2, 3)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "outcomes",
+            "closed-world",
+            "compute-boundary"
+          ],
+          "self_review": [
+            "Name a different recovery for missing evidence and unresolved computation."
+          ]
+        },
+        {
+          "id": "found.depth-boundary",
+          "version": 2,
+          "title": "A decision stopped by its budget",
+          "objective": "Recover from actual depth exhaustion without turning it into FALSE.",
+          "explanation": "Use a small classification chain as a controlled search experiment: a dog is an animal, and an animal is alive. The initial depth budget is deliberately small. Compare the recorded boundary with a rerun under a sufficient budget. Then contrast chain depth with a wide quantified dispatch question. Many combinations can exhaust formula work even when no deep inference chain is needed.",
+          "tasks": [
+            "Predict the bounded run’s outcome.",
+            "Inspect the reported resource kind and the recorded search.",
+            "Raise depth, rerun, and compare the two run settings.",
+            "Run the wide dispatch query and inspect its fuel resource kind.",
+            "Ask a focused dispatch question without treating it as an answer to the original universal query."
+          ],
+          "hints": [
+            "The limit is a property of this run, not a negative fact about the individual.",
+            "The old run keeps its original depth and revision after settings change.",
+            "The browser has a fixed formula-work allowance as well as configurable chain depth. Increasing depth does not increase that allowance.",
+            "A recorded-history limit only limits the displayed history; a proof-construction limit can prevent a complete certificate."
+          ],
+          "solution": "The shallow classification run reports RESOURCE_EXCEEDED with depth as its kind; depth twenty permits that derivation. The wide dispatch query instead reaches the fixed formula-work allowance and reports fuel. Raising chain depth cannot enlarge that allowance. The focused CrewA question is FALSE because its required membership evidence is absent; it answers a narrower question, not the exhausted universal one. The engine allows 1,000,000 formula-node evaluations per verdict search and separately per certificate walk. A 100,000-step certificate ceiling or exhausted certificate walk refuses the whole certificate as a reasoning error. These browser/native limits differ from recording truncation and WASI instruction-fuel or memory controls. No partial certificate becomes a completed Boolean proof.",
+          "setup": [
+            {
+              "text": "dog(Nori).",
+              "source": "Classification observation"
+            },
+            {
+              "text": "animal(every dog).",
+              "source": "Classification rule one"
+            },
+            {
+              "text": "alive(every animal).",
+              "source": "Classification rule two"
+            }
+          ],
+          "profile": {
+            "id": "browser.depth-1",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 1
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "alive(Nori)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "RESOURCE_EXCEEDED"
+          },
+          "question": {
+            "prompt": "What did the limited run establish?",
+            "choices": [
+              "Nori is not alive.",
+              "Every UNKNOWN can be fixed by more depth.",
+              "It reached the configured depth boundary without a completed Boolean conclusion."
+            ],
+            "correct": 2,
+            "feedback": "Use the returned resource kind; raising depth does not address unrelated admission, encoding or backend failures."
+          },
+          "actions": [
+            {
+              "id": "raise-depth",
+              "title": "Raise the search depth",
+              "instruction": "Install a depth-20 profile and rerun the same claim.",
+              "changes": [],
+              "profile": {
+                "id": "browser.depth-20",
+                "version": 1,
+                "strict": false,
+                "existential_import": false,
+                "materialization": false,
+                "max_chain_depth": 20
+              },
+              "operation": {
+                "kind": "decide",
+                "claim": "alive(Nori)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "wide-formula-budget",
+              "title": "Inspect formula-work exhaustion",
+              "instruction": "The fictional dispatch policy has eight universal variables. Admit it, then ask the whole quantified question. Read the returned resource kind; no provider or host budget is being simulated.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "all $a, $b, $c, $d, $e, $f, $g, $h: member($a, CrewA) & member($b, CrewB) & member($c, CrewC) & member($d, CrewD) & member($e, CrewE) & member($f, CrewF) & owns($g, $h) -> ready($a, Dispatch).",
+                  "source": "Wide dispatch policy"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "all $a, $b, $c, $d, $e, $f, $g, $h: member($a, CrewA) & member($b, CrewB) & member($c, CrewC) & member($d, CrewD) & member($e, CrewE) & member($f, CrewF) & owns($g, $h) -> ready($a, Dispatch)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "RESOURCE_EXCEEDED",
+                "detail": "fuel"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "focused-dispatch",
+              "title": "Ask the focused operational question",
+              "instruction": "If the task is readiness of CrewA, ask that named question. Preserve the exhausted universal run: this focused result does not establish the original universal claim.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(CrewA, Dispatch)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "outcomes",
+            "depth",
+            "runtime-capabilities",
+            "resource-budgets"
+          ],
+          "self_review": [
+            "Distinguish a resource outcome from a cancelled or crashed operation.",
+            "Distinguish chain depth, formula fuel, certificate refusal, recording truncation and host instruction fuel.",
+            "Explain why a narrower question is not a proof of the original universal statement."
+          ]
+        },
+        {
+          "id": "found.input-versus-outcome",
+          "version": 1,
+          "title": "Compilation is not a verdict",
+          "objective": "Locate an input error and repair it without calling it FALSE.",
+          "explanation": "A statement is missing its final period. Compile it and inspect the error. Repairing syntax makes the source interpretable; it does not automatically admit the statement or establish a query result.",
+          "tasks": [
+            "Compile the incomplete source.",
+            "Locate and repair the missing delimiter.",
+            "Explain the difference between compilation, admission and a reasoning query."
+          ],
+          "hints": [
+            "The compiler cannot complete this statement as written.",
+            "After the period is supplied, the next result is a compilation artifact, not a truth value."
+          ],
+          "solution": "The first operation fails at the input boundary. The repaired source compiles. Actual admission and querying are separate operations. Cancellation is different again: it records an aborted attempt with no completed reasoning outcome, and may have no captured events after hard termination.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "compile",
+            "source": "approves(Reviewer, Package7)",
+            "structural_preflight": false
+          },
+          "expected": {
+            "family": "failed"
+          },
+          "question": {
+            "prompt": "Which item is a reasoning outcome?",
+            "choices": [
+              "FALSE",
+              "An input syntax error",
+              "A cancelled worker request"
+            ],
+            "correct": 0,
+            "feedback": "FALSE is a decision result. Input errors and cancellation describe different operation boundaries."
+          },
+          "actions": [
+            {
+              "id": "add-period",
+              "title": "Repair the source",
+              "instruction": "Compile the corrected statement without admitting it.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "compile",
+                "source": "approves(Reviewer, Package7).",
+                "structural_preflight": false
+              },
+              "expected": {
+                "family": "compiled"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "compile-admission",
+            "outcomes",
+            "recovery"
+          ],
+          "self_review": [
+            "Explain why a correct diagnosis of an error can complete a learning activity."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "found.investigate-release",
+      "version": 1,
+      "unit": "F5",
+      "track": "foundations",
+      "title": "Investigating and revising a decision",
+      "summary": "Predict, run, inspect, change evidence and repair the release-readiness decision.",
+      "prerequisites": [
+        "found.reasoning-outcomes"
+      ],
+      "legacy_release": true,
+      "activities": [
+        {
+          "id": "release.one-approval",
+          "version": 1,
+          "title": "One approval",
+          "objective": "Predict whether BuildA is ready with only its automated-check approval.",
+          "explanation": "A release needs two approvals for the same build. TestRunner has approved BuildA. Read the policy and the evidence before you run the claim.",
+          "tasks": [
+            "Read the policy and the accepted evidence.",
+            "Choose a prediction, then run the claim.",
+            "Find the condition that has no support."
+          ],
+          "hints": [
+            "The policy joins two conditions with AND. Which approval is present? Which one is missing?",
+            "Use the accepted inputs and the actual run record; the authored reasoning explains the intended learning check."
+          ],
+          "solution": "TestRunner's approval supports one condition. Reviewer's approval of BuildA has not been asserted or derived. Under this closed-world profile, readiness is not derivable: FALSE. That does not prove the real build unsafe.",
+          "setup": [
+            {
+              "text": "derived_only(\"ready\").",
+              "source": "Protected readiness declaration"
+            },
+            {
+              "text": "all $build: approves(TestRunner, $build) & approves(Reviewer, $build) -> ready($build, Release).",
+              "source": "Release policy"
+            },
+            {
+              "text": "approves(TestRunner, BuildA).",
+              "source": "Automated check A1"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "ready(BuildA, Release)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [],
+          "references": [
+            "derivable",
+            "assertions",
+            "replay",
+            "refusal",
+            "counterexamples"
+          ],
+          "self_review": []
+        },
+        {
+          "id": "release.different-build",
+          "version": 1,
+          "title": "A different build",
+          "objective": "Add Reviewer's approval of BuildB, then predict again.",
+          "explanation": "There will be two approvals, but they concern different builds. The variable $build denotes the same entity everywhere it appears in this policy.",
+          "tasks": [
+            "Add approves(Reviewer, BuildB).",
+            "Predict and run BuildA's readiness claim.",
+            "Compare the build named by each approval."
+          ],
+          "hints": [
+            "An approval of BuildB cannot fill a condition that requires an approval of BuildA.",
+            "Use the accepted inputs and the actual run record; the authored reasoning explains the intended learning check."
+          ],
+          "solution": "With $build bound to BuildA, the second condition is approves(Reviewer, BuildA). The new evidence is about BuildB. BuildA's readiness remains not derivable.",
+          "setup": [
+            {
+              "text": "derived_only(\"ready\").",
+              "source": "Protected readiness declaration"
+            },
+            {
+              "text": "all $build: approves(TestRunner, $build) & approves(Reviewer, $build) -> ready($build, Release).",
+              "source": "Release policy"
+            },
+            {
+              "text": "approves(TestRunner, BuildA).",
+              "source": "Automated check A1"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "ready(BuildA, Release)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [],
+          "references": [
+            "derivable",
+            "assertions",
+            "replay",
+            "refusal",
+            "counterexamples"
+          ],
+          "self_review": []
+        },
+        {
+          "id": "release.same-build",
+          "version": 1,
+          "title": "Same build, both approvals",
+          "objective": "Add Reviewer's approval of BuildA and inspect what supports the result.",
+          "explanation": "Give BuildA its review. After running, follow the conclusion to the policy and the assertions used to establish its two conditions.",
+          "tasks": [
+            "Add approves(Reviewer, BuildA).",
+            "Predict, then run the claim.",
+            "Inspect the supporting assertions and their source labels."
+          ],
+          "hints": [
+            "Both conditions now concern BuildA. Inspect the proof to find the actual assertion identifiers.",
+            "Use the accepted inputs and the actual run record; the authored reasoning explains the intended learning check."
+          ],
+          "solution": "The checker and reviewer approvals now bind the same build variable. The engine can apply the AND policy and derive readiness from those inputs. A proof establishes that derivation; it does not independently verify the source documents.",
+          "setup": [
+            {
+              "text": "derived_only(\"ready\").",
+              "source": "Protected readiness declaration"
+            },
+            {
+              "text": "all $build: approves(TestRunner, $build) & approves(Reviewer, $build) -> ready($build, Release).",
+              "source": "Release policy"
+            },
+            {
+              "text": "approves(TestRunner, BuildA).",
+              "source": "Automated check A1"
+            },
+            {
+              "text": "approves(Reviewer, BuildB).",
+              "source": "Review of another build"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "ready(BuildA, Release)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [],
+          "references": [
+            "derivable",
+            "assertions",
+            "replay",
+            "refusal",
+            "counterexamples"
+          ],
+          "self_review": []
+        },
+        {
+          "id": "release.execution-and-proof",
+          "version": 1,
+          "title": "Replay and proof",
+          "objective": "Distinguish the operations the engine attempted from the derivation it returned.",
+          "explanation": "Execution replay includes attempts, intermediate states and failed branches. A proof explains the returned derivation. They answer different questions about the same run.",
+          "tasks": [
+            "Run the current claim if no run is available.",
+            "Inspect execution replay and a failed attempt, when present.",
+            "Open the proof, then answer the understanding check."
+          ],
+          "hints": [
+            "A rejected candidate can appear in execution history without supporting the final derivation.",
+            "Use the accepted inputs and the actual run record; the authored reasoning explains the intended learning check."
+          ],
+          "solution": "Replay reads the saved operations and snapshots. It never runs reasoning again. The proof links the steps and assertions relevant to its derivation; it is not a transcript of every operation attempted.",
+          "setup": [
+            {
+              "text": "derived_only(\"ready\").",
+              "source": "Protected readiness declaration"
+            },
+            {
+              "text": "all $build: approves(TestRunner, $build) & approves(Reviewer, $build) -> ready($build, Release).",
+              "source": "Release policy"
+            },
+            {
+              "text": "approves(TestRunner, BuildA).",
+              "source": "Automated check A1"
+            },
+            {
+              "text": "approves(Reviewer, BuildB).",
+              "source": "Review of another build"
+            },
+            {
+              "text": "approves(Reviewer, BuildA).",
+              "source": "Review A1"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "ready(BuildA, Release)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": null,
+          "actions": [],
+          "references": [
+            "derivable",
+            "assertions",
+            "replay",
+            "refusal",
+            "counterexamples"
+          ],
+          "self_review": []
+        },
+        {
+          "id": "release.independent-support",
+          "version": 1,
+          "title": "Independent support",
+          "objective": "Add a second review assertion, withdraw one, then withdraw the last.",
+          "explanation": "Two separately recorded assertions can support the same claim. Removing one assertion need not remove the conclusion if another active assertion still supports it.",
+          "tasks": [
+            "Assert BuildA's review again with a different source label.",
+            "Predict and run while both review assertions are active.",
+            "Withdraw one review, run, then withdraw the last and run."
+          ],
+          "hints": [
+            "Count active assertions, not just distinct statement text. Each withdrawal names one assertion identifier.",
+            "Use the accepted inputs and the actual run record; the authored reasoning explains the intended learning check."
+          ],
+          "solution": "Readiness survives the first withdrawal because one review assertion remains. After the last review support is withdrawn, the AND policy lacks its second condition. The engine rebuilds from the surviving assertions. Separate records do not by themselves establish independent real-world evidence.",
+          "setup": [
+            {
+              "text": "derived_only(\"ready\").",
+              "source": "Protected readiness declaration"
+            },
+            {
+              "text": "all $build: approves(TestRunner, $build) & approves(Reviewer, $build) -> ready($build, Release).",
+              "source": "Release policy"
+            },
+            {
+              "text": "approves(TestRunner, BuildA).",
+              "source": "Automated check A1"
+            },
+            {
+              "text": "approves(Reviewer, BuildB).",
+              "source": "Review of another build"
+            },
+            {
+              "text": "approves(Reviewer, BuildA).",
+              "source": "Review A1"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "ready(BuildA, Release)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": null,
+          "actions": [],
+          "references": [
+            "derivable",
+            "assertions",
+            "replay",
+            "refusal",
+            "counterexamples"
+          ],
+          "self_review": []
+        },
+        {
+          "id": "release.protected-conclusion",
+          "version": 1,
+          "title": "Assert readiness directly",
+          "objective": "Try to assert the protected conclusion and explain the refusal.",
+          "explanation": "The readiness relation is declared derived-only. Evidence is admitted through the policy's premises; typing the conclusion directly cannot bypass that policy.",
+          "tasks": [
+            "Attempt to add ready(BuildA, Release).",
+            "Inspect the admission refusal and unchanged revision.",
+            "Choose the explanation that describes the boundary."
+          ],
+          "hints": [
+            "A refusal describes an attempted knowledge change. It is separate from the outcome of a reasoning query.",
+            "Use the accepted inputs and the actual run record; the authored reasoning explains the intended learning check."
+          ],
+          "solution": "The engine refuses a direct readiness assertion because that relation is derived-only. No change is committed. Supply the policy's required evidence instead. Understanding this refusal is a successful learning check.",
+          "setup": [
+            {
+              "text": "derived_only(\"ready\").",
+              "source": "Protected readiness declaration"
+            },
+            {
+              "text": "all $build: approves(TestRunner, $build) & approves(Reviewer, $build) -> ready($build, Release).",
+              "source": "Release policy"
+            },
+            {
+              "text": "approves(TestRunner, BuildA).",
+              "source": "Automated check A1"
+            },
+            {
+              "text": "approves(Reviewer, BuildB).",
+              "source": "Review of another build"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": null,
+          "actions": [],
+          "references": [
+            "derivable",
+            "assertions",
+            "replay",
+            "refusal",
+            "counterexamples"
+          ],
+          "self_review": []
+        },
+        {
+          "id": "release.repair-policy",
+          "version": 1,
+          "title": "Repair a flawed policy",
+          "objective": "Repair an OR policy so both approvals are required for the same build.",
+          "explanation": "Work in a separate exercise. The starting rule admits either approval. A single successful example cannot reveal that bug, so test four cases before and after your edit.",
+          "tasks": [
+            "Run all four cases against the flawed policy.",
+            "Change OR (|) to AND (&), then rerun.",
+            "Explain why the missing-approval and cross-build cases matter."
+          ],
+          "hints": [
+            "The checker-only case passes the weak rule. Does 'either condition' express the requirement that both approvals exist?",
+            "Use the accepted inputs and the actual run record; the authored reasoning explains the intended learning check."
+          ],
+          "solution": "AND requires both approvals with the same $build binding. The checker-only and reviewer-only cases become FALSE, same-build approvals yield TRUE, and cross-build approvals remain FALSE. The case checks test behavior; compare your written explanation with these criteria yourself.",
+          "setup": [
+            {
+              "text": "derived_only(\"ready\").",
+              "source": "Protected readiness declaration"
+            },
+            {
+              "text": "all $build: approves(TestRunner, $build) & approves(Reviewer, $build) -> ready($build, Release).",
+              "source": "Release policy"
+            },
+            {
+              "text": "approves(TestRunner, BuildA).",
+              "source": "Automated check A1"
+            },
+            {
+              "text": "approves(Reviewer, BuildB).",
+              "source": "Review of another build"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": null,
+          "actions": [],
+          "references": [
+            "derivable",
+            "assertions",
+            "replay",
+            "refusal",
+            "counterexamples"
+          ],
+          "self_review": []
+        }
+      ]
+    },
+    {
+      "id": "found.compare-approaches",
+      "version": 1,
+      "unit": "F6",
+      "track": "foundations",
+      "title": "Comparing neuro-symbolic approaches",
+      "summary": "Compare model-only, symbolic and reviewed drafting workflows by their inputs, evidence, failures and maintenance costs.",
+      "prerequisites": [
+        "found.investigate-release"
+      ],
+      "legacy_release": false,
+      "activities": [
+        {
+          "id": "found.architecture-comparison",
+          "version": 1,
+          "title": "A confident answer is a different artifact",
+          "objective": "Compare authored model output with an actual symbolic decision.",
+          "explanation": "Authored illustration, not captured model output: a text assistant says “Two approvals are present, so the release is ready.” One approval names BuildA and the other BuildB. Compare that sentence with the real symbolic run. A reviewed drafting workflow adds a separate opportunity to catch the name mismatch before admission.",
+          "tasks": [
+            "Run the cross-build case.",
+            "Compare the authored prose answer with the accepted inputs and proof search.",
+            "Identify where a drafting-and-review workflow could preserve or lose the build identity."
+          ],
+          "hints": [
+            "The same $build must satisfy both rule conditions.",
+            "Review can fail even when the reasoner accurately derives from what was accepted."
+          ],
+          "solution": "The symbolic claim does not follow from cross-build approvals. A model-only response requires its own evidence check; a fluent answer is not a derivation. A hybrid workflow adds reviewed formalization, but an incorrect accepted draft can still produce an unwanted conclusion. The illustration measures no model’s accuracy, speed or cost.",
+          "setup": [
+            {
+              "text": "all $build: approves(TestRunner, $build) & approves(Reviewer, $build) -> ready($build, Release).",
+              "source": "Release comparison policy"
+            },
+            {
+              "text": "approves(TestRunner, BuildA).",
+              "source": "BuildA automated check"
+            },
+            {
+              "text": "approves(Reviewer, BuildB).",
+              "source": "BuildB review"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "ready(BuildA, Release)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [],
+          "references": [
+            "architecture",
+            "formalization",
+            "assurance"
+          ],
+          "self_review": [
+            "Name the input and checking method for each approach.",
+            "Locate one failure boundary in model drafting, human review and symbolic inference.",
+            "Keep authored illustration separate from measured evidence."
+          ]
+        },
+        {
+          "id": "found.maintenance-choice",
+          "version": 1,
+          "title": "Who will maintain the knowledge?",
+          "objective": "Choose an architecture using explicit maintenance and review responsibilities.",
+          "explanation": "A small operations team wants help deciding whether equipment can be checked out. Policies change monthly and source notes arrive as prose. Compare a checklist, a symbolic policy model and reviewed model-assisted drafting. More automation changes where work occurs; it does not remove responsibility for interpreting policy and updating evidence.",
+          "tasks": [
+            "List who owns the policy, source review, formalization and rule updates.",
+            "Choose an initial workflow for this fictional team.",
+            "Describe a small trial and the evidence that would make you revise that choice.",
+            "Identify which source formats and host capabilities must remain available if the workflow moves to another runtime."
+          ],
+          "hints": [
+            "Separate initial authoring cost from the cost of each new note or policy change.",
+            "A defensible choice can favor a simpler workflow when maintenance capacity is limited."
+          ],
+          "solution": "There is no universal winning architecture. A useful choice names the errors it targets, the available maintainers, the review load and a way to evaluate behavior after changes. Retrieval can supply source passages; verification can check modeled requirements; neither substitutes for choosing the right requirements. Portability depends on preserving source meaning, supported vocabulary, profile and required host integrations; a portable file alone does not guarantee equivalent execution. This reflection is self-reviewed, not automatically graded.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": null,
+          "actions": [],
+          "references": [
+            "architecture",
+            "adoption",
+            "formalization",
+            "runtime-capabilities"
+          ],
+          "self_review": [
+            "Name a concrete maintenance owner and recurring task.",
+            "Identify a failure your choice reduces and a failure it leaves.",
+            "Specify a realistic trial with counterexamples; do not invent numerical performance claims."
+          ]
+        },
+        {
+          "id": "found.assurance-repair",
+          "version": 2,
+          "title": "Repair an assurance claim",
+          "objective": "Replace an unconditional promise with a scoped, testable assurance statement.",
+          "explanation": "A draft proposal says: “The reasoner proves every operational decision correct, so source review and regression tests are unnecessary.” Rewrite this proposal into something the team can evaluate. Consider source quality, encoding, implemented contracts, search limits and decisions outside the model. The research-context reference contrasts an early proposal for formal-premise reasoning with a later modular neural-and-symbolic design. Their publication dates and architectural ideas do not certify this application.",
+          "tasks": [
+            "Identify unsupported promises in the proposal.",
+            "Write a revised claim naming assumptions and evidence.",
+            "Choose a counterexample or test for each important assumption.",
+            "Compare the two research proposals in the reference: identify what is represented explicitly and what the neural modules contribute.",
+            "Explain why historical lineage and a research architecture are different evidence from the companion’s tested runtime contracts."
+          ],
+          "hints": [
+            "A proof concerns a particular claim, inputs, profile and implementation.",
+            "Soundness, completeness, source truth and successful operation under a budget are different claims."
+          ],
+          "solution": "An appropriate assurance statement identifies the modeled decision and the evidence supporting each boundary. Tests can expose defects; a formal argument covers its stated model and correspondence assumptions. Neither a green test suite nor one proof establishes unrestricted correctness. The repaired proposal should retain source review and regression work where they address actual risks. McCarthy’s 1959 proposal centers on manipulating formal statements and drawing conclusions from premises. The 2022 MRKL proposal combines neural models with discrete knowledge and reasoning modules. They illustrate different design choices, not a claim that either paper proves this implementation correct. Use research ideas to frame a design, then evaluate the actual representation, interfaces and evidence for the chosen system.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": null,
+          "actions": [],
+          "references": [
+            "assurance",
+            "proof-scope",
+            "adoption",
+            "research-context"
+          ],
+          "self_review": [
+            "State the modeled scope and excluded decisions.",
+            "Separate formal-model claims from implementation evidence.",
+            "Give an actionable check or repair at each identified boundary.",
+            "Identify one architectural connection and one difference between the two proposals without inferring guaranteed accuracy from their dates or labels."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "use.relationships-scope",
+      "version": 1,
+      "unit": "U1",
+      "track": "use",
+      "title": "Relationships and scope",
+      "summary": "Represent roles, identities, quantifiers, descriptions, modifiers, relatives and modal context with the supported notation.",
+      "prerequisites": [
+        "found.precise-claims",
+        "found.investigate-release"
+      ],
+      "legacy_release": false,
+      "activities": [
+        {
+          "id": "use.places-omissions",
+          "version": 2,
+          "title": "A gift has three roles",
+          "objective": "Distinguish fixed roles, unspecified places and existential witnesses without silently changing who did what.",
+          "explanation": "A logistics note records Ari giving Crate7 to Bea. The three places of gives are giver, gift and recipient. An underscore is an explicit unspecified value, not a wildcard that can match Crate7. Omitting a place, including a gap left by named arguments, uses that same unspecified value. Use ? when the intended claim is that some gift fills the place.",
+          "tasks": [
+            "Run the underscore claim and explain why the receipt does not establish it.",
+            "Compile the fully filled named-place statement and identify each role.",
+            "Inspect the repeated-place error, then compile its syntax repair without treating compilation as evidence.",
+            "Decide the named-place omission and compare it with the underscore claim.",
+            "Replace the gift placeholder with ? and use Find to inspect the supported gift."
+          ],
+          "hints": [
+            "The receipt fills the gift place with Crate7. The unspecified value _ is different from that named item.",
+            "Named places route arguments to the existing signature. Leaving gift out still inserts an unspecified value; naming the other places does not turn the gap into an existential.",
+            "? introduces a fresh existential witness. Find returns actual bindings for that query; it does not change the accepted receipt."
+          ],
+          "solution": "Both gives(Ari, _, Bea). and gives(giver: Ari, recipient: Bea). are FALSE from this receipt: their unspecified gift does not match Crate7. The fully filled positional and named statements express the recorded roles. Replacing the gift with ? makes an existential claim that is TRUE, and Find returns Crate7 as its gift witness. The repeated giver place is a compile error; repairing its syntax alone does not establish the resulting claim.",
+          "setup": [
+            {
+              "text": "gives(Ari, Crate7, Bea).",
+              "source": "Transfer receipt"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "gives(Ari, _, Bea)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "named-places",
+              "title": "Read named places",
+              "instruction": "Compile the same relationship with names instead of relying on positional memory.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "compile",
+                "source": "gives(giver: Ari, gift: Crate7, recipient: Bea).",
+                "structural_preflight": false
+              },
+              "expected": {
+                "family": "compiled"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "duplicate-place",
+              "title": "Inspect a repeated place",
+              "instruction": "Compile the defective draft; locate the place filled twice.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "compile",
+                "source": "gives(giver: Ari, giver: Bea).",
+                "structural_preflight": false
+              },
+              "expected": {
+                "family": "failed"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "repair-place",
+              "title": "Repair the repeated place",
+              "instruction": "Put Bea in the recipient place and leave gift omitted. This repairs the syntax, but the missing gift becomes an unspecified value; compilation alone does not show that the receipt supports the claim.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "compile",
+                "source": "gives(giver: Ari, recipient: Bea).",
+                "structural_preflight": false
+              },
+              "expected": {
+                "family": "compiled"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "named-omission",
+              "title": "Check the named omission",
+              "instruction": "Decide the repaired named-place claim. Compare its missing gift with the original underscore.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "gives(giver: Ari, recipient: Bea)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "existential-repair",
+              "title": "Require some gift",
+              "instruction": "Use ? for an existential gift while keeping Ari and Bea in the same roles.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "gives(Ari, ?, Bea)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "find-gift",
+              "title": "Inspect the gift witness",
+              "instruction": "Run Find on the existential claim and locate the returned gift binding.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "find",
+                "claim": "gives(Ari, ?, Bea)."
+              },
+              "expected": {
+                "family": "answers",
+                "count": "1",
+                "empty": false
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "places",
+            "omitted-arguments",
+            "compile-admission"
+          ],
+          "self_review": [
+            "Read all three roles aloud.",
+            "Explain why an unspecified value differs from both Crate7 and a fresh existential ?.",
+            "Separate a valid compilation from evidence that the claim follows."
+          ]
+        },
+        {
+          "id": "use.descriptions",
+          "version": 2,
+          "title": "A name is not an existential",
+          "objective": "Distinguish a fixed description from a quantified requirement.",
+          "explanation": "The inventory names Workstation7 and records that Ari owns it. Writing “the computer” introduces a fixed designator in this notation; it does not automatically refer to whichever computer Ari owns.",
+          "tasks": [
+            "Predict the fixed-description query.",
+            "Compare it with a query for some computer.",
+            "Explain when to use a known name and when to use an existential.",
+            "Compile the definite-domain and fixed-block reference examples. Explain why ordinary inventory facts do not automatically populate every the computer."
+          ],
+          "hints": [
+            "Find a statement identifying the fixed description with Workstation7; none was supplied.",
+            "The existential asks for a suitable witness rather than guessing a referent."
+          ],
+          "solution": "The fixed designator and Workstation7 are not automatically the same entity. A query for some computer can be supported by the named computer and ownership record. Descriptions can also contain opaque bodies: their internal wording must not be treated as an independently asserted fact.",
+          "setup": [
+            {
+              "text": "computer(Workstation7).",
+              "source": "Equipment classification"
+            },
+            {
+              "text": "owns(Ari, Workstation7).",
+              "source": "Ownership register"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "owns(Ari, the computer)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": {
+            "prompt": "Which spelling identifies a specific known inventory entity?",
+            "choices": [
+              "some computer",
+              "Workstation7",
+              "An omitted argument"
+            ],
+            "correct": 1,
+            "feedback": "A name identifies the recorded entity; a quantified description asks for a witness."
+          },
+          "actions": [
+            {
+              "id": "use-existential",
+              "title": "Ask for some computer",
+              "instruction": "Repair the intended existential reading.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "owns(Ari, some computer)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "descriptions",
+            "scope",
+            "identity",
+            "determiner-forms"
+          ],
+          "self_review": [
+            "Explain why a natural-language article is not an automatic reference resolver.",
+            "Distinguish a fixed description, its reused block spelling and an opaque definite domain from ordinary existential inventory claims."
+          ]
+        },
+        {
+          "id": "use.quantifier-existence",
+          "version": 1,
+          "title": "A rule does not create a member",
+          "objective": "Distinguish a universal rule from evidence that its domain has members.",
+          "explanation": "A classification rule says every dog is an animal, but this project has no dog observation. Use the default profile first, then compare the explicitly labeled optional existential-import profile. The profile is part of the reasoning input.",
+          "tasks": [
+            "Predict whether some dog is an animal under the default profile.",
+            "Inspect the rule and the absence of a dog witness.",
+            "Compare the declared import profile and identify the witness origin."
+          ],
+          "hints": [
+            "A universal rule can hold without creating any member of its domain.",
+            "Optional existential import changes the assumption; it is not a newly observed animal."
+          ],
+          "solution": "With import off, the rule supplies no dog witness. The optional profile may presuppose one and label its origin accordingly. Keep that presupposition distinct from a recorded observation, and retain the profile on every run and export.",
+          "setup": [
+            {
+              "text": "animal(every dog).",
+              "source": "Classification policy"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "animal(some dog)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "compare-import",
+              "title": "Compare optional existential import",
+              "instruction": "Run under the explicitly different profile; inspect the origin and retained settings.",
+              "changes": [],
+              "profile": {
+                "id": "browser.import-on",
+                "version": 1,
+                "strict": false,
+                "existential_import": true,
+                "materialization": false,
+                "max_chain_depth": 10
+              },
+              "operation": {
+                "kind": "decide",
+                "claim": "animal(some dog)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "find-imported",
+              "title": "Inspect imported answer origins",
+              "instruction": "Find the dog witness under the import-enabled profile and read its returned origin.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "find",
+                "claim": "dog($dog)."
+              },
+              "expected": {
+                "family": "answers",
+                "empty": false
+              },
+              "scope": "main"
+            },
+            {
+              "id": "restore-default",
+              "title": "Return to the default profile",
+              "instruction": "Rerun after returning to import off.",
+              "changes": [],
+              "profile": {
+                "id": "browser.standard",
+                "version": 1,
+                "strict": false,
+                "existential_import": false,
+                "materialization": false,
+                "max_chain_depth": 10
+              },
+              "operation": {
+                "kind": "decide",
+                "claim": "animal(some dog)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "scope",
+            "witness-origins",
+            "profiles"
+          ],
+          "self_review": [
+            "Explain the difference between a domain assumption and observed evidence."
+          ]
+        },
+        {
+          "id": "use.relative-scope",
+          "version": 2,
+          "title": "Restriction or extra assertion?",
+          "objective": "Distinguish restrictive and incidental relatives and repair missing attachment.",
+          "explanation": "A workshop wants to describe computers that are broken. A where clause restricts the relevant computers. An also clause adds information about the selected computers. The distinction changes the claim, even when the same words appear.",
+          "tasks": [
+            "Compile the restrictive form and inspect its structure.",
+            "Compare the incidental form.",
+            "Repair a relative clause that omits its bound entity.",
+            "Compile linked-place and selector examples, including their refused near-misses. Compare the two parenthesized attachment examples in the relative reference."
+          ],
+          "hints": [
+            "where contributes to which entities satisfy the description.",
+            "A parenthesized relative body must explicitly place it in the relationship."
+          ],
+          "solution": "where broken restricts the computers considered; also broken contributes an additional claim about them. In a parenthesized clause, it indicates the entity being described. Omitting it is not a shorthand for an arbitrary attachment. Nested it refers to the innermost relative clause; ambiguous intended outer references must be rewritten.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "compile",
+            "source": "ready(every computer where broken, Repair).",
+            "structural_preflight": false
+          },
+          "expected": {
+            "family": "compiled"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "incidental-form",
+              "title": "Compare also",
+              "instruction": "Inspect how the incidental property moves in the lowered structure.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "compile",
+                "source": "ready(every computer also broken, Repair).",
+                "structural_preflight": false
+              },
+              "expected": {
+                "family": "compiled"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "missing-it",
+              "title": "Inspect missing attachment",
+              "instruction": "Compile a parenthesized relative that never refers to its entity.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "compile",
+                "source": "owns(Ari, some computer where broken(Pump7)).",
+                "structural_preflight": false
+              },
+              "expected": {
+                "family": "failed"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "place-it",
+              "title": "Repair attachment",
+              "instruction": "Put the described entity in the broken predicate.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "compile",
+                "source": "owns(Ari, some computer where broken(it)).",
+                "structural_preflight": false
+              },
+              "expected": {
+                "family": "compiled"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "relatives",
+            "scope",
+            "compile-admission",
+            "restrictor-places"
+          ],
+          "self_review": [
+            "Explain restriction versus extra assertion.",
+            "Identify the entity that it denotes.",
+            "Identify the bound place and inner description scope; explain when it refers to the described entity and why ambiguous outer references require rewriting."
+          ]
+        },
+        {
+          "id": "use.event-modifiers",
+          "version": 2,
+          "title": "A modifier is not just AND",
+          "objective": "Inspect event/modifier structure instead of treating word sequences as conjunction.",
+          "explanation": "Compare a big-red description with two separately stated properties. The supported juxtaposition syntax attaches modifiers through a shared event structure; it is not a general-purpose synonym for writing two independent assertions.",
+          "tasks": [
+            "Compile the modifier form.",
+            "Compile the explicit conjunction and compare the lowered artifacts.",
+            "Choose the form that matches the intended two separate properties.",
+            "Compare the bracketed and unbracketed three-unit forms and explain the current flattening limit.",
+            "Compile a supported via tag and curated compound, then refused near-misses. Inspect which arguments the current tag lowering actually relates; do not assume it uses a reified event identifier."
+          ],
+          "hints": [
+            "The rightmost predicate is the head of a modifier sequence.",
+            "Use the actual structural artifacts; do not infer equivalence from English word order alone."
+          ],
+          "solution": "A shared-event modifier description and explicit conjunction have different structures; write conjunction when both standalone properties are intended. The current lowering preserves every modifier unit but flattens grouping beyond head selection: [big red] computer(Workstation7). and big red computer(Workstation7). have the same lowered logic. Brackets therefore do not promise a new inference-distinct reading. Facts about different events also cannot automatically be combined into one event with every desired property.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "compile",
+            "source": "big red(Crate7).",
+            "structural_preflight": false
+          },
+          "expected": {
+            "family": "compiled"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "separate-properties",
+              "title": "Express the two properties explicitly",
+              "instruction": "Compile the conjunction that matches two independent property claims.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "compile",
+                "source": "big(Crate7) & red(Crate7).",
+                "structural_preflight": false
+              },
+              "expected": {
+                "family": "compiled"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "group-modifier",
+              "title": "Inspect explicit modifier grouping",
+              "instruction": "Compile the bracketed three-unit description. Compare it next with the same unbracketed units; brackets do not guarantee a distinct lowered representation.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "compile",
+                "source": "[big red] computer(Workstation7).",
+                "structural_preflight": false
+              },
+              "expected": {
+                "family": "compiled"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "flattened-modifier",
+              "title": "Compare the disclosed flattening",
+              "instruction": "Compile the same three units without brackets. Compare lowered nodes: this engine gives these two forms the same lowered logic, despite their different written grouping.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "compile",
+                "source": "big red computer(Workstation7).",
+                "structural_preflight": false
+              },
+              "expected": {
+                "family": "compiled"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "events-modifiers",
+            "connectives",
+            "scope",
+            "tags-compounds"
+          ],
+          "self_review": [
+            "Describe the intended meaning before choosing syntax.",
+            "Name the shared-event distinction without claiming all modifier forms equal conjunction.",
+            "Identify a written grouping distinction that this lowering does not preserve.",
+            "Explain the actual tag argument projection without claiming an event-ID link or independently established causation; do not invent a compound’s places from its words."
+          ]
+        },
+        {
+          "id": "use.temporal-modal",
+          "version": 2,
+          "title": "Happened, happens, and ought to happen",
+          "objective": "Keep temporal facts and obligations distinct from unmarked facts.",
+          "explanation": "A record says Bench7 was dry in the past. A preparation rule requires it to be dry in the unmarked context. Another record says an inspector must approve Parcel7. An obligation does not report that approval happened.",
+          "tasks": [
+            "Predict the unmarked preparation claim.",
+            "Query the approval despite the obligation.",
+            "Inspect rejected prefix combinations and repair the source.",
+            "Check historical readiness before and after admitting an explicit historical mapping.",
+            "Recheck the unmarked claim to verify that the repair did not erase time."
+          ],
+          "hints": [
+            "The past prefix belongs to the fact’s context; it is not silently erased.",
+            "One atom cannot mix the tense and deontic prefix families.",
+            "The new policy connects a past condition to a past conclusion. It does not reinterpret a past observation as a current observation."
+          ],
+          "solution": "The past observation does not satisfy the unmarked condition, and must approval does not establish unmarked approval. An application that needs a temporal mapping must state it explicitly. Prefix ordering and attachment have supported forms; repairing a rejected form should preserve the intended modal meaning. The added historical policy explicitly maps past dryness to past paint-readiness. The past readiness query changes from FALSE to TRUE after admission, while the original unmarked readiness remains FALSE. This repairs the selected historical question without silently erasing the observation’s temporal flavor.",
+          "setup": [
+            {
+              "text": "past dry(Bench7).",
+              "source": "Yesterday observation"
+            },
+            {
+              "text": "all $x: dry($x) -> ready($x, Paint).",
+              "source": "Paint preparation rule"
+            },
+            {
+              "text": "must approves(Inspector, Parcel7).",
+              "source": "Inspection obligation"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "ready(Bench7, Paint)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "obligation-not-event",
+              "title": "Ask whether approval happened",
+              "instruction": "Query the unmarked predicate.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "approves(Inspector, Parcel7)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "bad-prefix-order",
+              "title": "Inspect an unsupported prefix order",
+              "instruction": "Compile the defective ordering.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "compile",
+                "source": "~past dry(Bench7).",
+                "structural_preflight": false
+              },
+              "expected": {
+                "family": "failed"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "repair-prefix-order",
+              "title": "Keep past outside negation",
+              "instruction": "Compile the repaired temporal negative.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "compile",
+                "source": "past ~dry(Bench7).",
+                "structural_preflight": false
+              },
+              "expected": {
+                "family": "compiled"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "mixed-families",
+              "title": "Inspect mixed prefix families",
+              "instruction": "Compile this mixed temporal/deontic atom; then explain which claim the author actually intended.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "compile",
+                "source": "must past approves(Inspector, Parcel7).",
+                "structural_preflight": false
+              },
+              "expected": {
+                "family": "failed"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "historical-before-mapping",
+              "title": "Ask the historical question first",
+              "instruction": "The existing unmarked preparation rule is not automatically copied into the past.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "past ready(Bench7, Paint)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "admit-historical-mapping",
+              "title": "State the historical policy explicitly",
+              "instruction": "The fictional policy owner supplies a historical preparation criterion: past dryness supports past paint-readiness. Admit the written temporal mapping and rerun.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "all $x: past dry($x) -> past ready($x, Paint).",
+                  "source": "Historical paint-readiness criterion"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "past ready(Bench7, Paint)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "keep-unmarked-separate",
+              "title": "Keep the original question separate",
+              "instruction": "Recheck the original unmarked claim. The new historical rule did not turn a past state into an unmarked one.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(Bench7, Paint)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "tense-deontics",
+            "compile-admission",
+            "refusal"
+          ],
+          "self_review": [
+            "Distinguish an obligation from an observed event.",
+            "Describe a temporal mapping the application would need to justify."
+          ]
+        },
+        {
+          "id": "use.opaque-types",
+          "version": 2,
+          "title": "A statement inside a statement",
+          "objective": "Keep abstract content opaque and distinguish syntax from domain typing.",
+          "explanation": "Ari knows a proposition about Pump7. The outer assertion is about Ari’s knowledge; its embedded fact is not independently admitted as a broken-pump observation. The compiler also distinguishes argument forms, while domain-specific sort enforcement is a separate engine configuration capability.",
+          "tasks": [
+            "Predict whether the embedded broken-pump proposition follows independently.",
+            "Compile an event abstraction and inspect its structure.",
+            "Explain which type checks this browser source path actually provides.",
+            "Compile every abstraction kind and the refused slot examples. Explain why amount content is not a computed quantity."
+          ],
+          "hints": [
+            "Find an independently accepted broken(Pump7) statement; the only occurrence is inside the abstraction.",
+            "A valid term shape does not automatically prove that a named entity has the domain role you intend."
+          ],
+          "solution": "Opaque abstraction bodies do not leak into ordinary accepted facts. A fact abstraction represents proposition content; an event abstraction packages event content. The corpus supplies predicate places and the front end checks supported forms. Native sort declarations can impose additional domain constraints, but this lesson does not pretend to configure those through an unsupported browser statement.",
+          "setup": [
+            {
+              "text": "knows(Ari, fact { broken(Pump7) }).",
+              "source": "Ari knowledge report"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "broken(Pump7)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "event-abstraction",
+              "title": "Inspect an event as a term",
+              "instruction": "Compile an event-valued desire without asserting its body.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "compile",
+                "source": "desires(Ari, event { uses(Ari, Pump7) }).",
+                "structural_preflight": false
+              },
+              "expected": {
+                "family": "compiled"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "abstractions",
+            "types",
+            "runtime-capabilities",
+            "abstraction-kinds"
+          ],
+          "self_review": [
+            "Explain why the embedded body was not admitted independently.",
+            "Separate corpus place/form checks from native domain-sort configuration.",
+            "Identify which body binds slot and why none of the outer content statements independently admits the embedded predicate."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "use.witnesses-counts",
+      "version": 1,
+      "unit": "U2",
+      "track": "use",
+      "title": "Witnesses, counts and candidate worlds",
+      "summary": "Inspect actual answer bindings, identify shared requirements, and preserve the distinction between empty, incomplete and numeric results.",
+      "prerequisites": [
+        "use.relationships-scope"
+      ],
+      "legacy_release": false,
+      "activities": [
+        {
+          "id": "use.shared-witness",
+          "version": 1,
+          "title": "One person must satisfy both clauses",
+          "objective": "Distinguish one shared answer from two independent answers.",
+          "explanation": "Ari owns a meter. Bea has the inspector’s approval. A request for any owner and any approved person can succeed, even though no single person currently meets both requirements.",
+          "tasks": [
+            "Run the independent-variable request.",
+            "Run the shared-variable version and compare its bindings.",
+            "Repair the missing support for one person and repeat the shared request."
+          ],
+          "hints": [
+            "Different variable names may select different people.",
+            "Use the same variable in both clauses when the requirement concerns one person."
+          ],
+          "solution": "The independent request can use Ari and Bea. The shared request initially has no answer. Adding the inspector’s approval for Ari supplies a single person who meets both clauses; changing the variable names alone would change the requirement.",
+          "setup": [
+            {
+              "text": "owns(Ari, Meter7).",
+              "source": "Meter register"
+            },
+            {
+              "text": "approves(Inspector, Bea).",
+              "source": "Bea inspection"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "find",
+            "claim": "owns($owner, Meter7) & approves(Inspector, $approved)."
+          },
+          "expected": {
+            "family": "answers",
+            "empty": false
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "shared",
+              "title": "Require one person",
+              "instruction": "Keep one variable across both clauses.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "find",
+                "claim": "owns($person, Meter7) & approves(Inspector, $person)."
+              },
+              "expected": {
+                "family": "answers",
+                "empty": true
+              },
+              "scope": "main"
+            },
+            {
+              "id": "supply-joint-evidence",
+              "title": "Add the supplied inspection",
+              "instruction": "A new inspection record explicitly approves Ari.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "approves(Inspector, Ari).",
+                  "source": "Ari inspection"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "find",
+                "claim": "owns($person, Meter7) & approves(Inspector, $person)."
+              },
+              "expected": {
+                "family": "answers",
+                "empty": false
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "variables",
+            "find",
+            "witness-origins"
+          ],
+          "self_review": [
+            "Explain why two independent witnesses did not meet the shared requirement."
+          ]
+        },
+        {
+          "id": "use.dependent-witness",
+          "version": 1,
+          "title": "A supplied computer for each pair",
+          "objective": "Read generated witnesses without turning their display names into identifiers.",
+          "explanation": "A workshop promises a computer for every pairing of a team member and a reviewer. The existential computer depends on the universally quantified pair. The workspace can expose generated answers and compiled scope, but it does not provide a complete public witness-dependency graph.",
+          "tasks": [
+            "Find the computers supplied for Ari and Reviewer1.",
+            "Inspect the two-variable rule’s compiled scope.",
+            "Compare a second pair and identify only the origin information the result actually exposes."
+          ],
+          "hints": [
+            "Read the universal variables outside some computer.",
+            "Treat generated display terms as output labels; do not copy them into a new assertion as stable constants."
+          ],
+          "solution": "The rule permits an existential witness for each member–reviewer pairing. Its two universal dependencies are visible in the authored rule and compiled representation. Returned origin tags distinguish generated witnesses from ordinary accepted constants. Similar-looking generated labels across runs or epochs do not prove shared identity, and no dependency edges should be invented from their spelling.",
+          "setup": [
+            {
+              "text": "member(Ari, Workshop).",
+              "source": "Ari team membership"
+            },
+            {
+              "text": "member(Bea, Workshop).",
+              "source": "Bea team membership"
+            },
+            {
+              "text": "member(Reviewer1, ReviewTeam).",
+              "source": "Reviewer roster"
+            },
+            {
+              "text": "all $p, $r: member($p, Workshop) & member($r, ReviewTeam) -> gives($p, some computer, $r).",
+              "source": "Pair equipment promise"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "find",
+            "claim": "gives(Ari, $computer, Reviewer1)."
+          },
+          "expected": {
+            "family": "answers",
+            "empty": false
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "inspect-dependency",
+              "title": "Inspect the rule",
+              "instruction": "Compile the same rule to inspect quantifier structure.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "compile",
+                "source": "all $p, $r: member($p, Workshop) & member($r, ReviewTeam) -> gives($p, some computer, $r).",
+                "structural_preflight": false
+              },
+              "expected": {
+                "family": "compiled"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "other-pair",
+              "title": "Inspect a different pair",
+              "instruction": "Find the answer for Bea without assuming that printed witness labels are portable IDs.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "find",
+                "claim": "gives(Bea, $computer, Reviewer1)."
+              },
+              "expected": {
+                "family": "answers",
+                "empty": false
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "witness-origins",
+            "scope",
+            "identity"
+          ],
+          "self_review": [
+            "Name both dependencies in the rule.",
+            "Separate actual returned origins from an unavailable identity/dependency graph."
+          ]
+        },
+        {
+          "id": "use.identity-count",
+          "version": 1,
+          "title": "Three records, two computers",
+          "objective": "Count distinct answer bindings under accepted equality.",
+          "explanation": "The inventory lists TerminalA, TerminalB and a legacy name OldTerminalA. Before identity is established these are separate answer terms. An accepted identity record changes the interpretation of answers; duplicate support and equal aliases are different concerns.",
+          "tasks": [
+            "Find the inventory entries and count them.",
+            "Admit the supplied identity record.",
+            "Count again and explain why neither raw assertion count nor spelling count is the answer."
+          ],
+          "hints": [
+            "Inspect the query’s selected bindings rather than counting rows in the assertion pane.",
+            "Equality can identify names without deleting the original source records."
+          ],
+          "solution": "The initial count is three distinct bindings. Once TerminalA = OldTerminalA is accepted, equality makes those names one identity for answer deduplication, so the count becomes two. Source records remain independently withdrawable. The UI exposes actual answers and equality evidence, not an invented equivalence-class database.",
+          "setup": [
+            {
+              "text": "computer(TerminalA).",
+              "source": "Current inventory A"
+            },
+            {
+              "text": "computer(TerminalB).",
+              "source": "Current inventory B"
+            },
+            {
+              "text": "computer(OldTerminalA).",
+              "source": "Legacy inventory A"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "count",
+            "claim": "computer($computer)."
+          },
+          "expected": {
+            "family": "counted",
+            "count": "3"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "inspect-answers",
+              "title": "Inspect returned bindings",
+              "instruction": "Read the actual terms and their origins.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "find",
+                "claim": "computer($computer)."
+              },
+              "expected": {
+                "family": "answers",
+                "empty": false
+              },
+              "scope": "main"
+            },
+            {
+              "id": "record-identity",
+              "title": "Record the verified alias",
+              "instruction": "The fictional asset register confirms these two names identify the same computer.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "TerminalA = OldTerminalA.",
+                  "source": "Asset alias confirmation"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "count",
+                "claim": "computer($computer)."
+              },
+              "expected": {
+                "family": "counted",
+                "count": "2"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "identity",
+            "counts",
+            "assertions",
+            "find"
+          ],
+          "self_review": [
+            "Explain why an equality change can alter a count while leaving source records present."
+          ]
+        },
+        {
+          "id": "use.count-query-boundary",
+          "version": 2,
+          "title": "A count is a question, not inventory",
+          "objective": "Keep exact-count checks out of asserted evidence.",
+          "explanation": "Two computers are listed and both are ready for audit. An operator wants to record the sentence “exactly two computers are ready” as though it were another observation. This engine’s exact-count form is query-only.",
+          "tasks": [
+            "Check the exact-count query.",
+            "Try admitting the same form and inspect the refusal.",
+            "Add a third actual computer observation and recheck the old count.",
+            "Compare the no computer term and block examples with exactly 0; compile the fractional-count refusal."
+          ],
+          "hints": [
+            "A successful query does not make its query syntax admissible as a fact.",
+            "Repair inventory with supported entity observations; rerun the count after changes."
+          ],
+          "solution": "The first query succeeds. The attempted exact-count assertion is refused without adding an assertion. Adding a real third computer and its readiness changes the answer to the original exactly-two query. Replacing a live count with a fixed assertion would hide that dependency.",
+          "setup": [
+            {
+              "text": "computer(TerminalA).",
+              "source": "Inventory A"
+            },
+            {
+              "text": "computer(TerminalB).",
+              "source": "Inventory B"
+            },
+            {
+              "text": "ready(TerminalA, Audit).",
+              "source": "Audit A"
+            },
+            {
+              "text": "ready(TerminalB, Audit).",
+              "source": "Audit B"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "ready(exactly 2 computer, Audit)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "refused-count",
+              "title": "Try admitting the query",
+              "instruction": "Observe the real admission refusal and unchanged accepted records.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "ready(exactly 2 computer, Audit).",
+                  "source": "Attempted inventory total"
+                }
+              ],
+              "profile": null,
+              "operation": null,
+              "expected": {
+                "family": "failed",
+                "stage": "change",
+                "error_class": "reasoning"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "third-observation",
+              "title": "Add actual observations",
+              "instruction": "The inventory and audit logs now include TerminalC.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "computer(TerminalC).",
+                  "source": "Inventory C"
+                },
+                {
+                  "kind": "assert",
+                  "text": "ready(TerminalC, Audit).",
+                  "source": "Audit C"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(exactly 2 computer, Audit)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "counts",
+            "compile-admission",
+            "refusal",
+            "determiner-forms"
+          ],
+          "self_review": [
+            "Separate an observation from a count computed over observations.",
+            "Explain why a compiling exact-zero question is not an admitted prohibition."
+          ]
+        },
+        {
+          "id": "use.aggregate-results",
+          "version": 1,
+          "title": "Empty is different from zero",
+          "objective": "Interpret aggregate values and failures without inventing a numeric result.",
+          "explanation": "A fictional packing desk records quantities of four and seven for two parcels. The sum is eleven and the average is five and a half. A query for an absent category is empty; selecting a variable that is not returned is a failure, not a zero total.",
+          "tasks": [
+            "Run sum, minimum, maximum and average over the same returned quantity variable.",
+            "Run a complete empty query.",
+            "Try a missing variable, then repair the variable selection."
+          ],
+          "hints": [
+            "The aggregate variable must match a named binding in the query.",
+            "An empty successful collection and an unavailable aggregate are different result families."
+          ],
+          "solution": "For the two records, sum is 11, min is 4, max is 7 and average is 5.5. An empty collection has an Empty aggregate even for sum. A missing selected variable cannot be repaired by reporting zero; choose the actual numeric binding. Numeric totals describe this query and these accepted records, not a real-world completeness guarantee.",
+          "setup": [
+            {
+              "text": "quantity(ParcelA, 4).",
+              "source": "Parcel A quantity"
+            },
+            {
+              "text": "quantity(ParcelB, 7).",
+              "source": "Parcel B quantity"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "aggregate",
+            "claim": "quantity($parcel, $amount).",
+            "variable": "$amount",
+            "operator": "sum"
+          },
+          "expected": {
+            "family": "aggregated",
+            "value": 11
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "minimum",
+              "title": "Find the minimum",
+              "instruction": "Use the same collection with minimum.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "aggregate",
+                "claim": "quantity($parcel, $amount).",
+                "variable": "$amount",
+                "operator": "min"
+              },
+              "expected": {
+                "family": "aggregated",
+                "value": 4
+              },
+              "scope": "main"
+            },
+            {
+              "id": "maximum",
+              "title": "Find the maximum",
+              "instruction": "Use the same collection with maximum.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "aggregate",
+                "claim": "quantity($parcel, $amount).",
+                "variable": "$amount",
+                "operator": "max"
+              },
+              "expected": {
+                "family": "aggregated",
+                "value": 7
+              },
+              "scope": "main"
+            },
+            {
+              "id": "average",
+              "title": "Find the average",
+              "instruction": "Use the same collection with average.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "aggregate",
+                "claim": "quantity($parcel, $amount).",
+                "variable": "$amount",
+                "operator": "avg"
+              },
+              "expected": {
+                "family": "aggregated",
+                "value": 5.5
+              },
+              "scope": "main"
+            },
+            {
+              "id": "empty",
+              "title": "Ask about an absent parcel",
+              "instruction": "A complete query with no bindings remains empty.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "aggregate",
+                "claim": "quantity(UnlistedParcel, $amount).",
+                "variable": "$amount",
+                "operator": "sum"
+              },
+              "expected": {
+                "family": "aggregated",
+                "empty": true
+              },
+              "scope": "main"
+            },
+            {
+              "id": "missing-variable",
+              "title": "Choose an absent variable",
+              "instruction": "Observe why the aggregate cannot produce a value.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "aggregate",
+                "claim": "quantity($parcel, $amount).",
+                "variable": "$missing",
+                "operator": "sum"
+              },
+              "expected": {
+                "family": "collection_unavailable",
+                "detail": "unbound_variable"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "repair-variable",
+              "title": "Select the numeric binding",
+              "instruction": "Repair the selection and rerun.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "aggregate",
+                "claim": "quantity($parcel, $amount).",
+                "variable": "$amount",
+                "operator": "sum"
+              },
+              "expected": {
+                "family": "aggregated",
+                "value": 11
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "aggregates",
+            "find",
+            "incomplete-collections"
+          ],
+          "self_review": [
+            "Explain the difference between finite zero, Empty, and collection unavailable."
+          ]
+        },
+        {
+          "id": "use.incomplete-collection",
+          "version": 1,
+          "title": "Withhold an unfinished total",
+          "objective": "Distinguish a complete empty answer from a refused incomplete collection.",
+          "explanation": "One named candidate appears in the inventory. A numeric operation using that name cannot be evaluated locally as arithmetic, and this browser has no external compute provider for it. The answer collector must not silently drop the unresolved candidate and call the collection empty.",
+          "tasks": [
+            "Run the unresolved collection query and inspect its typed result.",
+            "Repair the question to a locally decidable numeric condition.",
+            "Try a nonnumeric selected value and explain why no numeric total is returned."
+          ],
+          "hints": [
+            "A named entity is not the number five.",
+            "A successful answer list is complete; unresolved relevant work is not an empty list."
+          ],
+          "solution": "The original query cannot establish a complete collection, so no exhaustive rows or total are claimed. The repaired numeric condition is locally true and allows the known candidate through. An aggregate over the candidate’s name fails the numeric-value requirement. Enumeration does not dispatch external compute, and increasing depth does not supply a missing provider or turn a name into a number.",
+          "setup": [
+            {
+              "text": "dog(Nori).",
+              "source": "Named candidate"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "find",
+            "claim": "dog($candidate) & sum($candidate, 2, 3)."
+          },
+          "expected": {
+            "family": "collection_unavailable",
+            "detail": "incomplete_enumeration"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "local-condition",
+              "title": "Use the intended numeric condition",
+              "instruction": "Keep the inventory binding and repair the independent arithmetic test.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "find",
+                "claim": "dog($candidate) & sum(5, 2, 3)."
+              },
+              "expected": {
+                "family": "answers",
+                "empty": false
+              },
+              "scope": "main"
+            },
+            {
+              "id": "nonnumeric",
+              "title": "Attempt a total over names",
+              "instruction": "Select the name binding to inspect the real nonnumeric refusal.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "aggregate",
+                "claim": "dog($candidate).",
+                "variable": "$candidate",
+                "operator": "sum"
+              },
+              "expected": {
+                "family": "collection_unavailable",
+                "detail": "non_numeric_value"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "numeric-repair",
+              "title": "Supply a supported numeric measure",
+              "instruction": "The fictional record supplies a quantity for Nori.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "quantity(Nori, 5).",
+                  "source": "Candidate quantity"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "aggregate",
+                "claim": "quantity($candidate, $amount).",
+                "variable": "$amount",
+                "operator": "sum"
+              },
+              "expected": {
+                "family": "aggregated",
+                "value": 5
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "incomplete-collections",
+            "compute-boundary",
+            "aggregates",
+            "outcomes"
+          ],
+          "self_review": [
+            "Give one appropriate repair for each failure without relabeling it FALSE or zero."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "use.diagnosing",
+      "version": 1,
+      "unit": "U3",
+      "track": "use",
+      "title": "Surprising answers and admission",
+      "summary": "Diagnose closed-world assumptions, negative dependencies and refused changes using the actual project and engine diagnostics.",
+      "prerequisites": [
+        "use.witnesses-counts"
+      ],
+      "legacy_release": false,
+      "activities": [
+        {
+          "id": "use.absence-policy",
+          "version": 2,
+          "title": "Permission that depends on no breakage record",
+          "objective": "Recognize a conclusion that depends on negation as failure.",
+          "explanation": "A temporary workshop policy permits use of a listed tool when the workspace cannot derive that it is broken. This deliberately limited policy makes the missing-record assumption visible; it is not a claim that an unreported tool is physically safe. A second scene separates asking whether a material conditional holds from admitting a rule that can derive a consequence. Its negative queries also expose why closed-world absence is not a classical contraposition certificate.",
+          "tasks": [
+            "Predict permission with no broken-tool record.",
+            "Inspect the proof’s actual negation dependency.",
+            "Admit the supplied broken-tool observation and rerun.",
+            "Query a conditional and its consequent before admitting the rule.",
+            "Admit the conditional and its supplied premise, then check the consequent.",
+            "Test the converse mistake and inspect a negative query that succeeds by absence."
+          ],
+          "hints": [
+            "Read the negative condition in the rule.",
+            "Ask whether the policy checks physical reality or the current accepted record set.",
+            "A -> B is lowered as not-A OR B. A successful conditional query does not admit a rule or establish B.",
+            "A consequence by itself does not establish its antecedent. Read the negative query’s NAF evidence before attributing it to a classical inference."
+          ],
+          "solution": "Permission initially follows under this policy because broken(Tool7) cannot be derived. The proof identifies the negative dependency. Adding the broken-tool observation removes that basis for permission. The exercise repairs the evidence gap and exposes a policy choice that a real owner would need to review. In the cart scene, the initial conditional query is TRUE through absence of approval while readiness is FALSE. Querying did not add a policy. Admitting the conditional together with the supplied approval allows readiness by modus ponens. For Cart9, an accepted readiness statement and forward rule still do not establish approval: reversing the rule would change the policy. The negative approval query succeeds by absence even though readiness is TRUE; it does not certify a classical contrapositive argument. Explicit denials and contradiction checks remain separate artifacts.",
+          "setup": [
+            {
+              "text": "computer(Tool7).",
+              "source": "Tool roster"
+            },
+            {
+              "text": "all $tool: computer($tool) & ~broken($tool) -> authorized(Ari, Use, $tool).",
+              "source": "Temporary absence-based permission"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "authorized(Ari, Use, Tool7)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "record-breakage",
+              "title": "Admit the supplied observation",
+              "instruction": "A direct inspection reports that Tool7 is broken.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "broken(Tool7).",
+                  "source": "Tool7 inspection"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "authorized(Ari, Use, Tool7)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "conditional-query",
+              "title": "Query a conditional without admitting it",
+              "instruction": "With no Inspector approval for Cart8, inspect the result and its negative dependency.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "approves(Inspector, Cart8) -> ready(Cart8, Audit)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "consequent-not-admitted",
+              "title": "Check the consequent separately",
+              "instruction": "Verify that querying the conditional did not admit a rule or establish readiness.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(Cart8, Audit)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "admitted-modus-ponens",
+              "title": "Admit the rule and supplied premise",
+              "instruction": "The fictional owner now supplies the cart policy and an Inspector approval. Admit both and query readiness.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "approves(Inspector, Cart8) -> ready(Cart8, Audit).",
+                  "source": "Cart8 readiness policy"
+                },
+                {
+                  "kind": "assert",
+                  "text": "approves(Inspector, Cart8).",
+                  "source": "Cart8 Inspector approval"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(Cart8, Audit)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "converse-control",
+              "title": "Do not reverse the policy",
+              "instruction": "Cart9 has a supplied readiness record but no approval record. Admit its forward policy and check whether readiness alone supplies approval.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "approves(Inspector, Cart9) -> ready(Cart9, Audit).",
+                  "source": "Cart9 forward policy"
+                },
+                {
+                  "kind": "assert",
+                  "text": "ready(Cart9, Audit).",
+                  "source": "Cart9 readiness observation"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "approves(Inspector, Cart9)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "negative-query-boundary",
+              "title": "Read the negative evidence",
+              "instruction": "Inspect the negative approval query. It succeeds by absence despite the positive readiness record; this does not establish a classical contraposition derivation.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "~approves(Inspector, Cart9)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "negation",
+            "closed-world",
+            "proof-scope",
+            "conditionals"
+          ],
+          "self_review": [
+            "Name the missing-record assumption and explain why it mattered.",
+            "Separate conditional truth, rule admission and modus ponens.",
+            "Explain why the converse does not follow and why NAF evidence is not a classical contraposition certificate."
+          ]
+        },
+        {
+          "id": "use.negative-source",
+          "version": 1,
+          "title": "A denial has its own source",
+          "objective": "Distinguish a negative source assertion from a negative query succeeding by absence.",
+          "explanation": "A review log explicitly denies approval for Patch7. The engine retains that negative source record. A negative query still uses the engine’s negation-as-failure semantics; its successful outcome is not interchangeable with a source citation for the denial.",
+          "tasks": [
+            "Locate the retained negative assertion and its source identity.",
+            "Run the negative query and inspect its actual explanation.",
+            "Add a conflicting positive record, inspect the scan, then withdraw that specific conflicting record."
+          ],
+          "hints": [
+            "Read the assertion pane and the query proof as different artifacts.",
+            "A clean scan requires both no violations and no unresolved checks."
+          ],
+          "solution": "The denial remains an accepted source assertion. Adding a positive counterpart creates a represented contradiction that the scan reports. Withdrawing only the conflicting positive source restores the non-conflicting state while retaining the denial. The scan is a check of represented constraints, not a proof of unrestricted logical consistency.",
+          "setup": [
+            {
+              "text": "~approves(Reviewer, Patch7).",
+              "source": "Patch7 explicit denial"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "~approves(Reviewer, Patch7)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "conflict",
+              "title": "Admit a contradictory log entry",
+              "instruction": "This fictional duplicate system reports the opposite.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "approves(Reviewer, Patch7).",
+                  "source": "Patch7 conflicting approval"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "contradictions"
+              },
+              "expected": {
+                "family": "contradictions",
+                "violations": true,
+                "unresolved": false
+              },
+              "scope": "main"
+            },
+            {
+              "id": "remove-conflict",
+              "title": "Withdraw the mistaken log entry",
+              "instruction": "The owner confirms that the conflicting approval was entered in error.",
+              "changes": [
+                {
+                  "kind": "withdraw_source",
+                  "source": "Patch7 conflicting approval"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "contradictions"
+              },
+              "expected": {
+                "family": "contradictions",
+                "violations": false,
+                "unresolved": false
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "negation",
+            "constraints",
+            "assertions"
+          ],
+          "self_review": [
+            "Explain which artifact establishes that a denial was explicitly recorded."
+          ]
+        },
+        {
+          "id": "use.domain-boundary",
+          "version": 1,
+          "title": "Every listed computer",
+          "objective": "Explain the domain boundary of a universal query.",
+          "explanation": "Terminal1 is the only computer in the current inventory and it is ready for audit. The universal query ranges over the represented domain under this profile. It is not an independent survey of every computer outside the project.",
+          "tasks": [
+            "Predict the universal readiness query.",
+            "Add a newly discovered computer with no readiness record.",
+            "Repair the missing readiness evidence only after the supplied audit arrives."
+          ],
+          "hints": [
+            "Inspect which computer witnesses the project currently represents.",
+            "The word every does not acquire missing real-world inventory records."
+          ],
+          "solution": "The original universal query succeeds over the represented computer domain. The second computer makes it fail until an accepted audit record supplies its readiness. A complete answer within the engine’s domain can still depend on an incomplete real-world inventory.",
+          "setup": [
+            {
+              "text": "computer(Terminal1).",
+              "source": "Initial inventory"
+            },
+            {
+              "text": "ready(Terminal1, Audit).",
+              "source": "Terminal1 audit"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "ready(every computer, Audit)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "new-computer",
+              "title": "Add the discovered computer",
+              "instruction": "The inventory has expanded; no audit result is supplied yet.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "computer(Terminal2).",
+                  "source": "Expanded inventory"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(every computer, Audit)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "new-audit",
+              "title": "Add its supplied audit",
+              "instruction": "The second terminal now has an explicit readiness record.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "ready(Terminal2, Audit).",
+                  "source": "Terminal2 audit"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(every computer, Audit)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "closed-domain",
+            "closed-world",
+            "scope",
+            "profiles"
+          ],
+          "self_review": [
+            "State the represented domain and the external completeness assumption separately."
+          ]
+        },
+        {
+          "id": "use.negative-cycle",
+          "version": 1,
+          "title": "Repair a circular default",
+          "objective": "Inspect and repair an unstratifiable negative dependency.",
+          "explanation": "A rule says a computer is ready when it is not broken. A proposed second rule would declare it broken when it is not ready. These defaults would define each other through negation. The engine refuses that cycle instead of choosing an arbitrary answer.",
+          "tasks": [
+            "Inspect the accepted rule’s stratification.",
+            "Try the circular rule and verify that admission fails atomically.",
+            "Replace the proposed default with a rule grounded in an explicit inspection fact."
+          ],
+          "hints": [
+            "Draw the direction of each predicate dependency and mark negative edges.",
+            "A repair needs an independently supplied condition, not another spelling of the same cycle."
+          ],
+          "solution": "The second negative edge would close a cycle and is refused. The repaired rule derives breakage from a positive dangerous observation, which has its own source. The resulting graph can be stratified; the observation then defeats the absence-based readiness rule.",
+          "setup": [
+            {
+              "text": "computer(Terminal7).",
+              "source": "Terminal7 inventory"
+            },
+            {
+              "text": "all $x: computer($x) & ~broken($x) -> ready($x, Audit).",
+              "source": "Readiness default"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "inspect",
+            "view": "stratification"
+          },
+          "expected": {
+            "family": "inspection"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "cycle",
+              "title": "Try the circular default",
+              "instruction": "Attempt real admission and inspect the typed error.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "all $x: computer($x) & ~ready($x, Audit) -> broken($x).",
+                  "source": "Circular proposed default"
+                }
+              ],
+              "profile": null,
+              "operation": null,
+              "expected": {
+                "family": "failed",
+                "stage": "change",
+                "error_class": "reasoning"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "repair-cycle",
+              "title": "Use a supplied positive observation",
+              "instruction": "The inspection provides an independent condition for breakage.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "all $x: computer($x) & dangerous($x) -> broken($x).",
+                  "source": "Inspection-based breakage policy"
+                },
+                {
+                  "kind": "assert",
+                  "text": "dangerous(Terminal7).",
+                  "source": "Terminal7 danger report"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(Terminal7, Audit)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "inspect-repair",
+              "title": "Inspect the repaired dependencies",
+              "instruction": "Read actual stratification rows after successful admission.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "inspect",
+                "view": "stratification"
+              },
+              "expected": {
+                "family": "inspection"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "stratification",
+            "negation",
+            "compile-admission"
+          ],
+          "self_review": [
+            "Identify the negative cycle and the independent evidence used by the repair."
+          ]
+        },
+        {
+          "id": "use.vocabulary-signatures",
+          "version": 2,
+          "title": "A plausible name is not a predicate",
+          "objective": "Repair vocabulary and place-signature errors at the compiler boundary.",
+          "explanation": "A user types a plausible misspelling, then tries to put three arguments in the two-place approves relation. Familiar-looking text is not enough: the current KR front end resolves the committed corpus and validates its place signatures.",
+          "tasks": [
+            "Compile the misspelled name and read the actual diagnostic.",
+            "Try the overfilled approved relation.",
+            "Repair both spelling and arity, then distinguish compilation from admission.",
+            "Use the lexical reference examples to compare comments and decimals with a reserved-name collision, missing period and unsupported signed literal. Compile the valid and refused examples."
+          ],
+          "hints": [
+            "The accepted corpus name is approves.",
+            "Its places are approver and approved; an extra third positional argument has no place."
+          ],
+          "solution": "Both malformed proposals fail compilation. The repaired two-place relation compiles, but compilation alone neither admits it nor establishes that the review actually occurred. Missing trailing places may be legal omissions; overfilling a signature is a different error. Domain-specific sort configuration is explained in the reference, not simulated by a browser-only predicate declaration.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "compile",
+            "source": "approvess(Reviewer, Patch7).",
+            "structural_preflight": false
+          },
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "syntax"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "too-many-places",
+              "title": "Try an extra place",
+              "instruction": "Observe the compiler’s actual signature error.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "compile",
+                "source": "approves(Reviewer, Patch7, Morning).",
+                "structural_preflight": false
+              },
+              "expected": {
+                "family": "failed",
+                "stage": "compile",
+                "error_class": "syntax"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "repair-signature",
+              "title": "Use the supported relation",
+              "instruction": "Compile the intended two-place statement.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "compile",
+                "source": "approves(Reviewer, Patch7).",
+                "structural_preflight": true
+              },
+              "expected": {
+                "family": "compiled"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "places",
+            "types",
+            "compile-admission",
+            "lexical-forms"
+          ],
+          "self_review": [
+            "Explain why a valid predicate spelling does not verify a source claim.",
+            "Distinguish a lexical boundary, a corpus-name refusal and an intended statement’s meaning; do not remove a sign or rename an entity merely to make compilation pass."
+          ]
+        },
+        {
+          "id": "use.constraint-scan",
+          "version": 1,
+          "title": "A scan can finish with violations or remain unresolved",
+          "objective": "Read violations and unresolved checks as separate dimensions.",
+          "explanation": "A fictional classification policy requires each listed dog to be an animal or a fish. Explicit denials of both options violate that represented constraint. A second scene limits the reasoning depth while checking an opposing negative against a derived conclusion; an unfinished check must remain unresolved.",
+          "tasks": [
+            "Scan the explicit disjunctive violation.",
+            "Withdraw the erroneous denial and scan again.",
+            "Create the bounded inference scene, inspect unresolved checks, then rerun with sufficient depth."
+          ],
+          "hints": [
+            "The first violation uses explicit denied alternatives, not merely absent positive facts.",
+            "Zero reported violations cannot establish a clean scan while unresolved checks remain."
+          ],
+          "solution": "The first scan reports a represented disjunctive violation. Removing the mistaken denial repairs that conflict. In the bounded scene, the scan must retain unresolved work when it cannot finish the required inference. Raising this scene’s depth allows the opposing positive and negative to be checked; it is not a universal remedy for every unresolved reason.",
+          "setup": [
+            {
+              "text": "every dog $d: animal($d) | fish($d).",
+              "source": "Classification alternatives"
+            },
+            {
+              "text": "dog(Nori).",
+              "source": "Nori classification"
+            },
+            {
+              "text": "~animal(Nori).",
+              "source": "Mistaken animal denial"
+            },
+            {
+              "text": "~fish(Nori).",
+              "source": "Fish denial"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "contradictions"
+          },
+          "expected": {
+            "family": "contradictions",
+            "violations": true,
+            "unresolved": false
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "repair-disjunction",
+              "title": "Withdraw the mistaken denial",
+              "instruction": "The classification owner identifies the animal denial as erroneous.",
+              "changes": [
+                {
+                  "kind": "withdraw_source",
+                  "source": "Mistaken animal denial"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "contradictions"
+              },
+              "expected": {
+                "family": "contradictions",
+                "violations": false,
+                "unresolved": false
+              },
+              "scope": "main"
+            },
+            {
+              "id": "limited-scan",
+              "title": "Inspect a depth-limited scan",
+              "instruction": "Add an inference chain and an opposing denial, then scan with depth one.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "animal(every dog).",
+                  "source": "Animal classification rule"
+                },
+                {
+                  "kind": "assert",
+                  "text": "alive(every animal).",
+                  "source": "Living animal rule"
+                },
+                {
+                  "kind": "assert",
+                  "text": "~alive(Nori).",
+                  "source": "Opposing life denial"
+                }
+              ],
+              "profile": {
+                "id": "browser.shallow",
+                "version": 1,
+                "strict": false,
+                "existential_import": false,
+                "materialization": false,
+                "max_chain_depth": 1
+              },
+              "operation": {
+                "kind": "contradictions"
+              },
+              "expected": {
+                "family": "contradictions",
+                "unresolved": true
+              },
+              "scope": "main"
+            },
+            {
+              "id": "complete-scan",
+              "title": "Give this chain enough depth",
+              "instruction": "Rerun the same scan with depth twenty.",
+              "changes": [],
+              "profile": {
+                "id": "browser.deeper",
+                "version": 1,
+                "strict": false,
+                "existential_import": false,
+                "materialization": false,
+                "max_chain_depth": 20
+              },
+              "operation": {
+                "kind": "contradictions"
+              },
+              "expected": {
+                "family": "contradictions",
+                "violations": true,
+                "unresolved": false
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "constraints",
+            "depth",
+            "outcomes"
+          ],
+          "self_review": [
+            "Explain why completed and violation-free are independent properties.",
+            "Identify the evidence correction needed after the final violation."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "use.changing-knowledge",
+      "version": 1,
+      "unit": "U4",
+      "track": "use",
+      "title": "Changing knowledge without losing the record",
+      "summary": "Withdraw exact support, replace atomically, compare detached candidates and recover acknowledged knowledge.",
+      "prerequisites": [
+        "use.diagnosing"
+      ],
+      "legacy_release": false,
+      "activities": [
+        {
+          "id": "use.support-withdrawal",
+          "version": 1,
+          "title": "Two inspections support one conclusion",
+          "objective": "Withdraw source identities without confusing them with duplicate text.",
+          "explanation": "Two independently imported inspection logs contain the same readiness statement for Cart9. The statement text is equal, but the accepted records have separate identities and sources. Removing one support does not erase the other.",
+          "tasks": [
+            "Run the readiness query and locate both accepted records.",
+            "Withdraw the first log and rerun.",
+            "Withdraw the surviving log and compare the final result with earlier historical evidence."
+          ],
+          "hints": [
+            "Read assertion IDs within their project epoch, not only statement text.",
+            "A previous TRUE remains evidence about its original revision after the live state changes."
+          ],
+          "solution": "Readiness remains true after the first withdrawal because another source still supports it. It becomes not derivable after the last support is withdrawn. Earlier runs stay attached to their original revision and should be shown as historical or stale instead of silently recomputed.",
+          "setup": [
+            {
+              "text": "ready(Cart9, Audit).",
+              "source": "Inspection log North"
+            },
+            {
+              "text": "ready(Cart9, Audit).",
+              "source": "Inspection log South"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "ready(Cart9, Audit)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "withdraw-north",
+              "title": "Withdraw the first log",
+              "instruction": "Remove only the North record.",
+              "changes": [
+                {
+                  "kind": "withdraw_source",
+                  "source": "Inspection log North"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(Cart9, Audit)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "withdraw-south",
+              "title": "Withdraw the survivor",
+              "instruction": "Remove the remaining South record.",
+              "changes": [
+                {
+                  "kind": "withdraw_source",
+                  "source": "Inspection log South"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(Cart9, Audit)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "assertions",
+            "revision",
+            "replay",
+            "recovery"
+          ],
+          "self_review": [
+            "Identify the surviving source after the first change.",
+            "Explain what the original run still establishes after both withdrawals."
+          ]
+        },
+        {
+          "id": "use.atomic-replacement",
+          "version": 1,
+          "title": "A replacement must succeed as a whole",
+          "objective": "Verify that failed multi-change batches preserve the acknowledged project.",
+          "explanation": "An equipment register mistakenly names Cart1 instead of Cart2. A replacement is a withdrawal followed by a new assertion in one transaction. If the new source cannot compile, the old record must survive instead of leaving a half-applied correction.",
+          "tasks": [
+            "Run the original readiness claim.",
+            "Attempt the malformed replacement and inspect the retained state.",
+            "Apply the corrected replacement and query both the old and new targets."
+          ],
+          "hints": [
+            "The malformed replacement intentionally omits its final period.",
+            "Check the accepted records after failure; do not infer rollback merely from an error message."
+          ],
+          "solution": "The failed batch preserves the old source and acknowledged revision. The valid replacement withdraws that source and creates new support for Cart2 in one successful change. The old Cart1 claim then fails, while Cart2 succeeds. Replacements create new assertion identities; they do not rewrite the meaning of previous run evidence.",
+          "setup": [
+            {
+              "text": "ready(Cart1, Audit).",
+              "source": "Misaddressed audit"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "ready(Cart1, Audit)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "failed-replacement",
+              "title": "Try the malformed correction",
+              "instruction": "Attempt the whole replacement as one batch.",
+              "changes": [
+                {
+                  "kind": "replace_source",
+                  "source": "Misaddressed audit",
+                  "text": "ready(Cart2, Audit)",
+                  "replacement_source": "Unterminated audit correction"
+                }
+              ],
+              "profile": null,
+              "operation": null,
+              "expected": {
+                "family": "failed",
+                "stage": "change",
+                "error_class": "syntax"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "verify-survivor",
+              "title": "Verify the original survived",
+              "instruction": "Query the original target after the failed batch.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(Cart1, Audit)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "valid-replacement",
+              "title": "Apply the corrected source",
+              "instruction": "The corrected statement now includes its terminator.",
+              "changes": [
+                {
+                  "kind": "replace_source",
+                  "source": "Misaddressed audit",
+                  "text": "ready(Cart2, Audit).",
+                  "replacement_source": "Corrected Cart2 audit"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(Cart1, Audit)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "verify-new",
+              "title": "Verify the corrected target",
+              "instruction": "Check the new target at the new revision.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(Cart2, Audit)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "atomic-changes",
+            "compile-admission",
+            "revision"
+          ],
+          "self_review": [
+            "Give observable evidence that the failed batch did not partially publish."
+          ]
+        },
+        {
+          "id": "use.detached-what-if",
+          "version": 2,
+          "title": "Try a correction in a candidate world",
+          "objective": "Keep hypothetical evidence separate until its reviewed delta is admitted.",
+          "explanation": "Cart5 lacks a reviewer approval required by its readiness policy. A candidate can explore the proposed approval without altering the main project. Applying the correction later means admitting the reviewed source changes against the same base revision; it does not mean copying candidate assertion IDs into the project.",
+          "tasks": [
+            "Run the main claim, then the candidate with the proposed approval.",
+            "Compare the candidate label, epoch and source base with the unchanged main project.",
+            "Use Discard to remove a candidate. Rerun the candidate, preview the exact delta, and confirm Apply only when the supplied review record justifies it.",
+            "In a fresh attempt, change the main project after creating a candidate and verify that an old preview requires a retest against the new base."
+          ],
+          "hints": [
+            "A candidate TRUE describes a separate workspace.",
+            "Inspect the proposed source change and base revision before confirming Apply."
+          ],
+          "solution": "The main claim starts FALSE and the candidate becomes TRUE after adding its hypothetical review. Discard leaves the main project unchanged. A confirmed Apply reruns ordinary atomic admission and allocates main-project identities. Any intervening main change makes the original base stale; retest before applying. Candidate results cannot complete a main-project evidence requirement by themselves. Complete the candidate observation and pre-apply main check in that order. Applying afterwards is optional; it intentionally changes the main answer, so the earlier FALSE remains historical evidence rather than a target to recreate.",
+          "setup": [
+            {
+              "text": "all $cart: approves(Operator, $cart) & approves(Reviewer, $cart) -> ready($cart, Audit).",
+              "source": "Cart audit policy"
+            },
+            {
+              "text": "approves(Operator, Cart5).",
+              "source": "Operator Cart5 review"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "ready(Cart5, Audit)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "candidate-review",
+              "title": "Explore the proposed review",
+              "instruction": "Explore the proposed approval in the detached candidate. You may preview the delta, but keep it separate: run Recheck the main project next, before confirming Apply.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "approves(Reviewer, Cart5).",
+                  "source": "Proposed reviewer Cart5 approval"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(Cart5, Audit)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "hypothetical"
+            },
+            {
+              "id": "check-main",
+              "title": "Recheck the main project",
+              "instruction": "Before confirming Apply, verify that the main claim still lacks the review. After this check, optional Apply performs a real change; a later main query should then be TRUE, not the pre-apply FALSE expected here.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(Cart5, Audit)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "what-if",
+            "atomic-changes",
+            "revision",
+            "assertions"
+          ],
+          "self_review": [
+            "Distinguish candidate result, delta preview, and successful main admission.",
+            "Explain why a stale base needs a new candidate run."
+          ]
+        },
+        {
+          "id": "use.profiles-materialization",
+          "version": 2,
+          "title": "A profile belongs to the result",
+          "objective": "Inspect configuration changes without turning diagnostics into a guarantee.",
+          "explanation": "A short classification rule can be answered with materialization disabled or enabled. The Boolean answer remains TRUE. For this positive certificate query, the report is empty even when materialization is enabled: enabling an option does not promise that this operation uses it. Profile changes still belong in run evidence; recording detail alone does not change the logical input.",
+          "tasks": [
+            "Run the query under the standard profile.",
+            "Enable materialization and rerun, then inspect its actual report.",
+            "Make a source change and inspect how the previous materialization diagnostic becomes invalidated.",
+            "Explain what strict mode and existential import change using their reference entries."
+          ],
+          "hints": [
+            "Compare the recorded profile and revision for each run.",
+            "An empty last-query report after mutation does not mean the old result was false."
+          ],
+          "solution": "The classification remains TRUE under both profiles, and the actual report for this example has no complete or refused entries. Certificate construction uses the derivation path and does not request positive-only materialization for this query. Mutation invalidates available saturation information; inspecting another empty report does not demonstrate that stored materialized rows were removed. Existential import can change represented existence. Strict mode is prospective for supported admission checks, not a general explicit-contradiction gate. Neither option certifies source truth.",
+          "setup": [
+            {
+              "text": "dog(Nori).",
+              "source": "Nori species observation"
+            },
+            {
+              "text": "animal(every dog).",
+              "source": "Dog animal rule"
+            }
+          ],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "animal(Nori)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "enable-materialization",
+              "title": "Use the materializing profile",
+              "instruction": "Change the answer-affecting profile and rerun.",
+              "changes": [],
+              "profile": {
+                "id": "browser.materializing",
+                "version": 1,
+                "strict": false,
+                "existential_import": false,
+                "materialization": true,
+                "max_chain_depth": 10
+              },
+              "operation": {
+                "kind": "decide",
+                "claim": "animal(Nori)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "inspect-report",
+              "title": "Read the current report",
+              "instruction": "Inspect the actual report. In this example its complete and refused collections are empty; explain why this does not contradict the TRUE derivation.",
+              "changes": [],
+              "profile": null,
+              "operation": {
+                "kind": "inspect",
+                "view": "materialization"
+              },
+              "expected": {
+                "family": "inspection"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "invalidate-report",
+              "title": "Change accepted inputs",
+              "instruction": "Add a second dog and inspect again. This report is also empty; do not infer unseen saturation work from the setting alone.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "dog(Bea).",
+                  "source": "Bea species observation"
+                }
+              ],
+              "profile": null,
+              "operation": {
+                "kind": "inspect",
+                "view": "materialization"
+              },
+              "expected": {
+                "family": "inspection"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "profiles",
+            "materialization",
+            "revision",
+            "runtime-capabilities"
+          ],
+          "self_review": [
+            "Separate an input profile, a recording setting and an execution diagnostic.",
+            "State the limited meaning of strict mode."
+          ]
+        },
+        {
+          "id": "use.recovery-persistence",
+          "version": 1,
+          "title": "Recover a project, preserve an investigation",
+          "objective": "Separate browser recovery from native host persistence.",
+          "explanation": "A worker can be interrupted while a query is running. Recovery restores the last acknowledged source project, not a fabricated completed answer. This companion keeps learning progress locally and lets you export evidence; native journals, filesystems and database backends are separate host capabilities.",
+          "tasks": [
+            "Export a completed run and note its epoch, revision, operation and profile.",
+            "Use the workspace cancel or recovery controls during an operation when available; inspect the aborted attempt separately from completed evidence.",
+            "Restore the acknowledged project and rerun deliberately.",
+            "Write a recovery plan for a native deployment using the reference: identify its durable store, source validation and any host callbacks that must be rebound."
+          ],
+          "hints": [
+            "An aborted attempt has metadata but no invented verdict or proof.",
+            "A browser export is not evidence that a native filesystem journal or database transaction was executed."
+          ],
+          "solution": "Recovery validates and replays supported accepted source into a restored session. Completed historical evidence retains its original identity; a deliberate rerun creates new evidence. Browser storage can be cleared or unavailable, so an exported artifact is a useful user-controlled copy. Native persistence and runtime callback rebinding require host integration and are explained here as reference work, not simulated operations.",
+          "setup": [],
+          "profile": {
+            "id": "browser.standard",
+            "version": 1,
+            "strict": false,
+            "existential_import": false,
+            "materialization": false,
+            "max_chain_depth": 10
+          },
+          "operation": null,
+          "expected": null,
+          "question": null,
+          "actions": [],
+          "references": [
+            "recovery",
+            "persistence",
+            "replay",
+            "runtime-capabilities"
+          ],
+          "self_review": [
+            "Identify what is restored and what is not serialized.",
+            "Distinguish an aborted attempt from a completed logical outcome.",
+            "Name the host mechanism needed for the proposed native deployment."
+          ]
+        }
+      ]
+    }
+  ]
+}

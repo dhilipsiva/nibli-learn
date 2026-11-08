@@ -1,4 +1,5 @@
 //! Isolated, revision-bound browser worker client.
+pub mod platform;
 #[cfg(target_arch = "wasm32")]
 mod browser {
     use futures_channel::oneshot;
@@ -37,6 +38,8 @@ mod browser {
             kind: kind.into(),
             message: message.into(),
             record: None,
+            error_class: None,
+            stage: None,
         }
     }
 
@@ -68,8 +71,11 @@ mod browser {
         fn spawn_worker(&self) -> Result<(), String> {
             let options = WorkerOptions::new();
             options.set_type(WorkerType::Module);
-            let worker = Worker::new_with_options("/nibli-learn/worker/bootstrap.js", &options)
-                .map_err(|e| format!("Unable to start reasoning worker: {e:?}"))?;
+            let worker = Worker::new_with_options(
+                &nibli_learn_model::runtime_asset_url("worker/bootstrap.js"),
+                &options,
+            )
+            .map_err(|e| format!("Unable to start reasoning worker: {e:?}"))?;
             let weak = Rc::downgrade(&self.0);
             let message = Closure::<dyn FnMut(MessageEvent)>::new(move |event: MessageEvent| {
                 let Some(inner) = weak.upgrade() else { return };
@@ -145,11 +151,15 @@ mod browser {
                     .checked_add(1)
                     .ok_or_else(|| error("operational", "Request identity exhausted."))?;
                 let expected_revision = match command {
-                    Command::Initialize { .. } | Command::Restore { .. } => None,
+                    Command::Initialize { .. }
+                    | Command::InitializeProfile { .. }
+                    | Command::Restore { .. } => None,
                     _ => state.session.as_ref().map(|s| s.revision.clone()),
                 };
                 let expected_epoch = match command {
-                    Command::Initialize { .. } | Command::Restore { .. } => None,
+                    Command::Initialize { .. }
+                    | Command::InitializeProfile { .. }
+                    | Command::Restore { .. } => None,
                     _ => state.session.as_ref().map(|s| s.epoch.clone()),
                 };
                 let request = Request {
@@ -248,6 +258,8 @@ mod native {
                 kind: "unsupported".into(),
                 message: "The interactive worker runs in the browser.".into(),
                 record: None,
+                error_class: None,
+                stage: None,
             })
         }
         pub async fn cancel_and_restore(&self) -> Result<Reply, WorkerError> {

@@ -18,10 +18,10 @@ web-sys = "0.3"
 futures-channel = "0.3"
 nibli-learn-model = { path = "crates/model" }
 nibli-learn-client = { path = "crates/client" }
-nibli-types = { git = "https://github.com/dhilipsiva/nibli", rev = "803caefcfdeafb8d6d8a2dabfa5f2f4bb4cc6840", features = ["serde"] }
-nibli-session = { git = "https://github.com/dhilipsiva/nibli", rev = "803caefcfdeafb8d6d8a2dabfa5f2f4bb4cc6840" }
-nibli-protocol = { git = "https://github.com/dhilipsiva/nibli", rev = "803caefcfdeafb8d6d8a2dabfa5f2f4bb4cc6840" }
-nibli-render = { git = "https://github.com/dhilipsiva/nibli", rev = "803caefcfdeafb8d6d8a2dabfa5f2f4bb4cc6840" }
+nibli-types = { git = "https://github.com/dhilipsiva/nibli", rev = "0440db4233f8a8cffbf81be9654a5e54c1f9c836", features = ["serde"] }
+nibli-session = { git = "https://github.com/dhilipsiva/nibli", rev = "0440db4233f8a8cffbf81be9654a5e54c1f9c836" }
+nibli-protocol = { git = "https://github.com/dhilipsiva/nibli", rev = "0440db4233f8a8cffbf81be9654a5e54c1f9c836" }
+nibli-render = { git = "https://github.com/dhilipsiva/nibli", rev = "0440db4233f8a8cffbf81be9654a5e54c1f9c836" }
 
 [profile.release]
 opt-level = "s"

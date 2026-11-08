@@ -12,6 +12,7 @@ clippy:
 test:
     cargo test --locked --workspace --lib
     cargo test --locked -p nibli-learn-app --bins
+    cargo test --locked -p nibli-learn-worker --test curriculum --test references
 
 check-web:
     cargo check --locked --workspace --target wasm32-unknown-unknown
@@ -31,9 +32,12 @@ check-bundle:
 test-browser:
     npm run test:browser
 
+test-platform:
+    npm exec -- playwright test --config tests/platform.config.mjs
+
 ci-native: fmt-check clippy test check-web check-content
 
-ci-web: build check-bundle test-browser
+ci-web: build check-bundle test-browser test-platform
 
 ci: ci-native ci-web
 

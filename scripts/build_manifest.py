@@ -2,6 +2,7 @@
 """Bind a distributable to its actual engine sources and file bytes."""
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -47,6 +48,9 @@ for path in sorted(bundle.rglob("*")):
     "base_path": "/nibli-learn/",
     "app_revision": app_revision,
     "app_dirty": app_dirty,
+    "runtime_id": os.environ.get("NIBLI_RUNTIME_ID"),
+    "engine_identity": os.environ.get("NIBLI_BUILD_ENGINE_REVISION"),
+    "development": os.environ.get("NIBLI_BUILD_ENGINE_REVISION", "").startswith("local-"),
     "engine": engines,
     "content": {
         "manifest": "content/manifest.json",

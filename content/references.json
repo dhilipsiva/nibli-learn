@@ -1,0 +1,1587 @@
+{
+  "schema": 2,
+  "version": 2,
+  "entries": [
+    {
+      "id": "derivable",
+      "title": "What follows from accepted inputs",
+      "category": "foundations",
+      "body": "A decision asks what the current engine can establish from accepted sources under the recorded profile. A prediction is your expectation before running. A proof supports a particular derivation; it does not independently establish that source reports describe the world accurately. Read the claim, inputs, profile and revision together.",
+      "examples": [
+        {
+          "source": "all $p: member($p, Workshop) & approves(SafetyLead, $p) -> authorized($p, Use, Drill).",
+          "explanation": "Both conditions must hold for the same person before this rule supplies permission.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "proof-scope",
+        "closed-world"
+      ],
+      "links": [
+        {
+          "label": "Public engine source",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-session/src/lib.rs"
+        }
+      ]
+    },
+    {
+      "id": "closed-world",
+      "title": "Not derivable in this workspace",
+      "category": "reasoning",
+      "body": "A FALSE decision can mean that a positive claim is not derivable from this workspace under its closed-world policy. It does not report an exhaustive search of external reality. Negative conditions may rely on this absence. Repair a missing-evidence problem by obtaining and admitting justified evidence, not by asserting the desired conclusion.",
+      "examples": [
+        {
+          "source": "approves(Reviewer, Cart5).",
+          "explanation": "Without an accepted source or applicable derivation for this pair, the positive claim may be FALSE.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "closed-domain",
+        "negation",
+        "outcomes"
+      ],
+      "links": []
+    },
+    {
+      "id": "sources",
+      "title": "Source labels and accepted evidence",
+      "category": "evidence",
+      "body": "A source label tells a reader where an accepted statement was said to come from. It is metadata, not an independent verification of that source. Compare the supplied passage, the formal statement and the claim supported by the proof. A source that discusses one object cannot justify silently changing its name to another.",
+      "examples": [
+        {
+          "source": "approves(Inspector, Cart2).",
+          "explanation": "This statement is about Cart2. Relabeling it as a Cart1 observation changes the claim.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "formalization",
+        "assertions",
+        "assurance"
+      ],
+      "links": []
+    },
+    {
+      "id": "architecture",
+      "title": "Where a model, retriever and reasoner fit",
+      "category": "architecture",
+      "body": "A language model can propose an answer or draft an encoding. Retrieval can return source material. A symbolic engine can check a supplied formal claim against accepted knowledge. A reviewed combined workflow assigns separate responsibilities to drafting, source checking, formalization, admission and reasoning; failure at an earlier boundary can survive correct reasoning. The companion’s authored comparisons are illustrations, not live model measurements.",
+      "examples": [],
+      "related": [
+        "adoption",
+        "formalization",
+        "assurance",
+        "research-context"
+      ],
+      "links": []
+    },
+    {
+      "id": "formalization",
+      "title": "Preserving meaning when writing a claim",
+      "category": "representation",
+      "body": "Formalization chooses relations, argument roles, connectives and scope. A statement can compile perfectly while expressing the wrong requirement. Test a proposed encoding with cases that distinguish plausible readings, and compare names and roles with the source. Human review remains responsible for whether the chosen model fits the intended task.",
+      "examples": [
+        {
+          "source": "owns(Ari, Meter7).",
+          "explanation": "Ari is in the owner place and Meter7 in the owned place; swapping them changes the relationship.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "places",
+        "scope",
+        "counterexamples"
+      ],
+      "links": []
+    },
+    {
+      "id": "places",
+      "title": "Predicate places and names",
+      "category": "representation",
+      "body": "The KR front end resolves supported predicate names against the committed corpus. Each predicate has a place signature. Positional arguments occupy that order, and named arguments must use supported place names or x1-style positions. A duplicate filled place or an argument beyond the signature is an error. A legal omitted place, including a gap left by named arguments, becomes an unspecified value; it does not search for a matching participant.",
+      "examples": [
+        {
+          "source": "gives(giver: Ari, gift: Crate7, recipient: Bea).",
+          "explanation": "The named places make giver, gift and recipient explicit.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "omitted-arguments",
+        "compile-admission",
+        "types",
+        "lexical-forms"
+      ],
+      "links": [
+        {
+          "label": "Public engine source",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-lexicon/src/corpus/predicates.rs"
+        }
+      ]
+    },
+    {
+      "id": "compile-admission",
+      "title": "Compile, preflight, admit, query",
+      "category": "operations",
+      "body": "Compilation resolves and lowers source without admitting it. Structural preflight checks whether a compiled form is structurally usable as an assertion, but does not test every restriction of the current project. Actual admission applies the source to a candidate knowledge state and can refuse derived-only assertions or negative cycles. A query is a separate operation with its own result.",
+      "examples": [
+        {
+          "source": "ready(exactly 2 computer, Audit).",
+          "explanation": "This count can be a valid query even though it cannot be admitted as an ordinary fact.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "refusal",
+        "counts",
+        "atomic-changes"
+      ],
+      "links": [
+        {
+          "label": "Public engine source",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-session/src/execution.rs"
+        }
+      ]
+    },
+    {
+      "id": "variables",
+      "title": "Sharing a requirement across clauses",
+      "category": "representation",
+      "body": "A repeated free named variable connects one selected entity across clauses within a single ordinary connected region of a statement. Different names permit independent choices. Repetition crossing a negative, tense/deontic, quantified, anonymous-witness or abstraction scope can be refused because the engine will not guess its meaning. Use an explicit supported binder for the intended scope; separate period-terminated statements are independent scopes. Proximity of two records does not create an identity constraint.",
+      "examples": [
+        {
+          "source": "owns($p, Meter7) & approves(Inspector, $p).",
+          "explanation": "Both clauses must be satisfied by the same value of $p.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "owns($p, TerminalA) & ~approves(InspectorA, $p).",
+          "explanation": "This free-name repetition crosses a negative boundary and is refused rather than assigned an implicit reading.",
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "semantic"
+          }
+        },
+        {
+          "source": "owns(some person where ~approves(InspectorA, it), TerminalA).",
+          "explanation": "The relative condition belongs to the same selected person who fills the owner place.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "scope",
+        "find",
+        "counterexamples"
+      ],
+      "links": []
+    },
+    {
+      "id": "connectives",
+      "title": "Combining requirements",
+      "category": "representation",
+      "body": "AND requires both connected conditions. OR permits an alternative. Their consequences depend on variable sharing and quantifier scope as well as the connective itself. Use a one-condition case and a split-identity case to test the intended rule; a happy path with both conditions true cannot distinguish AND from OR. A material conditional A -> B is a formula with the not-A OR B shape. Its truth as a query, its admission as a forward rule, and a derived consequent are different observations.",
+      "examples": [
+        {
+          "source": "approves(TestRunner, BuildA) & approves(Reviewer, BuildA).",
+          "explanation": "Both named approvals are required by this conjunction.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "counterexamples",
+        "variables",
+        "scope",
+        "conditionals"
+      ],
+      "links": []
+    },
+    {
+      "id": "counterexamples",
+      "title": "Cases that distinguish encodings",
+      "category": "learning",
+      "body": "A useful counterexample makes a wrong encoding disagree with the intended requirement. For a two-review policy, test the checker alone, the reviewer alone, reviews on different objects and both reviews on one object. A failure can reveal missing evidence, an incorrect rule, or a boundary of the operation. Diagnose which one before changing knowledge.",
+      "examples": [],
+      "related": [
+        "connectives",
+        "formalization",
+        "assurance"
+      ],
+      "links": []
+    },
+    {
+      "id": "scope",
+      "title": "Which quantifier depends on which",
+      "category": "representation",
+      "body": "Quantifier scope determines whether witnesses may differ. A computer selected inside a requirement for each person may depend on that person; one computer selected outside can be shared across people. Named variables make intended identity links explicit. Inspect actual compiled structure to compare encodings, without mistaking a valid encoding for a reviewed requirement. Test scope with a split-owner counterexample: one owner per computer does not require a single owner of them all. Shared free-variable factoring stops at lexical scope boundaries; make an intended supported shared scope explicit instead of assuming every repeated spelling is accepted.",
+      "examples": [
+        {
+          "source": "every computer $c: owns(some person, $c).",
+          "explanation": "Each computer may have a different owner; this does not require one owner of all computers.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "variables",
+        "descriptions",
+        "witness-origins",
+        "restrictor-places",
+        "operator-grammar"
+      ],
+      "links": []
+    },
+    {
+      "id": "proof-scope",
+      "title": "What a proof supports",
+      "category": "evidence",
+      "body": "A proof is the recorded certificate for a particular claim and input state. It can cite accepted sources and record rule applications, equality or negative dependencies. It is different from the chronology of search and from a source’s truth in the world. After a project changes, a historical proof still concerns its original epoch, revision and profile.",
+      "examples": [],
+      "related": [
+        "replay",
+        "revision",
+        "assurance"
+      ],
+      "links": [
+        {
+          "label": "Public engine source",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-types/src/logic.rs"
+        }
+      ]
+    },
+    {
+      "id": "assertions",
+      "title": "Text, identity and independent support",
+      "category": "evidence",
+      "body": "Two accepted records can contain the same statement text and still have independent assertion identities and sources. Withdrawing one removes only that support. Identity is scoped to a project epoch; a decimal ID in a detached candidate does not identify the main project’s record. Replacing a source creates new accepted support rather than rewriting old evidence.",
+      "examples": [],
+      "related": [
+        "revision",
+        "atomic-changes",
+        "what-if"
+      ],
+      "links": [
+        {
+          "label": "Public engine source",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-types/src/execution.rs"
+        }
+      ]
+    },
+    {
+      "id": "assurance",
+      "title": "Separate the assurance boundaries",
+      "category": "architecture",
+      "body": "Source accuracy, faithful encoding and implementation behavior are separate obligations. Soundness and completeness are claims about specified formal systems and conditions; they are not synonyms for correct external data or unlimited search. A bounded operation can fail to decide even when a claim has a mathematical answer. State the assumptions and evidence behind an assurance claim, then choose tests that could expose its failure.",
+      "examples": [],
+      "related": [
+        "proof-scope",
+        "outcomes",
+        "adoption"
+      ],
+      "links": []
+    },
+    {
+      "id": "outcomes",
+      "title": "Decision results and operation failures",
+      "category": "operations",
+      "body": "TRUE, FALSE, UNKNOWN and RESOURCE_EXCEEDED are logical decision results. UNKNOWN retains the actual engine reason, and resource exhaustion retains the actual resource kind. Compilation errors, refused changes, aborted attempts and unavailable collections have distinct operation results. Do not display an error as FALSE, or an interruption as a completed proof. Certificate-only exhaustion is a reasoning operation failure: the API could not supply a complete certificate, so the UI must not turn that failure into FALSE.",
+      "examples": [],
+      "related": [
+        "depth",
+        "compute-boundary",
+        "incomplete-collections",
+        "recovery",
+        "resource-budgets"
+      ],
+      "links": [
+        {
+          "label": "Public engine source",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-types/src/logic.rs"
+        }
+      ]
+    },
+    {
+      "id": "compute-boundary",
+      "title": "Local arithmetic and external compute",
+      "category": "runtime",
+      "body": "Supported numeric operations can be evaluated locally when their arguments are usable numbers. A nonnumeric named entity can instead require an external compute capability that this browser does not provide. Enumeration does not dispatch external compute and refuses an incomplete result. Increasing inference depth cannot supply a missing provider or convert an arbitrary name into a number.",
+      "examples": [
+        {
+          "source": "sum(5, 2, 3).",
+          "explanation": "This ground arithmetic test is locally decidable; sum(Label, 2, 3) reaches a different boundary.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "outcomes",
+        "incomplete-collections",
+        "runtime-capabilities"
+      ],
+      "links": []
+    },
+    {
+      "id": "depth",
+      "title": "A bounded inference chain",
+      "category": "runtime",
+      "body": "Maximum chain depth limits a particular reasoning search. If the engine reports depth exhaustion, that run has not established a Boolean answer. Raising the limit can finish a short known chain, but is not a general repair for unsupported syntax, missing evidence or unavailable compute. Keep the old run with its original profile when rerunning. Increasing this setting does not increase the fixed formula-work or certificate allowances.",
+      "examples": [
+        {
+          "source": "dog(Nori). animal(every dog). alive(every animal).",
+          "explanation": "A shallow profile can prevent the query alive(Nori) from completing this chain.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "profiles",
+        "outcomes",
+        "revision",
+        "resource-budgets"
+      ],
+      "links": []
+    },
+    {
+      "id": "runtime-capabilities",
+      "title": "Where an operation actually runs",
+      "category": "runtime",
+      "body": "The companion executes the supported KR/source workflow in a browser worker. Native host sort configuration, direct IR integrations, filesystem journals, Redb storage, WASI fuel and memory controls, and external runtime callbacks require their respective host environments. They are reference topics here, not simulated browser features. Browser depth exhaustion does not demonstrate WASI fuel or memory exhaustion. The browser also enforces shared engine formula-work and certificate-size limits; a fuel outcome therefore need not be a WASI instruction-fuel trap.",
+      "examples": [],
+      "related": [
+        "types",
+        "persistence",
+        "compute-boundary",
+        "resource-budgets"
+      ],
+      "links": [
+        {
+          "label": "Public engine source",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-session/src/lib.rs"
+        }
+      ]
+    },
+    {
+      "id": "recovery",
+      "title": "Acknowledged state and interrupted attempts",
+      "category": "runtime",
+      "body": "Cancelling an operation ends that attempt without inventing an outcome or proof. Recovery reconstructs the last acknowledged supported source state; it must not publish a partly applied change. A deliberate rerun creates new evidence. Runtime callbacks, subscriptions, cancellation handles and caches are not durable knowledge and may need host reinstallation after native recovery.",
+      "examples": [],
+      "related": [
+        "atomic-changes",
+        "persistence",
+        "revision"
+      ],
+      "links": [
+        {
+          "label": "Public engine source",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-session/src/execution.rs"
+        }
+      ]
+    },
+    {
+      "id": "replay",
+      "title": "Execution history versus proof",
+      "category": "evidence",
+      "body": "Execution history records the observed chronology of an operation, including attempts, candidates, failures and bounded omissions. A proof records the successful justification or the actual decision explanation supplied by its API. Moving through an existing recording must not execute the engine again. Operations such as find or scan may provide recorded execution and typed results without a Boolean proof certificate.",
+      "examples": [],
+      "related": [
+        "proof-scope",
+        "outcomes",
+        "revision"
+      ],
+      "links": [
+        {
+          "label": "Public engine source",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-types/src/execution.rs"
+        }
+      ]
+    },
+    {
+      "id": "refusal",
+      "title": "A refused change preserves the project",
+      "category": "operations",
+      "body": "An admission refusal means the proposed change did not become accepted knowledge. Derived-only relations protect conclusions that should come from rules rather than direct assertions. Negative cycles and query-only forms can be refused for other reasons. Read the typed stage and class, inspect the unchanged accepted state, and repair the proposal at the relevant boundary.",
+      "examples": [
+        {
+          "source": "derived_only(\"ready\").",
+          "explanation": "After this declaration, direct readiness assertions must pass the actual derived-only admission rules.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "compile-admission",
+        "stratification",
+        "atomic-changes"
+      ],
+      "links": []
+    },
+    {
+      "id": "adoption",
+      "title": "Choosing a useful first project",
+      "category": "architecture",
+      "body": "Choose a small decision with identifiable sources, reviewable requirements and a maintainer. Compare the effort of source acquisition, initial encoding, review, change management and regression cases. Model-assisted drafting can reduce some work while adding review obligations; symbolic checks can expose modeled errors while leaving unmodeled ones. Evaluate the proposed workflow with actual tasks before claiming speed, cost or accuracy gains.",
+      "examples": [],
+      "related": [
+        "architecture",
+        "assurance",
+        "counterexamples"
+      ],
+      "links": []
+    },
+    {
+      "id": "omitted-arguments",
+      "title": "Unspecified places and existential witnesses",
+      "category": "representation",
+      "body": "An underscore or a legal omitted place becomes the explicit Unspecified value. It is rigid: it does not act as a wildcard for any named participant. Named arguments route filled places but leave gaps unspecified in the same way. Thus a receipt for gives(Ari, Crate7, Bea). does not establish gives(Ari, _, Bea). Use ? for a fresh existential witness when the intended claim requires some participant; use Find to return its actual binding. Each ? is independent. Use a shared named variable when several clauses must refer to the same witness. An unspecified place does not prove that no real-world participant exists.",
+      "examples": [
+        {
+          "source": "gives(Ari, _, Bea).",
+          "explanation": "With only gives(Ari, Crate7, Bea). accepted, this is FALSE: the unspecified gift is not Crate7.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "gives(giver: Ari, recipient: Bea).",
+          "explanation": "This legal named-place omission has the same unspecified gift and remains FALSE from that receipt.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "gives(Ari, ?, Bea).",
+          "explanation": "This existential claim is TRUE from the receipt; Find returns Crate7 as the gift witness.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "rain().",
+          "explanation": "An observative leaves its places unspecified; it is not a wildcard search for a named participant.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "places",
+        "variables",
+        "find"
+      ],
+      "links": []
+    },
+    {
+      "id": "descriptions",
+      "title": "Existential and fixed descriptions",
+      "category": "representation",
+      "body": "Description forms contribute different terms and quantifier structure. An existential description searches for a suitable witness under the query’s scope. A fixed description is not automatically rewritten to any named item with the same predicate. Use supported identity evidence or a correctly scoped existential when that is the intended requirement.",
+      "examples": [
+        {
+          "source": "owns(Ari, some computer).",
+          "explanation": "This asks for a computer witness owned by Ari, rather than assuming a fixed description names an existing inventory constant.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "scope",
+        "identity",
+        "witness-origins",
+        "determiner-forms"
+      ],
+      "links": []
+    },
+    {
+      "id": "identity",
+      "title": "Names and accepted equality",
+      "category": "representation",
+      "body": "Different source names are not automatically aliases. An accepted identity statement can connect them, affecting substitution and answer deduplication while preserving independent source records. Generated witness display labels are not stable identity handles and must not be parsed as such. The current answer API exposes terms and origins, not a full public equivalence-class explorer. Identity using = is distinct from exact numeric num_equal and arithmetic comparison; a computed relation does not merge entity identities. Numeric compute forms are query-only where the admission contract requires it.",
+      "examples": [
+        {
+          "source": "TerminalA = OldTerminalA.",
+          "explanation": "This identity can make two otherwise distinct answer names count as one.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "num_equal(2, 2).",
+          "explanation": "This is an exact numeric test, not an instruction to merge two entity names.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "TerminalA = TerminalB = TerminalC.",
+          "explanation": "Equality is binary; state each reviewed identity separately rather than using a chain.",
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "syntax"
+          }
+        }
+      ],
+      "related": [
+        "counts",
+        "witness-origins",
+        "assertions"
+      ],
+      "links": []
+    },
+    {
+      "id": "witness-origins",
+      "title": "Where an answer witness came from",
+      "category": "answers",
+      "body": "A returned binding includes its variable, displayed logical term and origin. Origins distinguish knowledge-base entities, generated witnesses and existential-import witnesses. Existential witnesses can depend on surrounding universal variables; the rule and compiled scope express those dependencies. The current projection does not supply a complete stable dependency graph, so do not infer edges from generated display names.",
+      "examples": [
+        {
+          "source": "all $p, $r: member($p, Workshop) & member($r, ReviewTeam) -> gives($p, some computer, $r).",
+          "explanation": "The existential computer is within the scope of both pair variables.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "scope",
+        "find",
+        "profiles"
+      ],
+      "links": [
+        {
+          "label": "Public engine source",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-types/src/logic.rs"
+        }
+      ]
+    },
+    {
+      "id": "profiles",
+      "title": "Configuration is part of the question",
+      "category": "runtime",
+      "body": "A run profile records strict mode, existential import, materialization and maximum chain depth. Existential import is off by default and can change which witnesses exist; changing it rebuilds accepted source transactionally. Strict mode is prospective for supported admission checks, including configured integrity constraints; it is not a general explicit-contradiction gate. A changed answer-affecting profile creates a new input state; recording detail alone does not.",
+      "examples": [
+        {
+          "source": "animal(every dog).",
+          "explanation": "With import disabled this universal does not itself require a dog to exist; the supported import profile can add a corresponding witness.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "materialization",
+        "depth",
+        "witness-origins"
+      ],
+      "links": [
+        {
+          "label": "Public engine source",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-session/src/lib.rs"
+        }
+      ]
+    },
+    {
+      "id": "relatives",
+      "title": "Restrictions and additional predications",
+      "category": "representation",
+      "body": "A where-relative restricts the described entity; an also-relative adds the corresponding predication in its supported matrix structure. The relative placeholder it refers to the relevant described entity, with the innermost binding controlling nested uses. A parenthesized relative body that omits its required it reference is refused. Compare actual lowered structure when deciding whether an encoding preserves the intended restriction. After a relative-body equality, an unparenthesized following relative can attach to the equality’s right-hand term. Parenthesizing the equality keeps a following relative at the outer level. There is no outer-it subscript: nested it refers inward, so rewrite requirements that need a different relationship.",
+      "examples": [
+        {
+          "source": "owns(Ari, some computer where broken(it)).",
+          "explanation": "The relative body constrains the computer being described, not an unrelated named object.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "owns(Ari, some computer where it = TerminalA also broken).",
+          "explanation": "The trailing also describes the equality’s TerminalA term under the innermost attachment rule.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "owns(Ari, some computer where (it = TerminalA) also broken).",
+          "explanation": "Parenthesizing the equality keeps the following also at the outer described computer.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "owns(Ari, some computer where broken(Pump7)).",
+          "explanation": "The relative body never refers to its described entity, so it is refused.",
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "syntax"
+          }
+        }
+      ],
+      "related": [
+        "scope",
+        "descriptions",
+        "compile-admission"
+      ],
+      "links": []
+    },
+    {
+      "id": "events-modifiers",
+      "title": "Event structure and modifier grouping",
+      "category": "representation",
+      "body": "The compiler lowers predication into event and role structure. A modifier chain is not automatically a conjunction of independent claims. The current lowering preserves every unit but flattens grouping beyond head selection: [big red] computer(Workstation7). and big red computer(Workstation7). have identical lowered logic. Brackets can express written grouping without producing a distinct inference meaning here. Compare the real artifacts and this representation limit.",
+      "examples": [
+        {
+          "source": "big red(Crate7).",
+          "explanation": "Compare this modifier structure with big(Crate7) & red(Crate7) instead of assuming they are interchangeable.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "[big red] computer(Workstation7).",
+          "explanation": "The current lowered logic is the same as big red computer(Workstation7).; do not invent a semantic grouping distinction.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "places",
+        "compile-admission"
+      ],
+      "links": [
+        {
+          "label": "Public engine source",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-semantics/src/lib.rs"
+        }
+      ]
+    },
+    {
+      "id": "tense-deontics",
+      "title": "Time and modal flavors are explicit",
+      "category": "representation",
+      "body": "Past, present, future and deontic forms do not automatically project into bare facts or into each other. A rule must explicitly connect flavors when that is its intended policy. Supported surface order places a temporal prefix before its negative atom, and combined prefix families or prefixing a group can be refused. A must statement is not evidence that the ordinary event already occurred. For example, all $x: past dry($x) -> past ready($x, Paint). preserves Past on both literals; it does not establish bare ready from a past observation.",
+      "examples": [
+        {
+          "source": "past ~dry(Bench7).",
+          "explanation": "This is the supported order for the temporal negative atom; ~past dry(Bench7) is refused.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "all $x: past dry($x) -> past ready($x, Paint).",
+          "explanation": "An explicitly admitted historical criterion can derive past readiness. An unmarked readiness query remains a different claim.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "scope",
+        "negation",
+        "compile-admission"
+      ],
+      "links": []
+    },
+    {
+      "id": "abstractions",
+      "title": "A proposition can be an argument",
+      "category": "representation",
+      "body": "A fact abstraction packages propositional content as a term, and an event abstraction packages event content. Admitting an outer statement about knowledge or desire does not independently admit the embedded body. Treat the quoted content and the ordinary world-level assertion as different claims. Inspect the compiler for actual structure.",
+      "examples": [
+        {
+          "source": "knows(Ari, fact { broken(Pump7) }).",
+          "explanation": "This knowledge report does not by itself add broken(Pump7) as an independent ordinary assertion.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "types",
+        "scope",
+        "compile-admission",
+        "abstraction-kinds"
+      ],
+      "links": []
+    },
+    {
+      "id": "types",
+      "title": "Surface checks and native domain sorts",
+      "category": "representation",
+      "body": "The source front end checks supported terms, predicate signatures and structural combinations. Those checks do not establish that every named constant has the real-world domain role intended by an author. Native sort configuration can add domain constraints through host APIs, but this browser curriculum does not configure sorts using invented predicate declarations. A compiled statement still needs source and meaning review.",
+      "examples": [],
+      "related": [
+        "places",
+        "compile-admission",
+        "runtime-capabilities"
+      ],
+      "links": []
+    },
+    {
+      "id": "find",
+      "title": "Complete answer bindings",
+      "category": "answers",
+      "body": "Find returns bindings for the query’s selected variables when enumeration completes. A successful empty result means no answers within the represented domain and supported query, not a failure to run. Relevant unresolved candidates prevent an exhaustive collection from being returned. Returned rows are results; they are not a substitute for recorded execution events.",
+      "examples": [
+        {
+          "source": "owns($owner, Meter7) & approves(Inspector, $owner).",
+          "explanation": "The shared variable selects owners satisfying both conditions.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "variables",
+        "incomplete-collections",
+        "counts"
+      ],
+      "links": [
+        {
+          "label": "Public engine source",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-reason/src/lib.rs"
+        }
+      ]
+    },
+    {
+      "id": "counts",
+      "title": "Count bindings, not source rows",
+      "category": "answers",
+      "body": "Count measures distinct complete answer bindings under the query, including accepted equality deduplication. It is not the number of assertions, events or printed spellings. Exact-count and no-description forms are query-only in this source workflow. A count is only definitive when its underlying enumeration completes.",
+      "examples": [
+        {
+          "source": "ready(exactly 2 computer, Audit).",
+          "explanation": "This asks whether exactly two represented computer witnesses satisfy readiness; it is not an admissible inventory observation.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "find",
+        "identity",
+        "incomplete-collections"
+      ],
+      "links": []
+    },
+    {
+      "id": "aggregates",
+      "title": "Finite values, Empty and unavailable",
+      "category": "answers",
+      "body": "Sum, minimum, maximum and average select one named numeric binding across a complete answer collection. Every selected value must be present, numeric and finite, and the computed result must be finite. Empty remains Empty, including sum; it is not manufactured zero. Missing variables, nonnumeric values, nonfinite inputs or results and incomplete enumeration are unavailable results with actual typed reasons.",
+      "examples": [
+        {
+          "source": "quantity($parcel, $amount).",
+          "explanation": "Selecting $amount aggregates quantities; selecting a parcel name does not produce a numeric total.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "find",
+        "incomplete-collections",
+        "compute-boundary"
+      ],
+      "links": [
+        {
+          "label": "Public engine source",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-reason/src/lib.rs"
+        }
+      ]
+    },
+    {
+      "id": "incomplete-collections",
+      "title": "Do not total unfinished answers",
+      "category": "answers",
+      "body": "A collection cannot be called exhaustive while a relevant candidate or domain-closure check is unresolved. Find, count and aggregate preserve that boundary instead of silently presenting partial rows, zero or an Empty aggregate. Diagnose the typed failure: a missing numeric binding needs a different repair from depth exhaustion or unavailable compute. No error message substring is a substitute for the engine’s typed classification.",
+      "examples": [],
+      "related": [
+        "find",
+        "counts",
+        "aggregates",
+        "outcomes"
+      ],
+      "links": []
+    },
+    {
+      "id": "negation",
+      "title": "Absence, a denial and NAF",
+      "category": "reasoning",
+      "body": "An explicit negative source can be admitted and keeps its own assertion identity. A negative query uses the engine’s negation-as-failure semantics, so success from absence is not interchangeable with a citation to an explicit denial. Rules depending on a negative condition can lose support when new positive knowledge arrives. Contradiction scans separately examine represented opposing claims and constraints.",
+      "examples": [
+        {
+          "source": "~approves(Reviewer, Patch7).",
+          "explanation": "This may be a retained source assertion; inspect the source record separately from how a negative query is evaluated.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "closed-world",
+        "constraints",
+        "stratification"
+      ],
+      "links": []
+    },
+    {
+      "id": "closed-domain",
+      "title": "Which entities every ranges over",
+      "category": "reasoning",
+      "body": "A universal query is evaluated over the represented domain under its profile. Import settings and newly admitted entities can change that domain. A result over all listed computers does not independently establish that the inventory contains every physical computer. Domain completeness and absence of a derivation are related but different modeling assumptions.",
+      "examples": [
+        {
+          "source": "ready(every computer, Audit).",
+          "explanation": "Adding an unaudited computer can change this result without changing the readiness policy.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "closed-world",
+        "scope",
+        "profiles"
+      ],
+      "links": []
+    },
+    {
+      "id": "stratification",
+      "title": "Negative dependency cycles",
+      "category": "reasoning",
+      "body": "Rules with negative conditions need an admissible dependency ordering. A cycle through negation is refused rather than resolved by an arbitrary ordering. The actual stratification report exposes predicate strata and dependency information. Repair a circular default with independently supported positive conditions or a reviewed different policy, not merely renamed predicates.",
+      "examples": [
+        {
+          "source": "all $x: computer($x) & ~broken($x) -> ready($x, Audit).",
+          "explanation": "Adding a reverse default from not-ready to broken would create a negative cycle.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "negation",
+        "refusal",
+        "compile-admission"
+      ],
+      "links": [
+        {
+          "label": "Public engine source",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-reason/src/lib.rs"
+        }
+      ]
+    },
+    {
+      "id": "constraints",
+      "title": "Violations and unresolved checks",
+      "category": "reasoning",
+      "body": "A contradiction report contains both reported violations and unresolved checks. A clean completed scan requires both collections to be empty. The scan checks represented constraints and opposing claims; it is not unrestricted first-order consistency checking. Findings are supplied as actual report text and gap data, without invented assertion links or proof certificates.",
+      "examples": [
+        {
+          "source": "every dog $d: animal($d) | fish($d).",
+          "explanation": "This disjunctive conclusion registers a constraint; explicitly denying both alternatives for a dog can violate it.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "negation",
+        "depth",
+        "outcomes"
+      ],
+      "links": [
+        {
+          "label": "Public engine source",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-reason/src/contradictions.rs"
+        }
+      ]
+    },
+    {
+      "id": "atomic-changes",
+      "title": "Publish a whole successful change",
+      "category": "knowledge",
+      "body": "A change batch applies ordered assertions and withdrawals to a candidate state and publishes only if the whole batch succeeds. A replacement is a specific withdrawal plus new accepted source. If compilation or admission fails, the acknowledged project survives. Check accepted records and revision after failure; retain the failure record separately from successful knowledge.",
+      "examples": [],
+      "related": [
+        "revision",
+        "assertions",
+        "recovery"
+      ],
+      "links": [
+        {
+          "label": "Public engine source",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-session/src/execution.rs"
+        }
+      ]
+    },
+    {
+      "id": "what-if",
+      "title": "A candidate is a separate world",
+      "category": "knowledge",
+      "body": "A hypothetical operation applies an explicit delta and profile to a detached source snapshot. Its epoch, results and assertion identities belong to that candidate. Discard changes nothing in the main project. After a delta preview and confirmation, Apply performs fresh ordinary admission against the matching main base; stale bases require retest and candidate IDs are never transplanted.",
+      "examples": [],
+      "related": [
+        "atomic-changes",
+        "revision",
+        "assertions"
+      ],
+      "links": []
+    },
+    {
+      "id": "revision",
+      "title": "Evidence is bound to its inputs",
+      "category": "evidence",
+      "body": "An epoch identifies a project incarnation and a revision identifies its acknowledged input state. A source or answer-affecting profile change makes older results historical for the current project. Replay retains the original identity and never reruns reasoning. A new deliberate query receives a new run identity even when its answer is unchanged.",
+      "examples": [],
+      "related": [
+        "replay",
+        "profiles",
+        "what-if"
+      ],
+      "links": []
+    },
+    {
+      "id": "materialization",
+      "title": "A diagnostic of actual work",
+      "category": "runtime",
+      "body": "Materialization is an execution option, not a permanent certificate of all possible answers. Its report describes the actual work available for the relevant state or last query. Before a query or after a mutation, the report can be empty because saturation information was invalidated. Compare ordinary verdicts and recorded profiles while keeping diagnostic lifecycle separate from source truth. An enabled option may do no saturation for a particular operation. The positive classification certificate example has an empty report under the enabled profile; the actual report, not the toggle, establishes what was materialized.",
+      "examples": [],
+      "related": [
+        "profiles",
+        "revision",
+        "replay"
+      ],
+      "links": [
+        {
+          "label": "Public engine source",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-reason/src/lib.rs"
+        }
+      ]
+    },
+    {
+      "id": "persistence",
+      "title": "Browser copies and native durability",
+      "category": "runtime",
+      "body": "Browser progress and exported evidence are local learning artifacts; storage may be unavailable or cleared. Native hosts can integrate source snapshots, journals, filesystems or database storage such as Redb, each with its own durability and recovery contract. Source-recoverable imports validate schema, identity and source-to-compiled correspondence rather than trusting arbitrary inspected IR. Runtime callbacks and other live host resources are not serialized and require explicit rebind.",
+      "examples": [],
+      "related": [
+        "recovery",
+        "runtime-capabilities",
+        "atomic-changes"
+      ],
+      "links": [
+        {
+          "label": "Public engine source",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-session/src/execution.rs"
+        }
+      ]
+    },
+    {
+      "id": "resource-budgets",
+      "title": "Formula work, certificate size and recording limits",
+      "category": "runtime",
+      "body": "The shared browser/native evaluator allows 1,000,000 formula-node entries per verdict search across its depth passes, with a separate equal allowance for certificate construction. Wide quantifier products can reach this limit without a deep rule chain. Verdict-search exhaustion returns RESOURCE_EXCEEDED with fuel as its kind and indeterminate context. A 100,000-step certificate ceiling or exhausted certificate walk instead refuses the whole certificate as a reasoning error; no partial TRUE/FALSE certificate is published. These fixed engine limits are separate from configurable chain depth, bounded execution recording, browser cancellation and WASI instruction-fuel or memory controls. A truncated recording leaves the underlying reasoning result unchanged. Diagnose the actual boundary, preserve the attempted run, and narrow the question only when that matches the task; a smaller question does not answer the exhausted universal one.",
+      "examples": [],
+      "related": [
+        "depth",
+        "outcomes",
+        "runtime-capabilities",
+        "replay"
+      ],
+      "links": [
+        {
+          "label": "Public resource contracts",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/GUARANTEES.md"
+        }
+      ]
+    },
+    {
+      "id": "conditionals",
+      "title": "Conditional truth and admitted rules",
+      "category": "reasoning",
+      "body": "A -> B lowers to not-A OR B. Asking that formula as a query can succeed through absence of A without establishing B, and a query does not admit a rule. An admitted supported conditional can supply a forward rule: with A established, modus ponens can derive B. B alone does not establish A; reversing a rule changes its meaning. Classical contraposition relies on classical implication and negation. Here a successful ~A query may use negation as failure, even without a relevant conditional, so read its actual evidence rather than calling it a classical contraposition proof. Retained explicit denials and contradiction scans have their own contracts.",
+      "examples": [
+        {
+          "source": "approves(Inspector, Cart8) -> ready(Cart8, Audit).",
+          "explanation": "Compare querying this conditional, querying readiness alone, and admitting the rule with a justified approval premise.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "connectives",
+        "negation",
+        "compile-admission",
+        "constraints"
+      ],
+      "links": [
+        {
+          "label": "Public conditional and scope specification",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/NIBLI_KR.md"
+        }
+      ]
+    },
+    {
+      "id": "research-context",
+      "title": "Two research perspectives on reasoning systems",
+      "category": "architecture",
+      "body": "John McCarthy’s Programs with Common Sense (1959) proposes a system that manipulates formal statements and draws conclusions from supplied premises. Karpas and colleagues’ MRKL Systems (2022) proposes a modular architecture combining neural models with discrete knowledge and reasoning modules. These selected primary sources show that explicit representation and combinations of learning with reasoning are research design choices, not accuracy guarantees. The companion’s reviewed drafting-and-reasoning workflow is one concrete arrangement; it does not represent the whole field. Compare what each proposal stores, learns and checks, then separate the proposal from evidence about an implemented system.",
+      "examples": [],
+      "related": [
+        "architecture",
+        "assurance",
+        "adoption"
+      ],
+      "links": [
+        {
+          "label": "McCarthy, Programs with Common Sense (1959)",
+          "url": "https://www-formal.stanford.edu/jmc/mcc59.pdf"
+        },
+        {
+          "label": "Karpas et al., MRKL Systems (2022)",
+          "url": "https://arxiv.org/abs/2205.00445"
+        }
+      ]
+    },
+    {
+      "id": "lexical-forms",
+      "title": "Names, variables, strings and statement boundaries",
+      "category": "representation",
+      "body": "A statement ends with a period; predicate calls need parentheses. Lowercase predicate spellings must resolve in the committed vocabulary. Capitalized names, $variables, numbers and quoted strings are different term forms. Decimal digits stay together. Line comments begin with #; block comments use /* and */ and do not nest. Identifier syntax is ASCII, while string payloads can contain Unicode. Supported string escapes are an escaped quote or backslash; a raw newline is not a string escape. Opaque words such as me, this and it_a do not look up a conversational referent or assign themselves from the previous sentence. A name that would collide with one of these terms, such as Me, is refused. Bare reserved words have grammar roles; a longer identifier is not split into a keyword and a suffix.",
+      "examples": [
+        {
+          "source": "# Reviewed inventory\ncomputer(Terminal_7). /* local record */",
+          "explanation": "Comments do not become assertions; the period terminates the predicate call.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "quantity(Crate7, 2.5).",
+          "explanation": "The decimal point belongs to the numeric token; a separate final period terminates the statement.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "knows(Ari, \"café\").",
+          "explanation": "A quoted Unicode payload is accepted as a constant; it is not parsed as a predicate.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "computer(me). computer(it_a).",
+          "explanation": "These are opaque terms, not a lookup of the current speaker or a previously mentioned computer.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "all $everyday: dog($everyday) -> animal($everyday).",
+          "explanation": "The variable spelling is preserved; everyday is not split into a keyword and a suffix.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "computer(Me).",
+          "explanation": "This capitalized name would collide with the opaque me term; choose an unambiguous intended name.",
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "syntax"
+          }
+        },
+        {
+          "source": "quantity(Crate7, -2).",
+          "explanation": "Signed numeric literals are not part of this implemented grammar; do not silently drop the sign to repair the meaning.",
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "syntax"
+          }
+        },
+        {
+          "source": "computer(Terminal7)",
+          "explanation": "A missing period is a compilation failure, not FALSE.",
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "syntax"
+          }
+        },
+        {
+          "source": "everyday(Crate7).",
+          "explanation": "The identifier is lexically whole but is not a supported predicate in this corpus.",
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "syntax"
+          }
+        }
+      ],
+      "related": [
+        "places",
+        "variables",
+        "omitted-arguments",
+        "compile-admission"
+      ],
+      "links": [
+        {
+          "label": "Public implemented syntax",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/NIBLI_KR.md"
+        }
+      ]
+    },
+    {
+      "id": "determiner-forms",
+      "title": "Existence, definite domains and exact zero",
+      "category": "representation",
+      "body": "some introduces an existential witness; the is a fixed description, not evidence of existence. every ranges over its restrictor, while every the uses an opaque definite-domain restrictor rather than the ordinary predicate inventory. A the ... $name: block substitutes the same fixed description through its body. exactly N counts matching entity witnesses; no is its exact-zero query form, not a durable prohibition. Count forms can compile while actual assertion admission refuses them. Term and block spellings express these choices explicitly; a fractional exact count is not accepted. A negated restrictor such as some ~computer constrains the selected witness, unlike negating the outer predication. exactly N the also counts the opaque definite domain.",
+      "examples": [
+        {
+          "source": "ready(no computer, Audit).",
+          "explanation": "This asks whether zero represented computer witnesses meet readiness; it does not record a prohibition.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "no computer $c: ready($c, Audit).",
+          "explanation": "The block spelling names the same exact-zero witness condition.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "ready(exactly 0 computer, Audit).",
+          "explanation": "This expresses the zero-count question explicitly.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "ready(every the computer, Audit).",
+          "explanation": "The opaque definite domain is not automatically populated by ordinary computer observations.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "every the computer $c: ready($c, Audit).",
+          "explanation": "A named block keeps that definite-domain choice explicit.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "the computer $c: ready($c, Audit) & broken($c).",
+          "explanation": "The block reuses one fixed designator; it does not discover or create a computer.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "ready(exactly 2.5 computer, Audit).",
+          "explanation": "An exact-count determiner takes a natural-number count, not a fraction.",
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "syntax"
+          }
+        },
+        {
+          "source": "ready(exactly 2 the computer, Audit).",
+          "explanation": "This is a query-only count over the opaque definite domain, not the ordinary computer inventory.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "exactly 2 the computer $c: ready($c, Audit).",
+          "explanation": "The block form preserves the definite-domain count choice.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "ready(some ~computer, Audit).",
+          "explanation": "The negation restricts the selected witness; it does not negate the whole readiness claim.",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [
+        "descriptions",
+        "counts",
+        "closed-domain",
+        "scope",
+        "profiles"
+      ],
+      "links": [
+        {
+          "label": "Public implemented syntax",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/NIBLI_KR.md"
+        }
+      ]
+    },
+    {
+      "id": "restrictor-places",
+      "title": "Linked restrictor arguments and selected places",
+      "category": "representation",
+      "body": "A restrictor can fill additional predicate places while its bound entity occupies the remaining selected place. Linked positional arguments start after the ordinary bound first place. Descriptions inside linked arguments close inside that restrictor scope; do not move them outside and assume the same witness sharing. A compact .x2 selector puts the bound entity in the second place. The selector must be adjacent to its predicate and does not also take linked arguments. A named it can state the selected bound place in the longer form. Replacing that place with an unrelated fixed argument leaves no place for the bound entity and is refused.",
+      "examples": [
+        {
+          "source": "ready(every owns(Meter7), Audit).",
+          "explanation": "The quantified entities occupy owns x1; Meter7 fills its linked second place.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "ready(every owns(x2: Meter7), Audit).",
+          "explanation": "The same linked second place is written explicitly.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "ready(every owns(some computer), Audit).",
+          "explanation": "The computer description is scoped inside the ownership restrictor.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "computer(every owns.x2).",
+          "explanation": "The bound entities occupy owns x2 rather than the first place.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "computer(every owns(x2: it)).",
+          "explanation": "The longer form marks the second place as the bound entity.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "ready(every owns(x1: Meter7), Audit).",
+          "explanation": "A fixed first-place value cannot silently replace the bound entity; use the intended linked or selected place.",
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "syntax"
+          }
+        },
+        {
+          "source": "computer(every owns .x2).",
+          "explanation": "Whitespace breaks the compact selector; write the adjacent selector or a supported long form.",
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "syntax"
+          }
+        },
+        {
+          "source": "computer(every owns.x2(Ari)).",
+          "explanation": "A selected compact restrictor cannot also carry linked arguments; rewrite with named places.",
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "syntax"
+          }
+        }
+      ],
+      "related": [
+        "places",
+        "scope",
+        "relatives",
+        "determiner-forms"
+      ],
+      "links": [
+        {
+          "label": "Public implemented syntax",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/NIBLI_KR.md"
+        }
+      ]
+    },
+    {
+      "id": "tags-compounds",
+      "title": "Attached relations and curated compounds",
+      "category": "representation",
+      "body": "via adds a relation in the current lowering: the supplied tag term fills that relation’s first place, and the main predication’s first argument fills its second place; remaining places are unspecified. It does not link to a reified event identifier. Inspect that actual projection before choosing the form for an intended causal or instrumental claim. Tag syntax accepts one supplied term and requires a predicate with at least two places. A + compound instead names a committed corpus relation with its own place structure. Juxtaposed modifiers remain productive, but plausible uncurated compounds are refused. Replacing a compound with modifiers can change meaning and requires review.",
+      "examples": [
+        {
+          "source": "ready(Cart7, Audit) via cause(some rain).",
+          "explanation": "The current flat cause relation uses the rain witness and Cart7, with its remaining place unspecified; it does not use the readiness event ID.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "ready(Cart7, Audit) via uses(Meter7).",
+          "explanation": "Inspect the actual uses(Meter7, Cart7, unspecified) projection before claiming this syntax expresses the intended tool relationship.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "ready(Cart7, Audit) via person(Ari).",
+          "explanation": "The unary person relation cannot provide the required two tag places.",
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "syntax"
+          }
+        },
+        {
+          "source": "ready(Cart7, Audit) via cause(Ari, Bea).",
+          "explanation": "A via tag accepts one supplied term, not an ordinary multi-argument call.",
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "syntax"
+          }
+        },
+        {
+          "source": "computer+user(Ari, Terminal7, Audit).",
+          "explanation": "This curated compound has a declared relation and place structure; its places are not inferred from the words.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "computer+inspector(Ari).",
+          "explanation": "A plausible uncurated compound is refused instead of being interpreted as its final word.",
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "syntax"
+          }
+        },
+        {
+          "source": "computer + user(Ari).",
+          "explanation": "The compound join must be adjacent; spaces do not create an alternative compound syntax.",
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "syntax"
+          }
+        }
+      ],
+      "related": [
+        "events-modifiers",
+        "places",
+        "compile-admission"
+      ],
+      "links": [
+        {
+          "label": "Public implemented syntax",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/NIBLI_KR.md"
+        },
+        {
+          "label": "Public tag lowering",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-semantics/src/semantic/compile.rs"
+        }
+      ]
+    },
+    {
+      "id": "abstraction-kinds",
+      "title": "Opaque content kinds and the property slot",
+      "category": "representation",
+      "body": "The implemented abstraction terms distinguish event, fact, property, amount and concept content. Their brace-delimited bodies stay inside the content term; an outer knowledge or desire assertion does not admit the body as an ordinary fact. A property body may use slot for its open place. slot is neither a free named variable nor an independent ? witness, and is refused outside a property body. An amount abstraction is an opaque content kind, not a computed aggregate or measured number. These forms do not supply arbitrary higher-order execution, automatic belief truth or an assignment mechanism.",
+      "examples": [
+        {
+          "source": "knows(Ari, event { broken(Pump7) }).",
+          "explanation": "The embedded event content is not an independently admitted breakage observation.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "knows(Ari, fact { broken(Pump7) }).",
+          "explanation": "The fact-content term remains part of the outer knowledge statement.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "knows(Ari, property { broken(slot) }).",
+          "explanation": "The open place belongs to this property content.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "knows(Ari, amount { broken(Pump7) }).",
+          "explanation": "An amount-kind content term is not a numeric aggregate result.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "knows(Ari, concept { broken(Pump7) }).",
+          "explanation": "The content kind is retained without making the embedded predicate an outer assertion.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "broken(slot).",
+          "explanation": "There is no property binder for this open place.",
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "syntax"
+          }
+        },
+        {
+          "source": "knows(Ari, fact { broken(slot) }).",
+          "explanation": "A fact abstraction does not bind the property-only slot.",
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "syntax"
+          }
+        }
+      ],
+      "related": [
+        "abstractions",
+        "types",
+        "scope",
+        "aggregates"
+      ],
+      "links": [
+        {
+          "label": "Public implemented syntax",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/NIBLI_KR.md"
+        }
+      ]
+    },
+    {
+      "id": "operator-grammar",
+      "title": "Precedence, alternatives and refused negation",
+      "category": "representation",
+      "body": "From tighter to looser, the surface operators are atomic negation, temporal/deontic prefixes, AND &, OR |, XOR ^, biconditional <->, and conditional ->. Implication associates to the right. XOR expresses one alternative rather than both; biconditional connects both directions at the formula level. Parentheses can make a compound grouping explicit. Negation and temporal/deontic prefixes apply only to supported atoms, so ~(A & B), repeated negation prefixes and past (A & B) are refused. Write the supported Boolean expansion when it preserves the intended meaning. Compilation alone does not establish the formula or make every connective shape admissible as a rule.",
+      "examples": [
+        {
+          "source": "dog(Nori) | animal(Nori) & alive(Nori).",
+          "explanation": "AND binds more tightly: the right-hand alternative requires both animal and alive.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "(dog(Nori) | animal(Nori)) & alive(Nori).",
+          "explanation": "The explicit grouping requires alive as well as one of the first two alternatives.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "dog(Nori) ^ animal(Nori).",
+          "explanation": "The formula asks for the exclusive alternative, not inclusive OR.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "dog(Nori) <-> animal(Nori).",
+          "explanation": "The biconditional is a two-direction formula; inspecting it is separate from admission.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "dog(Nori) -> animal(Nori) -> alive(Nori).",
+          "explanation": "Implication is right-associated: dog implies the animal-implies-alive formula.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "~(dog(Nori) & animal(Nori)).",
+          "explanation": "A negated compound has no supported direct surface carrier.",
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "syntax"
+          }
+        },
+        {
+          "source": "~dog(Nori) | ~animal(Nori).",
+          "explanation": "This is the supported Boolean expansion of not-both for these atomic claims.",
+          "expected": {
+            "family": "compiled"
+          }
+        },
+        {
+          "source": "~~dog(Nori).",
+          "explanation": "Repeated atomic negation prefixes are not supported syntax.",
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "syntax"
+          }
+        },
+        {
+          "source": "past (dog(Nori) & animal(Nori)).",
+          "explanation": "A temporal prefix cannot wrap the compound sentence directly; qualify intended literals explicitly.",
+          "expected": {
+            "family": "failed",
+            "stage": "compile",
+            "error_class": "syntax"
+          }
+        }
+      ],
+      "related": [
+        "connectives",
+        "conditionals",
+        "negation",
+        "tense-deontics",
+        "scope"
+      ],
+      "links": [
+        {
+          "label": "Public implemented syntax",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/NIBLI_KR.md"
+        }
+      ]
+    }
+  ]
+}

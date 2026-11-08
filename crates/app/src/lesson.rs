@@ -96,33 +96,6 @@ pub const STEPS: [Step; 7] = [
     },
 ];
 
-pub const FOUNDATIONS: [(&str, &str); 6] = [
-    (
-        "Prediction versus derivation",
-        "Distinguish what you expect from what follows from stated inputs.",
-    ),
-    (
-        "Precise claims",
-        "Express argument roles, shared variables and scope without losing intent.",
-    ),
-    (
-        "Evidence",
-        "Trace a conclusion to its assertions and review what those inputs establish.",
-    ),
-    (
-        "Reasoning outcomes",
-        "Read four outcomes precisely and separate them from errors and refusals.",
-    ),
-    (
-        "Investigating and revising a decision",
-        "Predict, run, inspect, change evidence and repair a release policy.",
-    ),
-    (
-        "Comparing neuro-symbolic approaches",
-        "Compare architectures, their failure modes and maintenance costs.",
-    ),
-];
-
 pub const REFERENCES: [(&str, &str, &str); 8] = [
     (
         "derivable",
