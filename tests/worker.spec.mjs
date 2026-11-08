@@ -363,3 +363,19 @@ test('profile changes bind WASM results and recording preferences do not change 
   expect(bad.result.Err).toBeDefined();
   expect((await ok(page,{kind:'inspect'})).session).toEqual(changed.session);
 });
+
+test('worker review tickets are exact, single-use and invalidated by knowledge changes', async ({page}) => {
+  await start(page); const initial=await initialize(page);
+  const draft={source_id:'inspection-v1',source_label:'Inspection note',source_text:'Inspector approved CartB.',formal_text:'approves(Inspector, CartA).'};
+  const prepared=await ok(page,{kind:'prepare_review',draft}); expect(prepared.session).toEqual(initial.session); expect(prepared.review.canonical_kr.toLowerCase()).toContain('carta');
+  const noHuman=await request(page,{kind:'admit_reviewed',preparation:prepared.review,draft,human_confirmed:false}); expect(noHuman.result.Err).toBeDefined();
+  const fresh=await ok(page,{kind:'prepare_review',draft});
+  await change(page,[{kind:'assert',text:'computer(Terminal).',source:'Intervening evidence'}]);
+  const stale=await request(page,{kind:'admit_reviewed',preparation:fresh.review,draft,human_confirmed:true}); expect(stale.result.Err).toBeDefined();
+  const repaired={...draft,formal_text:'approves(Inspector, CartB).'}; const reviewed=await ok(page,{kind:'prepare_review',draft:repaired});
+  const admitted=await ok(page,{kind:'admit_reviewed',preparation:reviewed.review,draft:repaired,human_confirmed:true}); expect(admitted.session.assertions.find(a=>a.review).text).toBe(repaired.formal_text);
+  expect((await request(page,{kind:'admit_reviewed',preparation:reviewed.review,draft:repaired,human_confirmed:true})).result.Err).toBeDefined();
+  const restored=await ok(page,{kind:'restore',session:admitted.session}); expect(restored.session.assertions).toEqual(admitted.session.assertions);
+  const bad=structuredClone(admitted.session);bad.recovery.sources[bad.assertions.find(a=>a.review).id].review.source_text='Tampered';
+  expect((await request(page,{kind:'restore',session:bad})).result.Err).toBeDefined(); expect((await ok(page,{kind:'inspect'})).session).toEqual(restored.session);
+});

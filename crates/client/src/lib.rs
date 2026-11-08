@@ -1,5 +1,6 @@
 //! Isolated, revision-bound browser worker client.
 pub mod platform;
+pub mod tutor;
 #[cfg(target_arch = "wasm32")]
 mod browser {
     use futures_channel::oneshot;

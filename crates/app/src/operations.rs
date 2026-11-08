@@ -480,6 +480,7 @@ pub fn AcceptedSources() -> Element {
                         span { class: "eyebrow", "Source · {a.source}" }
                         pre { "{a.text}" }
                         span { class: "small muted", "Assertion {a.id}" }
+                        if let Some(review)=&a.review { details { summary { "Learner-reviewed source provenance" } p { "{review.source_id}: {review.source_text}" } p { class:"small muted", "Source hash {review.source_sha256}. This is retained learner attestation, not independent authentication." } } }
                         button { class: "button small interactive-only", disabled: s.busy,
                             onclick: { let id = a.id.clone(); move |_| send(state, Command::Change { changes: vec![Change::Withdraw { id: id.clone() }] }, Purpose::Change) },
                             "Withdraw this source"

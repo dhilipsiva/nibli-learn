@@ -276,7 +276,7 @@ pub fn ActivityWorkspace() -> Element {
             }
             section{class:"workspace curriculum-workspace","aria-label":"Reasoning workspace",
                 crate::operations::OperationToolbar {}
-                div{class:"workspace-content",if !s.notice.is_empty(){div{class:"notice","{s.notice}"}}if !s.storage_error.is_empty(){div{class:"notice error","{s.storage_error}"}}crate::operations::ActivityControls {}crate::operations::OperationResultView {}crate::operations::CandidateView {}crate::operations::AcceptedSources {}}
+                div{class:"workspace-content",if !s.notice.is_empty(){div{class:"notice","{s.notice}"}}if !s.storage_error.is_empty(){div{class:"notice error","{s.storage_error}"}}crate::operations::ActivityControls {}crate::operations::OperationResultView {}crate::operations::CandidateView {}crate::operations::AcceptedSources {}crate::integration::ReviewPanel {}}
             }
         }
     }

@@ -23,6 +23,9 @@ nibli-session = { git = "https://github.com/dhilipsiva/nibli", rev = "0440db4233
 nibli-protocol = { git = "https://github.com/dhilipsiva/nibli", rev = "0440db4233f8a8cffbf81be9654a5e54c1f9c836" }
 nibli-render = { git = "https://github.com/dhilipsiva/nibli", rev = "0440db4233f8a8cffbf81be9654a5e54c1f9c836" }
 
+nibli-formalize = { git = "https://github.com/dhilipsiva/nibli", rev = "0440db4233f8a8cffbf81be9654a5e54c1f9c836" }
+nibli-kr = { git = "https://github.com/dhilipsiva/nibli", rev = "0440db4233f8a8cffbf81be9654a5e54c1f9c836" }
+
 [profile.release]
 opt-level = "s"
 lto = true

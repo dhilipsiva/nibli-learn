@@ -12,6 +12,7 @@ use std::{cell::RefCell, collections::BTreeMap};
 use wasm_bindgen::prelude::*;
 
 mod operations;
+mod review;
 
 // Reviewed display frames for the original release exercise. These only phrase
 // already-derived proof facts; they do not change parsing, evidence, or reasoning.
@@ -111,6 +112,8 @@ fn phase_observer(_: &Request) -> Option<ExecutionObserverHandle> {
 struct SourceInfo {
     text: String,
     source: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    review: Option<ReviewProvenance>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -255,6 +258,11 @@ impl Session {
             let Some(record) = records.iter().find(|r| r.id == value) else {
                 return Err(fail("validation", "Source references an absent assertion."));
             };
+            if let Some(review) = &source.review {
+                review
+                    .validate(&source.text)
+                    .map_err(|message| fail("validation", message))?;
+            }
             if source.text != record.label || source.source.len() > 4096 {
                 return Err(fail(
                     "validation",
@@ -290,6 +298,7 @@ impl Session {
                     )
                 });
                 Assertion {
+                    review: self.sources.get(&id).and_then(|s| s.review.clone()),
                     source: self
                         .sources
                         .get(&id)
@@ -381,6 +390,7 @@ impl Session {
                     self.sources.insert(
                         id,
                         SourceInfo {
+                            review: None,
                             text: text.clone(),
                             source: source.clone(),
                         },
@@ -495,6 +505,8 @@ fn stringify_proof_identities(value: &mut Value) {
 #[derive(Default)]
 pub struct Runtime {
     session: Option<Session>,
+    pending_review: Option<ReviewPreparation>,
+    review_counter: u64,
 }
 impl Runtime {
     pub fn handle(&mut self, request: Request) -> Response {
@@ -536,6 +548,15 @@ impl Runtime {
         let mut operation = None;
         let mut hypothetical = None;
         let mut validated_session = None;
+        let mut review = None;
+        if matches!(
+            request.command,
+            Command::Initialize { .. }
+                | Command::InitializeProfile { .. }
+                | Command::Restore { .. }
+        ) {
+            self.pending_review = None;
+        }
         match request.command.clone() {
             Command::Initialize {
                 epoch,
@@ -661,6 +682,43 @@ impl Runtime {
                         session.require_base(&source_epoch, &source_revision)?;
                         change_record = Some(session.change(&changes, observer.clone())?);
                     }
+                    Command::PrepareReview { draft } => {
+                        self.pending_review = None;
+                        self.review_counter = self
+                            .review_counter
+                            .checked_add(1)
+                            .ok_or_else(|| fail("validation", "Review identity exhausted."))?;
+                        let prepared = session.prepare_review(
+                            draft,
+                            format!(
+                                "review:{}:{}:{}",
+                                request.generation, request.id, self.review_counter
+                            ),
+                            observer.clone(),
+                        )?;
+                        self.pending_review = Some(prepared.clone());
+                        review = Some(prepared);
+                    }
+                    Command::AdmitReviewed {
+                        preparation,
+                        draft,
+                        human_confirmed,
+                    } => {
+                        let prepared = self.pending_review.take().ok_or_else(|| {
+                            fail(
+                                "review",
+                                "Prepare and review this draft again before admission.",
+                            )
+                        })?;
+                        if !human_confirmed || prepared != *preparation || prepared.draft != draft {
+                            return Err(fail(
+                                "review",
+                                "Review requires explicit human confirmation of the exact prepared source and draft.",
+                            ));
+                        }
+                        session.require_review_base(&prepared)?;
+                        change_record = Some(session.admit_reviewed(prepared, observer.clone())?);
+                    }
                     Command::ValidateProject { session: proposed } => {
                         validated_session = Some(Session::restore(proposed)?.view()?);
                     }
@@ -744,6 +802,7 @@ impl Runtime {
             operation,
             hypothetical,
             validated_session,
+            review,
         })
     }
 }

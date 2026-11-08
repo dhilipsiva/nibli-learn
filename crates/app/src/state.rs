@@ -86,6 +86,8 @@ struct LocalState {
 }
 
 pub struct AppState {
+    pub review: crate::integration::ReviewState,
+    pub tutor: crate::integration::TutorState,
     pub learning: crate::curriculum::LearningState,
     pub client: Option<WorkerClient>,
     pub session: Option<SessionView>,
@@ -172,6 +174,8 @@ impl AppState {
             };
         let learning = crate::curriculum::LearningState::new(&progress, session.is_some());
         let mut state = Self {
+            review: crate::integration::ReviewState::default(),
+            tutor: crate::integration::TutorState::default(),
             learning,
             client: None,
             session,
@@ -410,6 +414,25 @@ pub fn send(mut state: Signal<AppState>, command: Command, purpose: Purpose) {
         let Some(client) = s.client.clone() else {
             return;
         };
+        if matches!(
+            &command,
+            Command::Initialize { .. }
+                | Command::InitializeProfile { .. }
+                | Command::Restore { .. }
+        ) {
+            s.review = crate::integration::ReviewState::default();
+            if matches!(&command, Command::Restore { .. })
+                && let Some(draft) = s
+                    .learning
+                    .workspace
+                    .active_project
+                    .as_ref()
+                    .and_then(|id| s.learning.workspace.projects.get(id))
+                    .and_then(|p| p.review_draft.clone())
+            {
+                s.review.draft = draft;
+            }
+        }
         s.serial += 1;
         s.busy = true;
         s.operation = "running".into();

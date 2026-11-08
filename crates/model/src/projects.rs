@@ -23,6 +23,8 @@ pub struct ProjectDocument {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub imported_from: Option<ProjectOrigin>,
     pub session: SessionView,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub review_draft: Option<crate::ReviewDraft>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -44,6 +46,7 @@ impl ProjectDocument {
             lesson: None,
             activity: None,
             imported_from: None,
+            review_draft: None,
             session,
         }
     }
@@ -90,6 +93,9 @@ impl ProjectDocument {
         }) {
             return Err("Invalid imported project provenance.".into());
         }
+        if let Some(draft) = &self.review_draft {
+            draft.validate_bounds()?;
+        }
         match (&self.lesson, &self.activity) {
             (Some(lesson), Some(activity)) if course.activity(lesson, activity).is_some() => {}
             (None, None) => {}
@@ -119,6 +125,7 @@ impl ProjectDocument {
                 lesson: None,
                 activity: None,
                 imported_from: None,
+                review_draft: None,
                 session: old.session,
             }
         } else {

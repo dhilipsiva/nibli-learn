@@ -19,7 +19,7 @@ for name in required:
 manifest = json.loads((root / "build-manifest.json").read_text())
 assert_public_bytes((root / "build-manifest.json").read_bytes(), "build-manifest.json")
 assert manifest["schema"] == 1 and manifest["base_path"] == "/nibli-learn/"
-assert set(manifest["engine"]) == {"nibli-session", "nibli-types", "nibli-protocol", "nibli-render"}
+assert {"nibli-session", "nibli-types", "nibli-protocol", "nibli-render", "nibli-formalize", "nibli-kr"} <= set(manifest["engine"])
 content_path = root / "content/manifest.json"
 content = json.loads(content_path.read_text())
 assert manifest["content"] == {"manifest": "content/manifest.json", "schema": content["schema"],
@@ -29,6 +29,7 @@ if "--release" in sys.argv:
     assert manifest.get("development") is False, "Development engine snapshots cannot be released"
     assert manifest["app_revision"] != "uncommitted-development"
     assert not manifest["app_dirty"], "Release bundle must be built from a clean app commit"
+    assert all(p["source"].rsplit("#", 1)[-1] == manifest["engine_identity"] for p in manifest["engine"].values()), "Engine package revisions must agree"
     assert all(p["source"].startswith("git+") and re.search(r"#[a-f0-9]{40}$", p["source"])
                for p in manifest["engine"].values()), "Release engine inputs must be pinned Git commits"
 actual = {p.relative_to(root).as_posix() for p in root.rglob("*")

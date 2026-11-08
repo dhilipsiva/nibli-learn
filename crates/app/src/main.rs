@@ -3,6 +3,7 @@ use nibli_learn_model::*;
 
 mod curriculum;
 mod inspectors;
+mod integration;
 mod lesson;
 mod local;
 mod offline;
@@ -74,6 +75,7 @@ fn App() -> Element {
                 Screen::Packs => rsx!{ offline::OfflinePage {} },
             }
             Footer {}
+            if s.drawer.is_some() { Drawer {} }
             if s.reset_dialog { ResetDialog {} }
             if s.learning.apply_dialog { operations::ApplyDialog {} }
         }
@@ -101,7 +103,7 @@ fn TopBar() -> Element {
             }
             div { class: "top-actions",
                 button { class: "button quiet optional-link", id: "reference-trigger", onclick: move |_| { if state.peek().learning.is_legacy() && matches!(state.peek().screen,Screen::Lesson|Screen::Sandbox){state.write().drawer=Some("reference".into());}else{navigate(state,Screen::Reference);} }, "Reference" }
-                if s.learning.is_legacy() {button { class: "button quiet optional-link", id: "tutor-trigger", onclick: move |_| { navigate(state,Screen::Lesson);state.write().drawer=Some("tutor".into()); }, "Tutor · optional" }}
+                button { class: "button quiet optional-link", id: "tutor-trigger", onclick: move |_| { state.write().drawer=Some("tutor".into()); }, "Tutor · optional" }
                 button { class: "button quiet small", title: if light { "Switch to dark theme" } else { "Switch to light theme" }, "data-testid": "theme-toggle", onclick: move |_| { state.write().theme=if light {"dark".into()} else {"light".into()}; persist(state); }, if light { "◐ Dark" } else { "◑ Light" } }
                 button { class: if saved { "badge ok" } else { "badge warn" }, onclick: move |_| navigate(state,Screen::Data),
                     span { class: "dot", "aria-hidden": "true" } if saved { "Saved on this device" } else if s.learning.save_busy { "Saving locally…" } else { "Not saved · export work" }
@@ -148,7 +150,7 @@ fn LessonWorkspace() -> Element {
         div { class:"reading-notice", strong { "Reading mode on this screen" }
             "Read lessons, statements and saved results here. Editing, running, replay and proof inspection need a window at least 768 px wide."
         }
-        main { id:"main-content",tabindex:"-1", class:if s.drawer.is_some() {"lesson-frame with-drawer"} else {"lesson-frame"},
+        main { id:"main-content",tabindex:"-1", class:"lesson-frame",
             if !sandbox { StepRail {} LessonPanel {} }
             section { class:"workspace", "aria-label":"Reasoning workspace",
                 if s.complete && !sandbox { Completion {} }
@@ -162,14 +164,13 @@ fn LessonWorkspace() -> Element {
                         if !s.storage_error.is_empty() { div { class:"notice error", "{s.storage_error}" button { class:"button small", onclick:move |_| navigate(state,Screen::Data), "Export local work" } } }
                         if s.exercise_open { RepairExercise {} }
                         else { match s.pane {
-                            Pane::Knowledge=>rsx!{ Knowledge {} },
+                            Pane::Knowledge=>rsx!{ Knowledge {} integration::ReviewPanel {} },
                             Pane::Replay=>rsx!{div{class:"interactive-only",inspectors::Replay {}} NarrowRunReading {}},
                             Pane::Proof=>rsx!{div{class:"interactive-only",inspectors::Proof {}} NarrowRunReading {}},
                         } }
                     }
                 }
             }
-            if s.drawer.is_some() { Drawer {} }
         }
     }
 }
@@ -625,9 +626,9 @@ fn Drawer() -> Element {
         .iter()
         .find(|r| r.0 == s.reference)
         .unwrap_or(&lesson::REFERENCES[0]);
-    rsx! {aside{class:"drawer",role:"region","aria-labelledby":"drawer-heading",onkeydown:move|e|{if e.key()==Key::Escape{state.write().drawer=None;focus(if tutor{"tutor-trigger"}else{"reference-trigger"});}},
-        div{class:"drawer-header",h2{id:"drawer-heading",tabindex:"-1",if tutor{"Optional tutor"}else{"Reference"}}button{class:"button square","aria-label":"Close side panel",onclick:move |_|{state.write().drawer=None;focus(if tutor{"tutor-trigger"}else{"reference-trigger"});},"×"}}
-        if tutor{span{class:"badge","Planned · Integrate Applications"}p{style:"margin-top:20px","The live tutor arrives in the integration phase. This lesson is complete with its authored hints, explanations and actual engine inspection."}p{"Future model connections will use your own key or local endpoint. Context is sent only through an explicit action; model suggestions never grade work or silently admit knowledge."}button{class:"button",onclick:move |_|{let mut s=state.write();let step=s.step();s.progress.steps[step-1].hint_revealed=true;s.drawer=None;},"Open this step's authored hint"}}
+    rsx! {aside{class:"drawer",role:"region","aria-labelledby":"drawer-heading",onkeydown:move|e|{if e.key()==Key::Escape{if tutor{integration::cancel_tutor(state);}state.write().drawer=None;focus(if tutor{"tutor-trigger"}else{"reference-trigger"});}},
+        div{class:"drawer-header",h2{id:"drawer-heading",tabindex:"-1",if tutor{"Optional tutor"}else{"Reference"}}button{class:"button square","aria-label":"Close side panel",onclick:move |_|{if tutor{integration::cancel_tutor(state);}state.write().drawer=None;focus(if tutor{"tutor-trigger"}else{"reference-trigger"});},"×"}}
+        if tutor{integration::TutorPanel {}}
         else{div{class:"drawer-list",for (id,title,_) in lesson::REFERENCES{button{class:if s.reference==id{"active"}else{""},onclick:move |_|state.write().reference=id.into(),"{title}"}}}h3{"{reference.1}"}p{style:"margin-top:14px","{reference.2}"}button{class:"button small",onclick:move |_|{state.write().drawer=None;navigate(state,Screen::Reference);},"Open reference library →"}}
     }}
 }

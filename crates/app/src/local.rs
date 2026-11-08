@@ -64,6 +64,7 @@ pub fn capture(mut state: Signal<AppState>) {
                 )
             });
         p.session = session;
+        p.review_draft = Some(s.review.draft.clone());
         p.engine_revision = ENGINE_REVISION.into();
         if s.screen == Screen::Lesson
             || (p.lesson.is_none() && id == "original-release" && s.learning.is_legacy())

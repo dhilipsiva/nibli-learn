@@ -13,7 +13,7 @@ metadata = json.loads(subprocess.check_output(
 ))
 engines = {}
 for package in metadata["packages"]:
-    if package["name"] in {"nibli-session", "nibli-types", "nibli-protocol", "nibli-render"}:
+    if package["name"].startswith("nibli-") and not package["name"].startswith("nibli-learn-"):
         engines[package["name"]] = {
             "version": package["version"],
             "source": package["source"] or "local-development",

@@ -1848,6 +1848,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "nibli-formalize"
+version = "0.2.0"
+source = "git+https://github.com/dhilipsiva/nibli?rev=0440db4233f8a8cffbf81be9654a5e54c1f9c836#0440db4233f8a8cffbf81be9654a5e54c1f9c836"
+dependencies = [
+ "gloo-net",
+ "nibli-kr",
+ "nibli-lexicon",
+ "nibli-reason",
+ "nibli-render",
+ "nibli-semantics",
+ "nibli-types",
+ "serde_json",
+]
+
+[[package]]
 name = "nibli-kr"
 version = "0.2.0"
 source = "git+https://github.com/dhilipsiva/nibli?rev=0440db4233f8a8cffbf81be9654a5e54c1f9c836#0440db4233f8a8cffbf81be9654a5e54c1f9c836"
@@ -1895,6 +1910,7 @@ version = "0.1.0"
 dependencies = [
  "serde",
  "serde_json",
+ "sha2",
 ]
 
 [[package]]
@@ -1902,6 +1918,8 @@ name = "nibli-learn-worker"
 version = "0.1.0"
 dependencies = [
  "js-sys",
+ "nibli-formalize",
+ "nibli-kr",
  "nibli-learn-model",
  "nibli-protocol",
  "nibli-render",
@@ -2605,6 +2623,17 @@ name = "sha1"
 version = "0.10.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e3bf829a2d51ab4a5ddf1352d8470c140cadc8301b2ae1789db023f01cedd6ba"
+dependencies = [
+ "cfg-if",
+ "cpufeatures",
+ "digest",
+]
+
+[[package]]
+name = "sha2"
+version = "0.10.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283"
 dependencies = [
  "cfg-if",
  "cpufeatures",

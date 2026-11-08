@@ -1,6 +1,9 @@
 import { defineConfig } from '@playwright/test';
 import { fileURLToPath } from 'node:url';
 
+const port = Number(process.env.NIBLI_TEST_PORT || 4178);
+if (!Number.isInteger(port) || port < 1024 || port > 65535) throw new Error('Invalid NIBLI_TEST_PORT');
+
 export default defineConfig({
   testDir: '.',
   testMatch: '*.spec.mjs',
@@ -12,7 +15,7 @@ export default defineConfig({
   reporter: [['list'], ['json', { outputFile: fileURLToPath(new URL('../test-results/results.json', import.meta.url)) }]],
   outputDir: '../test-results/artifacts',
   use: {
-    baseURL: 'http://127.0.0.1:4178',
+    baseURL: `http://127.0.0.1:${port}`,
     viewport: { width: 1440, height: 1100 },
     headless: true,
     trace: 'retain-on-failure',
@@ -20,9 +23,9 @@ export default defineConfig({
     launchOptions: process.env.BROWSER_EXECUTABLE ? { executablePath: process.env.BROWSER_EXECUTABLE } : {},
   },
   webServer: {
-    command: 'python3 -m http.server 4178 --bind 127.0.0.1 --directory dist',
+    command: `python3 -m http.server ${port} --bind 127.0.0.1 --directory dist`,
     cwd: fileURLToPath(new URL('..', import.meta.url)),
-    url: 'http://127.0.0.1:4178/nibli-learn/',
+    url: `http://127.0.0.1:${port}/nibli-learn/`,
     reuseExistingServer: !process.env.CI,
     timeout: 30_000,
   },

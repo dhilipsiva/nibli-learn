@@ -6,10 +6,12 @@ pub mod course;
 pub mod operations;
 pub mod progress;
 pub mod projects;
+pub mod review;
 pub use course::*;
 pub use operations::*;
 pub use progress::*;
 pub use projects::*;
+pub use review::*;
 
 pub const SCHEMA_VERSION: u32 = 1;
 pub const LESSON_ID: &str = "found.investigate-release";
@@ -85,6 +87,8 @@ pub struct Assertion {
     pub text: String,
     pub plain: Option<String>,
     pub source: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub review: Option<ReviewProvenance>,
     pub active: bool,
 }
 
@@ -194,6 +198,14 @@ pub enum Command {
         source_revision: String,
         changes: Vec<Change>,
     },
+    PrepareReview {
+        draft: ReviewDraft,
+    },
+    AdmitReviewed {
+        preparation: Box<ReviewPreparation>,
+        draft: ReviewDraft,
+        human_confirmed: bool,
+    },
     ValidateProject {
         session: SessionView,
     },
@@ -242,6 +254,8 @@ pub struct Reply {
     pub hypothetical: Option<HypotheticalResult>,
     #[serde(default)]
     pub validated_session: Option<SessionView>,
+    #[serde(default)]
+    pub review: Option<ReviewPreparation>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
