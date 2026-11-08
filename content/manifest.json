@@ -1,0 +1,142 @@
+{
+  "schema": 1,
+  "kind": "nibli-learn-content-manifest",
+  "content_version": 1,
+  "minimum_app_schema": 1,
+  "license": "CC-BY-4.0",
+  "tracks": [
+    {
+      "id": "foundations",
+      "title": "Shared foundations",
+      "availability": "partial"
+    },
+    {
+      "id": "build",
+      "title": "Build Nibli",
+      "availability": "planned"
+    },
+    {
+      "id": "integrate",
+      "title": "Integrate Applications",
+      "availability": "planned"
+    },
+    {
+      "id": "choose",
+      "title": "Choose an Approach",
+      "availability": "planned"
+    }
+  ],
+  "foundations": [
+    {
+      "id": "F1",
+      "title": "Prediction versus derivation",
+      "availability": "planned"
+    },
+    {
+      "id": "F2",
+      "title": "Precise claims",
+      "availability": "planned"
+    },
+    {
+      "id": "F3",
+      "title": "Evidence",
+      "availability": "planned"
+    },
+    {
+      "id": "F4",
+      "title": "Reasoning outcomes",
+      "availability": "planned"
+    },
+    {
+      "id": "F5",
+      "title": "Investigating and revising a decision",
+      "availability": "available",
+      "lesson": "found.investigate-release"
+    },
+    {
+      "id": "F6",
+      "title": "Comparing neuro-symbolic approaches",
+      "availability": "planned"
+    }
+  ],
+  "lessons": [
+    {
+      "id": "found.investigate-release",
+      "version": 1,
+      "track": "foundations",
+      "unit": "F5",
+      "title": "Investigating and revising a decision",
+      "availability": "available",
+      "route": "#/lesson/found.investigate-release/step/1",
+      "execution": "local-wasm-worker",
+      "coverage": [
+        "claims",
+        "shared-variables",
+        "closed-world",
+        "assertion-provenance",
+        "independent-support",
+        "execution-versus-proof",
+        "derived-only-admission",
+        "policy-repair"
+      ],
+      "steps": [
+        {
+          "number": 1,
+          "id": "release.one-approval",
+          "title": "One approval",
+          "objective": "Predict whether BuildA is ready with only its automated-check approval.",
+          "check": "prediction"
+        },
+        {
+          "number": 2,
+          "id": "release.different-build",
+          "title": "A different build",
+          "objective": "Add Reviewer's approval of BuildB, then predict again.",
+          "check": "prediction"
+        },
+        {
+          "number": 3,
+          "id": "release.same-build",
+          "title": "Same build, both approvals",
+          "objective": "Add Reviewer's approval of BuildA and inspect what supports the result.",
+          "check": "prediction"
+        },
+        {
+          "number": 4,
+          "id": "release.execution-and-proof",
+          "title": "Replay and proof",
+          "objective": "Distinguish the operations the engine attempted from the derivation it returned.",
+          "check": "inspection-and-understanding"
+        },
+        {
+          "number": 5,
+          "id": "release.independent-support",
+          "title": "Independent support",
+          "objective": "Add a second review assertion, withdraw one, then withdraw the last.",
+          "check": "three-predictions"
+        },
+        {
+          "number": 6,
+          "id": "release.protected-conclusion",
+          "title": "Assert readiness directly",
+          "objective": "Try to assert the protected conclusion and explain the refusal.",
+          "check": "refusal-and-understanding"
+        },
+        {
+          "number": 7,
+          "id": "release.repair-policy",
+          "title": "Repair a flawed policy",
+          "objective": "Repair an OR policy so both approvals are required for the same build.",
+          "check": "four-engine-cases-and-self-review"
+        }
+      ]
+    }
+  ],
+  "offline_packs": {
+    "installation": "not-implemented",
+    "contract_schema": 1
+  },
+  "progress_schema": 1,
+  "project_schema": 1,
+  "proof_record_schema": 1
+}

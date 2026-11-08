@@ -1,0 +1,30 @@
+[workspace]
+members = ["crates/model", "crates/worker", "crates/client", "crates/app"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.96"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/dhilipsiva/nibli-learn"
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+wasm-bindgen = "0.2"
+js-sys = "0.3"
+web-sys = "0.3"
+futures-channel = "0.3"
+nibli-learn-model = { path = "crates/model" }
+nibli-learn-client = { path = "crates/client" }
+nibli-types = { git = "https://github.com/dhilipsiva/nibli", rev = "274eb4ff0a066c10903df607ea300a1a73357c5b", features = ["serde"] }
+nibli-session = { git = "https://github.com/dhilipsiva/nibli", rev = "274eb4ff0a066c10903df607ea300a1a73357c5b" }
+nibli-protocol = { git = "https://github.com/dhilipsiva/nibli", rev = "274eb4ff0a066c10903df607ea300a1a73357c5b" }
+nibli-render = { git = "https://github.com/dhilipsiva/nibli", rev = "274eb4ff0a066c10903df607ea300a1a73357c5b" }
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"

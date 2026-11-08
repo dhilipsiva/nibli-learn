@@ -1,0 +1,18 @@
+[package]
+name = "nibli-learn-app"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+dioxus = { version = "=0.7.3", features = ["web"] }
+nibli-learn-model.workspace = true
+nibli-learn-client.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+gloo-timers = { version = "0.3", features = ["futures"] }
+wasm-bindgen.workspace = true
+js-sys.workspace = true
+web-sys = { workspace = true, features = ["Window", "Storage", "Location", "Event", "EventTarget", "MediaQueryList"] }
