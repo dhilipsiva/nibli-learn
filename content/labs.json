@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "download": "assets/nibli-labs-v1.tar.gz",
+  "entries": [
+    {
+      "id": "compute",
+      "version": 1,
+      "title": "Compute results, failures and evidence",
+      "command": "python3 labs/run.py compute --output ../nibli-compute-first",
+      "platform": "Verified on Linux x86_64; Rust 1.96.1 in the pinned Nix shell. Other platforms unverified.",
+      "kit_sha256": "d79a06bc004a2380451876f6b5cd232c95792b3abe3d06113235c0c38d04e7b7",
+      "required_checks": [
+        "memo_is_query_local",
+        "collections_do_not_dispatch",
+        "no_durable_compute_assertions",
+        "backend_failure_is_not_false"
+      ]
+    },
+    {
+      "id": "ontology",
+      "version": 1,
+      "title": "Map an ontology without hiding losses",
+      "command": "python3 labs/run.py ontology --output ../nibli-ontology-first",
+      "platform": "Verified on Linux x86_64; Rust 1.96.1 in the pinned Nix shell. Other platforms unverified.",
+      "kit_sha256": "d79a06bc004a2380451876f6b5cd232c95792b3abe3d06113235c0c38d04e7b7",
+      "required_checks": [
+        "fragment_roundtrip",
+        "collision_detected",
+        "main_survives_refused_detached_import",
+        "losses_exposed"
+      ]
+    },
+    {
+      "id": "measurement",
+      "version": 1,
+      "title": "Measure distinct phases and memory quantities",
+      "command": "python3 labs/run.py measurement --output ../nibli-measurement-first",
+      "platform": "Verified on Linux x86_64; Rust 1.96.1 in the pinned Nix shell. Other platforms unverified.",
+      "kit_sha256": "d79a06bc004a2380451876f6b5cd232c95792b3abe3d06113235c0c38d04e7b7",
+      "required_checks": [
+        "all_queries_true",
+        "distinct_shapes"
+      ]
+    },
+    {
+      "id": "scoped-application",
+      "version": 1,
+      "title": "Keep cases and journal identities separate",
+      "command": "python3 labs/run.py scoped-application --output ../nibli-scoped-application-first",
+      "platform": "Verified on Linux x86_64; Rust 1.96.1 in the pinned Nix shell. Other platforms unverified.",
+      "kit_sha256": "d79a06bc004a2380451876f6b5cd232c95792b3abe3d06113235c0c38d04e7b7",
+      "required_checks": [
+        "authorizer_context_isolation",
+        "case_isolation",
+        "review_support",
+        "stable_ids_after_reopen",
+        "withdrawal_survives_reopen"
+      ]
+    },
+    {
+      "id": "wasi-runtime",
+      "version": 1,
+      "title": "Exhaust host budgets and recover committed inputs",
+      "command": "python3 labs/run.py wasi-runtime --engine-root ../nibli-lab-engine --output ../nibli-wasi-runtime-first",
+      "platform": "Verified on Linux x86_64; Rust 1.96.1 in the pinned Nix shell. Other platforms unverified.",
+      "kit_sha256": "d79a06bc004a2380451876f6b5cd232c95792b3abe3d06113235c0c38d04e7b7",
+      "required_checks": [
+        "external_compute_is_query_local",
+        "component_identity_and_imports",
+        "fuel_trap_then_recovery",
+        "memory_trap_then_recovery",
+        "stable_journal_ids_with_tombstone",
+        "scoped_application_native_wasi_outcomes"
+      ]
+    }
+  ]
+}

@@ -30,7 +30,7 @@ jobs:
             ~/.cargo/registry/cache
             ~/.cargo/git/db
             target
-          key: cargo-${{ runner.os }}-${{ hashFiles('Cargo.lock', 'flake.lock') }}
+          key: cargo-${{ runner.os }}-${{ hashFiles('Cargo.lock', 'labs/native/Cargo.lock', 'flake.lock') }}
           restore-keys: cargo-${{ runner.os }}-
       - name: Install pinned browser-test dependencies
         run: nix develop --command just dependencies

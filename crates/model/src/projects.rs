@@ -25,6 +25,8 @@ pub struct ProjectDocument {
     pub session: SessionView,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub review_draft: Option<crate::ReviewDraft>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub review_cost: Option<crate::ReviewCostInputs>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -47,6 +49,7 @@ impl ProjectDocument {
             activity: None,
             imported_from: None,
             review_draft: None,
+            review_cost: None,
             session,
         }
     }
@@ -93,6 +96,9 @@ impl ProjectDocument {
         }) {
             return Err("Invalid imported project provenance.".into());
         }
+        if let Some(cost) = &self.review_cost {
+            cost.validate()?;
+        }
         if let Some(draft) = &self.review_draft {
             draft.validate_bounds()?;
         }
@@ -126,6 +132,7 @@ impl ProjectDocument {
                 activity: None,
                 imported_from: None,
                 review_draft: None,
+                review_cost: None,
                 session: old.session,
             }
         } else {
@@ -165,6 +172,8 @@ pub struct LocalWorkspace {
     pub aborted: Vec<AbortedAttemptRecord>,
     #[serde(default)]
     pub release_support_stage: usize,
+    #[serde(default)]
+    pub lab_reports: BTreeMap<String, crate::LabReport>,
 }
 impl LocalWorkspace {
     pub fn new(course: &Course) -> Self {
@@ -177,6 +186,7 @@ impl LocalWorkspace {
             notation: "both".into(),
             aborted: vec![],
             release_support_stage: 0,
+            lab_reports: BTreeMap::new(),
         }
     }
     pub fn parse(text: &str, course: &Course) -> Result<Self, String> {
@@ -199,6 +209,15 @@ impl LocalWorkspace {
             return Err("Invalid local workspace version or preferences.".into());
         }
         self.progress.validate(course)?;
+        if self.lab_reports.len() > 16 {
+            return Err("Too many local lab reports.".into());
+        }
+        for (id, report) in &self.lab_reports {
+            if id != &report.lab_id {
+                return Err("Local lab identity mismatch.".into());
+            }
+            report.validate()?;
+        }
         for (id, project) in &self.projects {
             if id != &project.id {
                 return Err("Project storage identity does not match its document.".into());
@@ -297,7 +316,7 @@ mod tests {
         for (field, value) in [
             ("schema", json!(3)),
             ("engine_revision", json!("unknown-engine")),
-            ("content_version", json!(3)),
+            ("content_version", json!(catalog.version + 1)),
             ("kind", json!("proof-record")),
             ("lesson", json!("unknown.lesson")),
         ] {

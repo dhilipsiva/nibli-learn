@@ -65,6 +65,7 @@ pub fn capture(mut state: Signal<AppState>) {
             });
         p.session = session;
         p.review_draft = Some(s.review.draft.clone());
+        p.review_cost = Some(s.learning.review_cost.clone());
         p.engine_revision = ENGINE_REVISION.into();
         if s.screen == Screen::Lesson
             || (p.lesson.is_none() && id == "original-release" && s.learning.is_legacy())
@@ -799,11 +800,18 @@ async fn load_paired_content(mut state: Signal<AppState>) {
                 .map_err(|e| e.message)?;
             let course = Course::parse(&content["course"].to_string())?;
             let references = ReferenceLibrary::parse(&content["references"].to_string(), &course)?;
-            Ok::<_, String>((course, references))
+            let labs = if course.schema >= 3 {
+                let labs = LabLibrary::parse(&content["labs"].to_string())?;
+                labs.validate_links(&course, &references)?;
+                Some(labs)
+            } else {
+                None
+            };
+            Ok::<_, String>((course, references, labs))
         }
         .await;
         match result {
-            Ok((course, references)) => {
+            Ok((course, references, labs)) => {
                 let mut s = state.write();
                 let mut workspace = LocalWorkspace::new(&course);
                 if s.session.is_some()
@@ -814,6 +822,9 @@ async fn load_paired_content(mut state: Signal<AppState>) {
                 s.learning.workspace = workspace;
                 s.learning.course = course;
                 s.learning.references = references;
+                if let Some(labs) = labs {
+                    s.learning.labs = labs;
+                }
             }
             Err(message) => {
                 state.write().notice = format!(

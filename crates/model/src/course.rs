@@ -3,7 +3,7 @@ use crate::{Operation, OperationResult, RunProfile, SeedStatement};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
 
-pub const COURSE_SCHEMA: u32 = 2;
+pub const COURSE_SCHEMA: u32 = 3;
 pub const RELEASE_OBJECTIVES: [&str; 7] = [
     "release.one-approval",
     "release.different-build",
@@ -71,6 +71,14 @@ pub struct Activity {
     pub references: Vec<String>,
     #[serde(default)]
     pub self_review: Vec<String>,
+    #[serde(default)]
+    pub local_lab: Option<String>,
+    #[serde(default)]
+    pub retrieval: bool,
+    #[serde(default)]
+    pub cost_worksheet: bool,
+    #[serde(default)]
+    pub review_exercise: Option<crate::ReviewExercise>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -319,7 +327,7 @@ impl Course {
         self.lesson(lesson)?.activities.iter().find(|a| a.id == id)
     }
     pub fn validate(&self) -> Result<(), String> {
-        if self.schema != COURSE_SCHEMA
+        if !matches!(self.schema, 2 | COURSE_SCHEMA)
             || self.version == 0
             || self.lessons.is_empty()
             || self.lessons.len() > 128
@@ -372,6 +380,16 @@ impl Course {
                     return Err(format!("Invalid or duplicate activity {}.", activity.id));
                 }
                 activity.profile.validate()?;
+                if activity
+                    .local_lab
+                    .as_ref()
+                    .is_some_and(|s| !valid_content_id(s))
+                {
+                    return Err("Invalid local lab identity.".into());
+                }
+                if let Some(review) = &activity.review_exercise {
+                    review.validate()?;
+                }
                 if let Some(op) = &activity.operation {
                     op.validate()?;
                 }
@@ -440,12 +458,29 @@ pub struct ReferenceEntry {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ReferenceExample {
+    #[serde(default)]
+    pub kind: ExampleKind,
+    #[serde(default)]
+    pub run_in: Option<String>,
+    #[serde(default)]
+    pub lab: Option<String>,
     pub source: String,
     pub explanation: String,
     /// Authored compile contract; absent on compatible older reference files.
     #[serde(default)]
     pub expected: Option<ExpectedResult>,
 }
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ExampleKind {
+    #[default]
+    Kr,
+    Api,
+    Wit,
+    Data,
+    Lab,
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ReferenceLink {
@@ -458,12 +493,21 @@ impl ReferenceLibrary {
             return Err("Reference library exceeds 8 MiB.".into());
         }
         let library: Self = serde_json::from_str(text).map_err(|e| e.to_string())?;
-        if library.schema != COURSE_SCHEMA || library.version == 0 {
+        if !matches!(library.schema, 2 | COURSE_SCHEMA) || library.version == 0 {
             return Err("Unsupported reference version.".into());
         }
         let mut ids = BTreeSet::new();
         for entry in &library.entries {
             for example in &entry.examples {
+                if example.kind != ExampleKind::Kr
+                    && (example.expected.is_some()
+                        || example.run_in.as_ref().is_none_or(|s| s.trim().is_empty()))
+                {
+                    return Err("Non-KR examples need an execution context and cannot claim a KR compile result.".into());
+                }
+                if example.lab.as_ref().is_some_and(|s| !valid_content_id(s)) {
+                    return Err("Invalid reference lab identity.".into());
+                }
                 if let Some(expected) = &example.expected {
                     expected.validate()?;
                     if !matches!(expected.family.as_str(), "compiled" | "failed") {

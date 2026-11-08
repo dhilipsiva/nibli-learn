@@ -9,6 +9,7 @@ export NIBLI_APP_REVISION="${NIBLI_BUILD_IDENTITIES[0]}"
 export NIBLI_RUNTIME_ID="${NIBLI_BUILD_IDENTITIES[1]}"
 export NIBLI_BUILD_ENGINE_REVISION="${NIBLI_BUILD_IDENTITIES[2]}"
 python3 scripts/check_content.py
+python3 scripts/lab_catalog.py --check
 for tool in cargo dx wasm-pack python3; do
   command -v "$tool" >/dev/null || { echo "Missing $tool; enter nix develop first." >&2; exit 1; }
 done
@@ -37,6 +38,7 @@ mkdir -p "$STAGE/worker/pkg"
 cp crates/worker/bootstrap.js "$STAGE/worker/bootstrap.js"
 cp "$WORKER_PKG/nibli_learn_worker.js" "$WORKER_PKG/nibli_learn_worker_bg.wasm" "$STAGE/worker/pkg/"
 cp -R assets "$STAGE/"
+python3 scripts/package_labs.py "$STAGE/assets/nibli-labs-v1.tar.gz"
 cp -R content "$STAGE/"
 mkdir -p "$STAGE/licenses"
 cp LICENSE-MIT LICENSE-APACHE CONTENT-LICENSE.md "$STAGE/licenses/"

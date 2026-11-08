@@ -5,14 +5,16 @@ import json
 from pathlib import Path
 import re
 import sys
+import tarfile
 from build_paths import assert_public_bytes
+from package_labs import PUBLIC_INPUTS
 
 root = Path(sys.argv[1])
 required = ["index.html", "worker/bootstrap.js", "worker/pkg/nibli_learn_worker.js",
             "worker/pkg/nibli_learn_worker_bg.wasm", "assets/app.css", "assets/fonts.css",
             "licenses/LICENSE-MIT", "licenses/LICENSE-APACHE", "licenses/CONTENT-LICENSE.md",
             "content/manifest.json", "content/offline-pack.schema.json",
-            "content/course.json", "content/references.json", "offline/catalog.json", "service-worker.js", "platform/platform.js",
+            "content/course.json", "content/references.json", "content/labs.json", "assets/nibli-labs-v1.tar.gz", "offline/catalog.json", "service-worker.js", "platform/platform.js",
             "build-manifest.json"]
 for name in required:
     assert (root / name).is_file(), f"Missing bundled file: {name}"
@@ -41,6 +43,14 @@ for name, expected in manifest["files"].items():
     data = path.read_bytes()
     assert len(data) == expected["bytes"] and hashlib.sha256(data).hexdigest() == expected["sha256"], name
     assert_public_bytes(data, name)
+    if path.name == "nibli-labs-v1.tar.gz":
+        with tarfile.open(path, 'r:gz') as archive:
+            members = archive.getmembers()
+            assert len(members) == len(PUBLIC_INPUTS)
+            assert {member.name for member in members} == set(PUBLIC_INPUTS)
+            for member in members:
+                assert member.isfile() and member.size <= 1024 * 1024
+                assert_public_bytes(archive.extractfile(member).read(), member.name)
     assert not any(x in name.lower() for x in ["claude-design", ".dc.html", "editorial/", "render/shots", "canvas/project"]), name
     if path.suffix in {".html", ".js", ".css", ".json", ".md", ".txt"}:
         text = data.decode("utf-8")
@@ -60,14 +70,14 @@ catalog = json.loads((root / "offline/catalog.json").read_text())
 assert catalog["schema"] == 1 and catalog["kind"] == "nibli-offline-catalog"
 assert len(catalog["entries"]) == 1
 entry = catalog["entries"][0]
-assert entry["id"] == manifest["runtime_id"] and entry["app_schema"] == 2
+assert entry["id"] == manifest["runtime_id"] and entry["app_schema"] == 3
 for kind in ["runtime", "content"]:
     ref = entry[kind]
     assert ref["url"].startswith("/nibli-learn/offline/")
     path = root / ref["url"].removeprefix("/nibli-learn/")
     assert hashlib.sha256(path.read_bytes()).hexdigest() == ref["sha256"]
     part = json.loads(path.read_text())
-    assert part["app_schema"] == 2
+    assert part["app_schema"] == 3
     assert part["engine_revision"] == manifest["engine_identity"]
     assert part["development"] == entry["development"] == manifest["development"]
     assert part["base_path"].startswith("/nibli-learn/")
@@ -83,7 +93,7 @@ for kind in ["runtime", "content"]:
         for css in (part_root / "assets").glob("*.css"):
             assert "/nibli-learn/assets/" not in css.read_text()
     else:
-        assert part["content_version"] == content["content_version"] == 2
+        assert part["content_version"] == content["content_version"] == 3
         rows = [{key: file[key] for key in ("path", "sha256", "bytes")} for file in sorted(part["files"], key=lambda f: f["path"])]
         assert hashlib.sha256(json.dumps(rows, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest() == part["content_digest"]
 print(f"Bundle verified: {len(actual)} files, /nibli-learn/ mount, actual worker WASM and matching hashes")

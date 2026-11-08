@@ -421,6 +421,16 @@ pub fn send(mut state: Signal<AppState>, command: Command, purpose: Purpose) {
                 | Command::Restore { .. }
         ) {
             s.review = crate::integration::ReviewState::default();
+            s.learning.review_cost = ReviewCostInputs::default();
+            s.learning.review_cost_fields.clear();
+            s.learning.review_cost_feedback.clear();
+            if let Some(exercise) = s
+                .learning
+                .activity()
+                .and_then(|a| a.review_exercise.as_ref())
+            {
+                s.review.draft = exercise.draft.clone();
+            }
             if matches!(&command, Command::Restore { .. })
                 && let Some(draft) = s
                     .learning
@@ -431,6 +441,17 @@ pub fn send(mut state: Signal<AppState>, command: Command, purpose: Purpose) {
                     .and_then(|p| p.review_draft.clone())
             {
                 s.review.draft = draft;
+            }
+            if matches!(&command, Command::Restore { .. })
+                && let Some(cost) = s
+                    .learning
+                    .workspace
+                    .active_project
+                    .as_ref()
+                    .and_then(|id| s.learning.workspace.projects.get(id))
+                    .and_then(|p| p.review_cost.clone())
+            {
+                s.learning.review_cost = cost;
             }
         }
         s.serial += 1;

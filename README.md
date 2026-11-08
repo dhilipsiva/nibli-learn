@@ -1,9 +1,10 @@
 # Nibli Learn
 
 An interactive learning environment for developers learning symbolic and
-neuro-symbolic reasoning. Ten original units cover shared foundations and using
-a reasoner through 44 activities, with executable exercises backed by Nibli's
-real browser engine.
+neuro-symbolic reasoning. Fourteen original units cover shared foundations,
+using a reasoner and integrating applications through 76 activities. Executable
+exercises use Nibli's browser engine; five pinned local labs expose native and
+WASI capabilities that the browser cannot run.
 
 The learning loop is predict, change evidence, execute, inspect and repair.
 Execution recordings describe actual operations; proofs describe derivations.
@@ -48,10 +49,17 @@ identity. A cancelled run has no completed logical outcome; recovery restores
 the last committed knowledge.
 
 The versioned [content manifest](content/manifest.json) covers foundations F1–F6
-and Use units U1–U4. Later integration, engine-building and studio tracks remain
-planned. [Data contracts](docs/data-contracts.md) describe versioned progress,
+and Use units U1–U4, plus Integrate units I1–I4. Engine-building and specialist
+studio tracks remain planned. [Data contracts](docs/data-contracts.md) describe versioned progress,
 projects, read-only run archives and verified offline installation. The Local Data
 page provides import previews, backup/undo and recovery from storage conflicts.
+
+Integrate includes explicit source review and admission, local document retrieval,
+review-capacity calculations, and [optional model connections](docs/model-connections.md).
+Authored hints and the complete learning path remain available without a model.
+The [local lab kit](labs/README.md) runs actual compute, ontology, scoped application,
+measurement and WASI recovery experiments. Imported reports are learner-supplied
+observations, not authenticated execution certificates.
 
 Offline installation stages and verifies the matching runtime and original course
 before explicit activation. It preserves the previous active version on failure.

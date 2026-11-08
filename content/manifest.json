@@ -1,8 +1,8 @@
 {
-  "schema": 2,
+  "schema": 3,
   "kind": "nibli-learn-content-manifest",
-  "content_version": 2,
-  "minimum_app_schema": 2,
+  "content_version": 3,
+  "minimum_app_schema": 3,
   "license": "CC-BY-4.0",
   "registry": "content/course.json",
   "references": "content/references.json",
@@ -20,7 +20,7 @@
     {
       "id": "integrate",
       "title": "Integrate Applications",
-      "availability": "planned"
+      "availability": "available"
     },
     {
       "id": "build",
@@ -499,6 +499,278 @@
           "objective": "Separate browser recovery from native host persistence."
         }
       ]
+    },
+    {
+      "id": "integrate.reviewed-sources",
+      "version": 1,
+      "track": "integrate",
+      "unit": "I1",
+      "title": "From source to reviewed assertion",
+      "availability": "available",
+      "route": "#/lesson/integrate.reviewed-sources/activity/integrate.review-triad",
+      "execution": "local-wasm-worker-and-optional-local-labs",
+      "steps": [
+        {
+          "number": 1,
+          "id": "integrate.review-triad",
+          "version": 1,
+          "title": "Three readings of one inspection",
+          "objective": "Compare source intent, canonical KR and backtranslation; repair the wrong cart."
+        },
+        {
+          "number": 2,
+          "id": "integrate.review-scope",
+          "version": 1,
+          "title": "A single inspection is not a universal policy",
+          "objective": "Replace an overbroad rule with the single approval supported by its source."
+        },
+        {
+          "number": 3,
+          "id": "integrate.review-negation",
+          "version": 1,
+          "title": "An explicit negative needs its own source",
+          "objective": "Distinguish an explicit negative source from a closed-world absence result."
+        },
+        {
+          "number": 4,
+          "id": "integrate.review-gates",
+          "version": 1,
+          "title": "Repair a refused draft without losing main knowledge",
+          "objective": "Repair a syntax refusal and verify that the main project stayed unchanged."
+        },
+        {
+          "number": 5,
+          "id": "integrate.review-stale",
+          "version": 1,
+          "title": "Approval belongs to one knowledge revision",
+          "objective": "Invalidate a review when main knowledge changes and prepare a fresh one."
+        },
+        {
+          "number": 6,
+          "id": "integrate.review-context",
+          "version": 1,
+          "title": "Choose what leaves the page",
+          "objective": "Choose the minimum model context and inspect the exact outgoing request."
+        },
+        {
+          "number": 7,
+          "id": "integrate.review-provider-failure",
+          "version": 1,
+          "title": "A failed provider is an application state",
+          "objective": "Diagnose provider failures and continue the lesson without model output."
+        },
+        {
+          "number": 8,
+          "id": "integrate.review-throughput",
+          "version": 1,
+          "title": "Can the review queue keep up?",
+          "objective": "Calculate review backlog and repair an overloaded intake process."
+        }
+      ]
+    },
+    {
+      "id": "integrate.external-computation",
+      "version": 1,
+      "track": "integrate",
+      "unit": "I2",
+      "title": "External computation and its evidence",
+      "availability": "available",
+      "route": "#/lesson/integrate.external-computation/activity/integrate.compute-arithmetic",
+      "execution": "local-wasm-worker-and-optional-local-labs",
+      "steps": [
+        {
+          "number": 1,
+          "id": "integrate.compute-arithmetic",
+          "version": 1,
+          "title": "An arithmetic answer and a domain failure",
+          "objective": "Distinguish a finite arithmetic FALSE from unavailable computation."
+        },
+        {
+          "number": 2,
+          "id": "integrate.compute-numeric-limits",
+          "version": 1,
+          "title": "A number-shaped value is not always usable",
+          "objective": "Compare non-finite handling at compiler-shaped and raw compute ingress."
+        },
+        {
+          "number": 3,
+          "id": "integrate.compute-registration",
+          "version": 1,
+          "title": "Routing does not declare a vocabulary",
+          "objective": "Resolve unknown-name and live-assertion conflicts before compute registration."
+        },
+        {
+          "number": 4,
+          "id": "integrate.compute-query-evidence",
+          "version": 1,
+          "title": "One query can reuse a backend reply",
+          "objective": "Trace one-query memo reuse and the lifetime of computed proof evidence."
+        },
+        {
+          "number": 5,
+          "id": "integrate.compute-transport-failure",
+          "version": 1,
+          "title": "FALSE is not a broken connection",
+          "objective": "Separate a backend FALSE from malformed replies, timeout and unavailable service."
+        },
+        {
+          "number": 6,
+          "id": "integrate.compute-argument-boundary",
+          "version": 1,
+          "title": "Keep the backend argument contract explicit",
+          "objective": "Validate external argument types and avoid treating compute as domain enumeration."
+        },
+        {
+          "number": 7,
+          "id": "integrate.compute-model-trust",
+          "version": 1,
+          "title": "A model-backed check is still an external assumption",
+          "objective": "Locate the trust assumptions behind a computed TRUE and design counterchecks."
+        },
+        {
+          "number": 8,
+          "id": "integrate.compute-durable-evidence",
+          "version": 1,
+          "title": "Promote a reviewed observation deliberately",
+          "objective": "Convert a transient service observation into an explicitly reviewed source."
+        }
+      ]
+    },
+    {
+      "id": "integrate.runtimes-resources",
+      "version": 1,
+      "track": "integrate",
+      "unit": "I3",
+      "title": "Choose, bound and measure a runtime",
+      "availability": "available",
+      "route": "#/lesson/integrate.runtimes-resources/activity/integrate.runtime-choice",
+      "execution": "local-wasm-worker-and-optional-local-labs",
+      "steps": [
+        {
+          "number": 1,
+          "id": "integrate.runtime-choice",
+          "version": 1,
+          "title": "Choose the runtime that owns the required capability",
+          "objective": "Assign inference, persistence and external calls to supported runtimes."
+        },
+        {
+          "number": 2,
+          "id": "integrate.runtime-artifact",
+          "version": 1,
+          "title": "Inspect the artifact you actually run",
+          "objective": "Verify component identity and capabilities from the actual built artifact."
+        },
+        {
+          "number": 3,
+          "id": "integrate.runtime-budget-origin",
+          "version": 1,
+          "title": "Locate the budget that stopped work",
+          "objective": "Identify the layer that exhausted a budget before choosing a repair."
+        },
+        {
+          "number": 4,
+          "id": "integrate.runtime-fuel-recovery",
+          "version": 1,
+          "title": "Recover after a real fuel trap",
+          "objective": "Recover committed inputs after an actual WASI fuel trap."
+        },
+        {
+          "number": 5,
+          "id": "integrate.runtime-memory-recovery",
+          "version": 1,
+          "title": "A memory cap is not process RSS",
+          "objective": "Interpret component growth limits and recover after a memory trap."
+        },
+        {
+          "number": 6,
+          "id": "integrate.runtime-journal",
+          "version": 1,
+          "title": "Reopen without renumbering evidence",
+          "objective": "Preserve source identities across deletion, reopening and later withdrawal."
+        },
+        {
+          "number": 7,
+          "id": "integrate.runtime-measurement",
+          "version": 1,
+          "title": "Measure the work you named",
+          "objective": "Measure distinct engine phases and distinguish allocations from resident memory."
+        },
+        {
+          "number": 8,
+          "id": "integrate.runtime-cost",
+          "version": 1,
+          "title": "Budget for review and maintenance as well as inference",
+          "objective": "Estimate integration costs with explicit workload and staffing assumptions."
+        }
+      ]
+    },
+    {
+      "id": "integrate.scoped-applications",
+      "version": 1,
+      "track": "integrate",
+      "unit": "I4",
+      "title": "Build an application around retained evidence",
+      "availability": "available",
+      "route": "#/lesson/integrate.scoped-applications/activity/integrate.application-records",
+      "execution": "local-wasm-worker-and-optional-local-labs",
+      "steps": [
+        {
+          "number": 1,
+          "id": "integrate.application-records",
+          "version": 1,
+          "title": "A document is not an assertion",
+          "objective": "Trace application records through explicit admission into engine sources."
+        },
+        {
+          "number": 2,
+          "id": "integrate.application-case-isolation",
+          "version": 1,
+          "title": "The same cart can belong to different cases",
+          "objective": "Prevent another case’s approval from satisfying this case."
+        },
+        {
+          "number": 3,
+          "id": "integrate.application-citations",
+          "version": 1,
+          "title": "Follow a conclusion back to retained evidence",
+          "objective": "Connect actual proof citations to source IDs and application provenance."
+        },
+        {
+          "number": 4,
+          "id": "integrate.application-ontology",
+          "version": 1,
+          "title": "Map a fragment without hiding a loss",
+          "objective": "Validate an ontology mapping and preserve main state when import is partial or lossy."
+        },
+        {
+          "number": 5,
+          "id": "integrate.application-retrieval",
+          "version": 1,
+          "title": "A relevant result can still be the wrong evidence",
+          "objective": "Filter retrieval by case and withdrawal before selecting evidence for review."
+        },
+        {
+          "number": 6,
+          "id": "integrate.application-guided-generation",
+          "version": 1,
+          "title": "Use failed checks to guide a new draft",
+          "objective": "Use counterexample queries and source review to repair a generated draft."
+        },
+        {
+          "number": 7,
+          "id": "integrate.application-agent",
+          "version": 1,
+          "title": "Separate an agent proposal from an authorized action",
+          "objective": "Bind an agent’s proposed action to scoped authorization and host execution."
+        },
+        {
+          "number": 8,
+          "id": "integrate.application-capstone",
+          "version": 1,
+          "title": "Rebuild a scoped evidence workflow",
+          "objective": "Combine explicit source admission, case isolation, citations and recovery."
+        }
+      ]
     }
   ],
   "offline_packs": {
@@ -508,5 +780,6 @@
   "progress_schema": 2,
   "project_schema": 2,
   "proof_record_schema": 1,
-  "operation_record_schema": 2
+  "operation_record_schema": 2,
+  "labs": "content/labs.json"
 }

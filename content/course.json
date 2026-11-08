@@ -1,6 +1,6 @@
 {
-  "schema": 2,
-  "version": 2,
+  "schema": 3,
+  "version": 3,
   "lessons": [
     {
       "id": "found.prediction-derivation",
@@ -4424,6 +4424,2132 @@
             "Distinguish an aborted attempt from a completed logical outcome.",
             "Name the host mechanism needed for the proposed native deployment."
           ]
+        }
+      ]
+    },
+    {
+      "id": "integrate.reviewed-sources",
+      "unit": "I1",
+      "track": "integrate",
+      "title": "From source to reviewed assertion",
+      "summary": "Prepare readings, reject semantic mismatches, handle stale review and choose optional model context.",
+      "version": 1,
+      "prerequisites": [
+        "found.compare-approaches",
+        "use.changing-knowledge"
+      ],
+      "legacy_release": false,
+      "activities": [
+        {
+          "id": "integrate.review-triad",
+          "version": 1,
+          "title": "Three readings of one inspection",
+          "objective": "Compare source intent, canonical KR and backtranslation; repair the wrong cart.",
+          "explanation": "Inspector approved CartB; CartA still awaits inspection.",
+          "tasks": [
+            "Run the initial query and inspect its accepted sources.",
+            "Contrast the CartA draft with the CartB source before admission.",
+            "Repair the draft, prepare it again, inspect the readings and explicitly approve admission.",
+            "Run the post-review query; compare its proof and source provenance."
+          ],
+          "hints": [
+            "The reviewer is the first argument; the inspected cart is the second.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "The repaired formal source is approves(Inspector, CartB). Admit it only after comparing it with the original. The post-review query should be supported by the new reviewed source; the source itself remains an application record whose accuracy needs an owner.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "approves(Inspector, CartB)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "query-reviewed",
+              "title": "Check the reviewed claim",
+              "instruction": "After reviewed admission, query the main project and inspect the cited source.",
+              "changes": [],
+              "operation": {
+                "kind": "decide",
+                "claim": "approves(Inspector, CartB)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "api-reviewed-admission",
+            "review-state-contract"
+          ],
+          "self_review": [
+            "Explain why a syntactically valid CartA approval is still the wrong claim."
+          ],
+          "review_exercise": {
+            "draft": {
+              "source_id": "integrate-review-triad-source-v1",
+              "source_label": "Three readings of one inspection source",
+              "source_text": "Inspector approved CartB; CartA still awaits inspection.",
+              "formal_text": "approves(Inspector, CartA)."
+            },
+            "repair": {
+              "source_id": "integrate-review-triad-source-v1",
+              "source_label": "Three readings of one inspection source",
+              "source_text": "Inspector approved CartB; CartA still awaits inspection.",
+              "formal_text": "approves(Inspector, CartB)."
+            },
+            "milestones": [
+              "rejected",
+              "admitted"
+            ]
+          }
+        },
+        {
+          "id": "integrate.review-scope",
+          "version": 1,
+          "title": "A single inspection is not a universal policy",
+          "objective": "Replace an overbroad rule with the single approval supported by its source.",
+          "explanation": "Inspector approved CartB only. The note does not approve every computer.",
+          "tasks": [
+            "Run the initial query and inspect its accepted sources.",
+            "Inspect the universal draft, then test both CartB and the unsupported CartA.",
+            "Repair the draft, prepare it again, inspect the readings and explicitly approve admission.",
+            "Run the post-review query; compare its proof and source provenance."
+          ],
+          "hints": [
+            "A variable bound by all can apply to more objects than the source names.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "The repaired formal source is approves(Inspector, CartB). Admit it only after comparing it with the original. The post-review query should be supported by the new reviewed source; the source itself remains an application record whose accuracy needs an owner.",
+          "setup": [
+            {
+              "text": "computer(CartA).",
+              "source": "CartA inventory"
+            },
+            {
+              "text": "computer(CartB).",
+              "source": "CartB inventory"
+            }
+          ],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "approves(Inspector, CartB)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "query-reviewed",
+              "title": "Check the reviewed claim",
+              "instruction": "After reviewed admission, query the main project and inspect the cited source.",
+              "changes": [],
+              "operation": {
+                "kind": "decide",
+                "claim": "approves(Inspector, CartB)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "scope-counterexample",
+              "title": "Test another cart",
+              "instruction": "A repair must not broaden this note to CartA.",
+              "changes": [],
+              "operation": {
+                "kind": "decide",
+                "claim": "approves(Inspector, CartA)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "review-state-contract",
+            "scope"
+          ],
+          "self_review": [
+            "Explain why CartB becomes TRUE while CartA must remain FALSE."
+          ],
+          "review_exercise": {
+            "draft": {
+              "source_id": "integrate-review-scope-source-v1",
+              "source_label": "A single inspection is not a universal policy source",
+              "source_text": "Inspector approved CartB only. The note does not approve every computer.",
+              "formal_text": "all $cart: computer($cart) -> approves(Inspector, $cart)."
+            },
+            "repair": {
+              "source_id": "integrate-review-scope-source-v1",
+              "source_label": "A single inspection is not a universal policy source",
+              "source_text": "Inspector approved CartB only. The note does not approve every computer.",
+              "formal_text": "approves(Inspector, CartB)."
+            },
+            "milestones": [
+              "rejected",
+              "admitted"
+            ]
+          }
+        },
+        {
+          "id": "integrate.review-negation",
+          "version": 1,
+          "title": "An explicit negative needs its own source",
+          "objective": "Distinguish an explicit negative source from a closed-world absence result.",
+          "explanation": "Inspector explicitly did not approve CartB. This is a recorded negative assessment, not merely a missing positive note. The initial negated query may already succeed through the closed-world rule. Inspect the later proof to distinguish that absence-based result from the admitted explicit negative.",
+          "tasks": [
+            "Run the initial query and inspect its accepted sources.",
+            "Compare the initial negated proof with the proof after admitting the repaired negative.",
+            "Repair the draft, prepare it again, inspect the readings and explicitly approve admission.",
+            "Run the post-review query; compare its proof and source provenance."
+          ],
+          "hints": [
+            "An unchanged TRUE label can conceal a changed evidential basis. Inspect the proof steps.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "The repaired formal source is ~approves(Inspector, CartB). Admit it only after comparing it with the original. The post-review query should be supported by the new reviewed source; the source itself remains an application record whose accuracy needs an owner.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "~approves(Inspector, CartB)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "query-reviewed",
+              "title": "Check the reviewed claim",
+              "instruction": "After reviewed admission, query the main project and inspect the cited source.",
+              "changes": [],
+              "operation": {
+                "kind": "decide",
+                "claim": "~approves(Inspector, CartB)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "review-state-contract",
+            "negation"
+          ],
+          "self_review": [
+            "Identify which result relies on absence and which cites the retained explicit negative."
+          ],
+          "review_exercise": {
+            "draft": {
+              "source_id": "integrate-review-negation-source-v1",
+              "source_label": "An explicit negative needs its own source source",
+              "source_text": "Inspector explicitly did not approve CartB. This is a recorded negative assessment, not merely a missing positive note.",
+              "formal_text": "approves(Inspector, CartB)."
+            },
+            "repair": {
+              "source_id": "integrate-review-negation-source-v1",
+              "source_label": "An explicit negative needs its own source source",
+              "source_text": "Inspector explicitly did not approve CartB. This is a recorded negative assessment, not merely a missing positive note.",
+              "formal_text": "~approves(Inspector, CartB)."
+            },
+            "milestones": [
+              "rejected",
+              "admitted"
+            ]
+          }
+        },
+        {
+          "id": "integrate.review-gates",
+          "version": 1,
+          "title": "Repair a refused draft without losing main knowledge",
+          "objective": "Repair a syntax refusal and verify that the main project stayed unchanged.",
+          "explanation": "Inspector approved CartB. The supplied draft is missing its statement terminator.",
+          "tasks": [
+            "Run the initial query and inspect its accepted sources.",
+            "Record the missing-terminator refusal before adding the full stop and preparing again.",
+            "Repair the draft, prepare it again, inspect the readings and explicitly approve admission.",
+            "Run the post-review query; compare its proof and source provenance."
+          ],
+          "hints": [
+            "A refusal has a stage and error message; it does not become a FALSE query.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "The repaired formal source is approves(Inspector, CartB). Admit it only after comparing it with the original. The post-review query should be supported by the new reviewed source; the source itself remains an application record whose accuracy needs an owner.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "approves(Inspector, CartB)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "query-reviewed",
+              "title": "Check the reviewed claim",
+              "instruction": "After reviewed admission, query the main project and inspect the cited source.",
+              "changes": [],
+              "operation": {
+                "kind": "decide",
+                "claim": "approves(Inspector, CartB)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "api-reviewed-admission",
+            "compile-admission"
+          ],
+          "self_review": [
+            "Describe the parser repair and show that the refused preparation created no main assertion."
+          ],
+          "review_exercise": {
+            "draft": {
+              "source_id": "integrate-review-gates-source-v1",
+              "source_label": "Repair a refused draft without losing main knowledge source",
+              "source_text": "Inspector approved CartB. The supplied draft is missing its statement terminator.",
+              "formal_text": "approves(Inspector, CartB)"
+            },
+            "repair": {
+              "source_id": "integrate-review-gates-source-v1",
+              "source_label": "Repair a refused draft without losing main knowledge source",
+              "source_text": "Inspector approved CartB. The supplied draft is missing its statement terminator.",
+              "formal_text": "approves(Inspector, CartB)."
+            },
+            "milestones": [
+              "refused",
+              "admitted"
+            ]
+          }
+        },
+        {
+          "id": "integrate.review-stale",
+          "version": 1,
+          "title": "Approval belongs to one knowledge revision",
+          "objective": "Invalidate a review when main knowledge changes and prepare a fresh one.",
+          "explanation": "Inspector approved CartB. Another source may arrive while a reviewer is working.",
+          "tasks": [
+            "Run the initial query and inspect its accepted sources.",
+            "Prepare the repaired draft, add the intervening source, and observe the disabled admission before preparing again.",
+            "After preparing the draft, run the intervening inventory change. Observe that its old preparation no longer permits admission.",
+            "Repair the draft, prepare it again, inspect the readings and explicitly approve admission.",
+            "Run the post-review query; compare its proof and source provenance."
+          ],
+          "hints": [
+            "Compare the review base revision with the current project revision.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "The repaired formal source is approves(Inspector, CartB). Admit it only after comparing it with the original. The post-review query should be supported by the new reviewed source; the source itself remains an application record whose accuracy needs an owner.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "approves(Inspector, CartB)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "intervening-change",
+              "title": "Add an intervening source",
+              "instruction": "Prepare first, then admit this unrelated inventory record. Fresh review is required even if the draft text is unchanged.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "computer(Terminal7).",
+                  "source": "Intervening inventory record"
+                }
+              ],
+              "operation": {
+                "kind": "inspect",
+                "view": "admission_registry"
+              },
+              "expected": {
+                "family": "inspection"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "query-reviewed",
+              "title": "Check the reviewed claim",
+              "instruction": "After reviewed admission, query the main project and inspect the cited source.",
+              "changes": [],
+              "operation": {
+                "kind": "decide",
+                "claim": "approves(Inspector, CartB)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "review-state-contract",
+            "revision"
+          ],
+          "self_review": [
+            "Explain why even an unrelated intervening input requires a fresh review in this workflow."
+          ],
+          "review_exercise": {
+            "draft": {
+              "source_id": "integrate-review-stale-source-v1",
+              "source_label": "Approval belongs to one knowledge revision source",
+              "source_text": "Inspector approved CartB. Another source may arrive while a reviewer is working.",
+              "formal_text": "approves(Inspector, CartA)."
+            },
+            "repair": {
+              "source_id": "integrate-review-stale-source-v1",
+              "source_label": "Approval belongs to one knowledge revision source",
+              "source_text": "Inspector approved CartB. Another source may arrive while a reviewer is working.",
+              "formal_text": "approves(Inspector, CartB)."
+            },
+            "milestones": [
+              "rejected",
+              "admitted"
+            ]
+          }
+        },
+        {
+          "id": "integrate.review-context",
+          "version": 1,
+          "title": "Choose what leaves the page",
+          "objective": "Choose the minimum model context and inspect the exact outgoing request.",
+          "explanation": "The optional tutor shows a complete request preview before Send. The question is always included; source text and active assertion provenance are opt-in. A source can itself contain instructions, private identifiers or a withdrawn claim. Selecting it for a model does not authorize those instructions.",
+          "tasks": [
+            "Open the optional tutor, enter a question, toggle source context and compare previews without sending.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "The preview should change only when you select different context or edit the question.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "Send only the context needed for the question, review the destination and exact payload, and treat the reply as an untrusted draft.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "Which context should a model receive?",
+            "choices": [
+              "Treat a model suggestion as a new accepted premise.",
+              "Send only the context needed for the question, review the destination and exact payload, and treat the reply as an untrusted draft.",
+              "Include every project automatically to improve confidence."
+            ],
+            "correct": 1,
+            "feedback": "Send only the context needed for the question, review the destination and exact payload, and treat the reply as an untrusted draft."
+          },
+          "actions": [],
+          "references": [
+            "provider-context-failures",
+            "api-application-provenance"
+          ],
+          "self_review": [
+            "Name the source fields you would send, the reason for each, and any content you would remove."
+          ],
+          "local_lab": null
+        },
+        {
+          "id": "integrate.review-provider-failure",
+          "version": 1,
+          "title": "A failed provider is an application state",
+          "objective": "Diagnose provider failures and continue the lesson without model output.",
+          "explanation": "An unavailable local model, denied origin, timeout, rate limit and malformed response have different causes. None is a reasoner FALSE. The tutor retains authored assistance, shows the transport failure and never silently retries. Cancellation discards partial text, while provider-side work or charges may continue.",
+          "tasks": [
+            "Compare the connection failures in the reference; use an authored hint to continue without a model.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "A timeout does not mean the provider stopped working. A denied origin is a browser connection boundary.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "Keep the accepted project intact, diagnose the transport layer, repair its configuration or work without the model, then explicitly preview a fresh request.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "How should the workflow behave when a provider fails?",
+            "choices": [
+              "Keep the accepted project intact, diagnose the transport layer, repair its configuration or work without the model, then explicitly preview a fresh request.",
+              "Map every timeout to FALSE so the workflow can continue.",
+              "Retry automatically until a suggestion can be admitted."
+            ],
+            "correct": 0,
+            "feedback": "Keep the accepted project intact, diagnose the transport layer, repair its configuration or work without the model, then explicitly preview a fresh request."
+          },
+          "actions": [],
+          "references": [
+            "provider-context-failures",
+            "review-state-contract"
+          ],
+          "self_review": [
+            "Choose a repair for a missing model, an origin denial and a timeout, without admitting stale text."
+          ],
+          "local_lab": null
+        },
+        {
+          "id": "integrate.review-throughput",
+          "version": 1,
+          "title": "Can the review queue keep up?",
+          "objective": "Calculate review backlog and repair an overloaded intake process.",
+          "explanation": "A workshop proposes 120 formal drafts per day, three minutes of review each and four reviewer hours. The worksheet exposes both the review load and unreviewed work. Reducing the review fraction changes the queue, but does not establish the meaning of unreviewed drafts. Maintenance and correction work still require staff.",
+          "tasks": [
+            "Compare the default four-hour capacity with six available hours, then try reviewing only half the drafts.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "120 drafts at three minutes each require 360 minutes; compare this with staffed minutes.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "At these assumptions, full review needs six hours per day. Four hours handles 80 drafts, leaving 40 unreviewed; reduce intake or add review capacity before admission.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "What happens when draft production exceeds review capacity?",
+            "choices": [
+              "Admit the overflow because the parser accepted it.",
+              "Reviewing a random half approves the remaining half.",
+              "At these assumptions, full review needs six hours per day. Four hours handles 80 drafts, leaving 40 unreviewed; reduce intake or add review capacity before admission."
+            ],
+            "correct": 2,
+            "feedback": "At these assumptions, full review needs six hours per day. Four hours handles 80 drafts, leaving 40 unreviewed; reduce intake or add review capacity before admission."
+          },
+          "actions": [],
+          "references": [
+            "review-capacity",
+            "integration-cost-model"
+          ],
+          "self_review": [
+            "Explain which drafts remain unreviewed after sampling and who owns the remaining queue."
+          ],
+          "local_lab": null,
+          "cost_worksheet": true
+        }
+      ]
+    },
+    {
+      "id": "integrate.external-computation",
+      "unit": "I2",
+      "track": "integrate",
+      "title": "External computation and its evidence",
+      "summary": "Exercise arithmetic, dispatch, typed boundaries, failure handling and query-local evidence.",
+      "version": 1,
+      "prerequisites": [
+        "integrate.reviewed-sources",
+        "use.witnesses-counts"
+      ],
+      "legacy_release": false,
+      "activities": [
+        {
+          "id": "integrate.compute-arithmetic",
+          "version": 1,
+          "title": "An arithmetic answer and a domain failure",
+          "objective": "Distinguish a finite arithmetic FALSE from unavailable computation.",
+          "explanation": "Built-in arithmetic can be resolved in the engine. The first position is the proposed result: sum(5, 2, 3) checks whether five equals two plus three. A finite quotient with a zero divisor is FALSE under this engine contract; a backend error is a different result.",
+          "tasks": [
+            "Run the sum, wrong-result and zero-divisor controls; compare their actual outcomes.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "The first argument is a proposed result, not an output slot to fill.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "The correct sum is TRUE, an incorrect sum is FALSE, and quotient(1, 2, 0) is FALSE. Preserve that distinction when mapping engine outcomes into application states.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "sum(5, 2, 3)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "TRUE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "wrong-result",
+              "title": "Test a wrong proposed sum",
+              "instruction": "Keep operands fixed and change the proposed result.",
+              "changes": [],
+              "operation": {
+                "kind": "decide",
+                "claim": "sum(6, 2, 3)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "zero-divisor",
+              "title": "Test the zero-divisor contract",
+              "instruction": "Inspect the finite domain failure.",
+              "changes": [],
+              "operation": {
+                "kind": "decide",
+                "claim": "quotient(1, 2, 0)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "numeric-compute-boundaries",
+            "compute-transport-contract"
+          ],
+          "self_review": [
+            "Explain why the zero-divisor FALSE cannot be used as a model for transport failures."
+          ]
+        },
+        {
+          "id": "integrate.compute-numeric-limits",
+          "version": 1,
+          "title": "A number-shaped value is not always usable",
+          "objective": "Compare non-finite handling at compiler-shaped and raw compute ingress.",
+          "explanation": "Run the compute kit and compare its compiler-shaped numeric group with its caller-built flat compute node. The event group preserves the numeric non-finite guard. The raw flat node can reach a host callback, whose argument refusal is reported as backend unavailable. These are different ingress paths, not interchangeable representations.",
+          "tasks": [
+            "Run the compute kit; compare non_finite with raw_flat_non_finite_host_error.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "The raw node has a different route to the callback; find the guard at each ingress.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "Validate finite operands at each ingress and backend boundary. Preserve the actual outcome reason and the representation that produced it.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "sum(Amount, 2, 3)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "UNKNOWN"
+          },
+          "question": {
+            "prompt": "How do non-finite values and raw compute buffers differ?",
+            "choices": [
+              "Assume every raw buffer receives exactly the source compiler checks.",
+              "Replace non-finite values with zero to make the query definitive.",
+              "Validate finite operands at each ingress and backend boundary. Preserve the actual outcome reason and the representation that produced it."
+            ],
+            "correct": 2,
+            "feedback": "Validate finite operands at each ingress and backend boundary. Preserve the actual outcome reason and the representation that produced it."
+          },
+          "actions": [],
+          "references": [
+            "numeric-compute-boundaries",
+            "api-compute-routing"
+          ],
+          "self_review": [
+            "Locate the layer responsible for each refusal and describe the validation needed by a raw caller."
+          ],
+          "local_lab": "compute"
+        },
+        {
+          "id": "integrate.compute-registration",
+          "version": 1,
+          "title": "Routing does not declare a vocabulary",
+          "objective": "Resolve unknown-name and live-assertion conflicts before compute registration.",
+          "explanation": "The kit first refuses an invented text predicate, then registers a committed-corpus relation. It also tries to register person while a live person assertion exists. Routing a stored relation to a backend would make that stored extension unreachable, so the engine refuses the conflicting registration.",
+          "tasks": [
+            "Inspect unknown_registration and live_registration_conflict in the compute report.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "Registration selects routing for existing vocabulary; it does not declare a predicate.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "Use committed vocabulary and explicit argument contracts; resolve live-source conflicts before choosing backend routing. Arbitrary native raw compute names require a separate caller-owned contract.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "What does external-compute registration change?",
+            "choices": [
+              "Leave existing assertions in place and expect a backend to combine them automatically.",
+              "Use committed vocabulary and explicit argument contracts; resolve live-source conflicts before choosing backend routing. Arbitrary native raw compute names require a separate caller-owned contract.",
+              "Register any spelling to declare its argument count."
+            ],
+            "correct": 1,
+            "feedback": "Use committed vocabulary and explicit argument contracts; resolve live-source conflicts before choosing backend routing. Arbitrary native raw compute names require a separate caller-owned contract."
+          },
+          "actions": [],
+          "references": [
+            "api-compute-routing",
+            "compute-transport-contract"
+          ],
+          "self_review": [
+            "Describe the compatible vocabulary and source-state changes needed before registering a relation."
+          ],
+          "local_lab": "compute"
+        },
+        {
+          "id": "integrate.compute-query-evidence",
+          "version": 1,
+          "title": "One query can reuse a backend reply",
+          "objective": "Trace one-query memo reuse and the lifetime of computed proof evidence.",
+          "explanation": "Inspect the actual proof and dispatch counts. Repeating the same compute check within one proof-producing query uses a query-local memo. A second top-level query dispatches again. The reply contributes trusted evidence to that query, while the durable assertion registry remains empty.",
+          "tasks": [
+            "Compare first_query_dispatches, two_queries_dispatches, proof and durable_assertions.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "Two compute proof leaves can share one dispatch within a query; a later query starts a new memo.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "Keep memo lifetime, proof evidence and persistent source records distinct; a new query may observe a changed backend.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "How long does external evidence remain reusable?",
+            "choices": [
+              "Keep memo lifetime, proof evidence and persistent source records distinct; a new query may observe a changed backend.",
+              "A successful backend reply creates an assertion ID for future queries.",
+              "One cached TRUE can be reused forever across source revisions."
+            ],
+            "correct": 0,
+            "feedback": "Keep memo lifetime, proof evidence and persistent source records distinct; a new query may observe a changed backend."
+          },
+          "actions": [],
+          "references": [
+            "api-compute-routing",
+            "api-application-provenance"
+          ],
+          "self_review": [
+            "Explain why a cached compute check is neither a durable source nor evidence for a later query."
+          ],
+          "local_lab": "compute"
+        },
+        {
+          "id": "integrate.compute-transport-failure",
+          "version": 1,
+          "title": "FALSE is not a broken connection",
+          "objective": "Separate a backend FALSE from malformed replies, timeout and unavailable service.",
+          "explanation": "The loopback JSONL experiment returns true, false, malformed text and a delayed response. The one-second read timeout is a host transport setting. A parseable false is a backend answer. Malformed text and timeout become UNKNOWN/backend-unavailable and create no durable source.",
+          "tasks": [
+            "Compare each tcp result and its assertions_after value in the compute report.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "A parseable false is an answer. Malformed bytes and a missed deadline cannot supply that answer.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "Retain the failure class, repair the host/backend boundary, and rerun the query; do not treat missing computation as negative evidence.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "How should a backend transport failure be represented?",
+            "choices": [
+              "Turn malformed JSON into a false result.",
+              "Reuse a prior successful reply after a timeout without a freshness contract.",
+              "Retain the failure class, repair the host/backend boundary, and rerun the query; do not treat missing computation as negative evidence."
+            ],
+            "correct": 2,
+            "feedback": "Retain the failure class, repair the host/backend boundary, and rerun the query; do not treat missing computation as negative evidence."
+          },
+          "actions": [],
+          "references": [
+            "compute-transport-contract",
+            "provider-context-failures"
+          ],
+          "self_review": [
+            "Choose a repair for each failed transport and explain why no durable assertion should appear."
+          ],
+          "local_lab": "compute"
+        },
+        {
+          "id": "integrate.compute-argument-boundary",
+          "version": 1,
+          "title": "Keep the backend argument contract explicit",
+          "objective": "Validate external argument types and avoid treating compute as domain enumeration.",
+          "explanation": "The dispatch interface can carry numbers, constants, descriptions and unspecified places, but the arithmetic backend in this kit accepts exactly three finite numbers. A named UnknownNumber therefore fails its contract. Engine-minted witness identities also must not be relabeled as user constants to bypass an identity boundary. Find/count/aggregate deliberately do not ask the backend to enumerate a domain.",
+          "tasks": [
+            "Compare argument_refusal, find, count, aggregate and collection_dispatches.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "A complete empty enumeration says nothing about a backend that was never asked for candidates.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "Validate argument shape and identity, preserve unavailable collections, and provide an explicit finite data source when complete enumeration is required.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "Which arguments may cross an external boundary?",
+            "choices": [
+              "Ask count to repeatedly call a Boolean backend until a domain is discovered.",
+              "Validate argument shape and identity, preserve unavailable collections, and provide an explicit finite data source when complete enumeration is required.",
+              "Convert any internal witness to its printed name and send it as a user constant."
+            ],
+            "correct": 1,
+            "feedback": "Validate argument shape and identity, preserve unavailable collections, and provide an explicit finite data source when complete enumeration is required."
+          },
+          "actions": [],
+          "references": [
+            "numeric-compute-boundaries",
+            "compute-transport-contract"
+          ],
+          "self_review": [
+            "State the backend input contract and explain why find/count cannot enumerate its hidden domain."
+          ],
+          "local_lab": "compute"
+        },
+        {
+          "id": "integrate.compute-model-trust",
+          "version": 1,
+          "title": "A model-backed check is still an external assumption",
+          "objective": "Locate the trust assumptions behind a computed TRUE and design counterchecks.",
+          "explanation": "A future backend might classify an inspection image with a neural model. The symbolic engine sees the returned Boolean, not the image, model calibration or data provenance. The kit demonstrates that parseable replies are trusted without authentication or freshness. Moving a prediction behind a compute interface does not turn it into a theorem about the world.",
+          "tasks": [
+            "Inspect the kit’s deliberately false reply to a true arithmetic proposition; plan an equivalent model counterexample.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "The symbolic layer trusts a parseable backend Boolean even when the arithmetic is wrong.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "Keep model version, input provenance, threshold, review policy and freshness outside the formal claim visible; use conservative handling for unavailable evidence and test false positives separately.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "What does a backend TRUE establish?",
+            "choices": [
+              "Keep model version, input provenance, threshold, review policy and freshness outside the formal claim visible; use conservative handling for unavailable evidence and test false positives separately.",
+              "A proof containing a model-backed TRUE proves the classifier is accurate.",
+              "The JSONL transport authenticates the model and its training data."
+            ],
+            "correct": 0,
+            "feedback": "Keep model version, input provenance, threshold, review policy and freshness outside the formal claim visible; use conservative handling for unavailable evidence and test false positives separately."
+          },
+          "actions": [],
+          "references": [
+            "api-compute-routing",
+            "adoption-obligations"
+          ],
+          "self_review": [
+            "Specify source identity, freshness, calibration and disagreement checks for a proposed model backend."
+          ],
+          "local_lab": "compute"
+        },
+        {
+          "id": "integrate.compute-durable-evidence",
+          "version": 1,
+          "title": "Promote a reviewed observation deliberately",
+          "objective": "Convert a transient service observation into an explicitly reviewed source.",
+          "explanation": "A fictional inspection service reported that Inspector approved CartB. A human checked the service identity, timestamp and source record before choosing to retain that observation.",
+          "tasks": [
+            "Run the initial query and inspect its accepted sources.",
+            "Reject the wrong-cart draft; admit the corrected record only after comparing its stated provenance.",
+            "Repair the draft, prepare it again, inspect the readings and explicitly approve admission.",
+            "Run the post-review query; compare its proof and source provenance."
+          ],
+          "hints": [
+            "The durable source comes from a separate admission, never from the earlier compute memo.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "The repaired formal source is approves(Inspector, CartB). Admit it only after comparing it with the original. The post-review query should be supported by the new reviewed source; the source itself remains an application record whose accuracy needs an owner.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "approves(Inspector, CartB)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "query-reviewed",
+              "title": "Check the reviewed claim",
+              "instruction": "After reviewed admission, query the main project and inspect the cited source.",
+              "changes": [],
+              "operation": {
+                "kind": "decide",
+                "claim": "approves(Inspector, CartB)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "api-reviewed-admission",
+            "api-application-provenance"
+          ],
+          "self_review": [
+            "Explain what was reviewed and which service-identity and freshness claims still need application evidence."
+          ],
+          "review_exercise": {
+            "draft": {
+              "source_id": "integrate-compute-durable-evidence-source-v1",
+              "source_label": "Promote a reviewed observation deliberately source",
+              "source_text": "A fictional inspection service reported that Inspector approved CartB. A human checked the service identity, timestamp and source record before choosing to retain that observation.",
+              "formal_text": "approves(Inspector, CartA)."
+            },
+            "repair": {
+              "source_id": "integrate-compute-durable-evidence-source-v1",
+              "source_label": "Promote a reviewed observation deliberately source",
+              "source_text": "A fictional inspection service reported that Inspector approved CartB. A human checked the service identity, timestamp and source record before choosing to retain that observation.",
+              "formal_text": "approves(Inspector, CartB)."
+            },
+            "milestones": [
+              "rejected",
+              "admitted"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "integrate.runtimes-resources",
+      "unit": "I3",
+      "track": "integrate",
+      "title": "Choose, bound and measure a runtime",
+      "summary": "Inspect a component, exhaust host budgets, recover journals and measure explicit workloads.",
+      "version": 1,
+      "prerequisites": [
+        "integrate.external-computation"
+      ],
+      "legacy_release": false,
+      "activities": [
+        {
+          "id": "integrate.runtime-choice",
+          "version": 1,
+          "title": "Choose the runtime that owns the required capability",
+          "objective": "Assign inference, persistence and external calls to supported runtimes.",
+          "explanation": "The browser worker supplies a local symbolic session and recording UI. Its synchronous engine dispatch is not an asynchronous HTTP bridge. Native embedding can bind callbacks and manage persistent data; a WASI component receives only the capabilities its host exposes. Inspect the kit artifacts before assigning responsibilities.",
+          "tasks": [
+            "Read the capability matrix and choose owners for a browser query, a native callback and a journal.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "A component import describes what the guest can request; the host supplies the implementation.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "Keep optional browser model requests in the application layer and put synchronous external compute or journal ownership in an explicit native/component host.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "Which runtime should host an external service call?",
+            "choices": [
+              "Keep optional browser model requests in the application layer and put synchronous external compute or journal ownership in an explicit native/component host.",
+              "Treat every native API as a browser or WIT export.",
+              "Assume a WASI component automatically receives HTTP and filesystem access."
+            ],
+            "correct": 0,
+            "feedback": "Keep optional browser model requests in the application layer and put synchronous external compute or journal ownership in an explicit native/component host."
+          },
+          "actions": [],
+          "references": [
+            "api-session-lifecycle",
+            "host-capabilities"
+          ],
+          "self_review": [
+            "Trace a proposed external call and identify the boundary the browser core cannot cross."
+          ],
+          "local_lab": "wasi-runtime"
+        },
+        {
+          "id": "integrate.runtime-artifact",
+          "version": 1,
+          "title": "Inspect the artifact you actually run",
+          "objective": "Verify component identity and capabilities from the actual built artifact.",
+          "explanation": "The lab records the component and host hashes, then extracts its WIT. This pin names nibli:engine@0.12.0 and exports engine and authorizer resources. WIT identity, crate version and source revision are different identifiers. The component imports compute plus specific WASI IO/CLI/random facilities; it has no guest HTTP, socket, filesystem or clock import in this build.",
+          "tasks": [
+            "Inspect the WASI report’s WIT identity, imports, exports and artifact hashes.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "A source commit, WIT package version and built binary digest identify different things.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "Inspect actual imports, exports and versions, then check that the intended host provides those capabilities and preserves resource ownership.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "How do you establish an interface contract for a component?",
+            "choices": [
+              "Infer capabilities from the filename nibli.wasm.",
+              "Assume all recorded CoreSession collection wrappers are exported through WIT.",
+              "Inspect actual imports, exports and versions, then check that the intended host provides those capabilities and preserves resource ownership."
+            ],
+            "correct": 2,
+            "feedback": "Inspect actual imports, exports and versions, then check that the intended host provides those capabilities and preserves resource ownership."
+          },
+          "actions": [],
+          "references": [
+            "wit-world",
+            "wit-values-resources",
+            "runtime-artifact-inspection"
+          ],
+          "self_review": [
+            "State which capabilities the guest imports and which capabilities its host still possesses."
+          ],
+          "local_lab": "wasi-runtime"
+        },
+        {
+          "id": "integrate.runtime-budget-origin",
+          "version": 1,
+          "title": "Locate the budget that stopped work",
+          "objective": "Identify the layer that exhausted a budget before choosing a repair.",
+          "explanation": "Reasoner depth limits inference search. Host fuel limits executed WASM work; host memory limits component growth. Browser cancellation terminates a worker and restores acknowledged state. These limits originate at different layers and produce different recovery obligations.",
+          "tasks": [
+            "Compare reasoner-depth results with fuel and memory observations from the WASI kit.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "Increasing reasoner depth cannot replenish Wasmtime fuel or change the component memory limit.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "For a fuel trap, diagnose and adjust the host workload/fuel budget, rebuild the poisoned instance and replay committed inputs. Raising rule depth alone does not supply fuel.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "Which setting repairs a host fuel trap?",
+            "choices": [
+              "Translate every trap into a completed FALSE inference.",
+              "For a fuel trap, diagnose and adjust the host workload/fuel budget, rebuild the poisoned instance and replay committed inputs. Raising rule depth alone does not supply fuel.",
+              "Increase rule depth to grant more Wasmtime fuel."
+            ],
+            "correct": 1,
+            "feedback": "For a fuel trap, diagnose and adjust the host workload/fuel budget, rebuild the poisoned instance and replay committed inputs. Raising rule depth alone does not supply fuel."
+          },
+          "actions": [],
+          "references": [
+            "budget-origin-contract",
+            "host-journal-recovery"
+          ],
+          "self_review": [
+            "Match depth, fuel, memory and browser cancellation to their controls and recovery owners."
+          ],
+          "local_lab": "wasi-runtime"
+        },
+        {
+          "id": "integrate.runtime-fuel-recovery",
+          "version": 1,
+          "title": "Recover after a real fuel trap",
+          "objective": "Recover committed inputs after an actual WASI fuel trap.",
+          "explanation": "The host commits one inventory fact, lowers fuel, then executes a query that traps. It raises fuel before the next call, rebuilds the component and replays the committed journal. Inspect the actual resource result, rebuild message, source ID and recovered TRUE.",
+          "tasks": [
+            "Read the fuel transcript in order: commit, trap, budget change, rebuild, replay and successful query.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "Find the surviving source ID as well as the final TRUE; a new empty instance would be insufficient.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "Recover acknowledged journal entries, preserve their IDs and rerun the query; do not retain an interrupted proof or pretend the failed call completed.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "What survives a trapped component call?",
+            "choices": [
+              "Recover acknowledged journal entries, preserve their IDs and rerun the query; do not retain an interrupted proof or pretend the failed call completed.",
+              "Keep using the poisoned instance as if only the query result was lost.",
+              "Treat the interrupted query as a new committed assertion."
+            ],
+            "correct": 0,
+            "feedback": "Recover acknowledged journal entries, preserve their IDs and rerun the query; do not retain an interrupted proof or pretend the failed call completed."
+          },
+          "actions": [],
+          "references": [
+            "host-journal-recovery",
+            "budget-origin-contract"
+          ],
+          "self_review": [
+            "Identify what was journaled before the trap and what the failed call did not acknowledge."
+          ],
+          "local_lab": "wasi-runtime"
+        },
+        {
+          "id": "integrate.runtime-memory-recovery",
+          "version": 1,
+          "title": "A memory cap is not process RSS",
+          "objective": "Interpret component growth limits and recover after a memory trap.",
+          "explanation": "The host lowers its component memory cap after initialization. That does not shrink existing memory. A bounded large query forces a subsequent growth request, triggering a real memory resource outcome. Raising the cap permits a fresh instance to replay the journal and answer the small original query.",
+          "tasks": [
+            "Compare memory_query_bytes, the memory transcript and the retained original fact.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "The lowered cap applies to subsequent growth; it cannot reclaim pages allocated earlier.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "Distinguish guest growth limits, existing allocations and host process RSS; recover committed state after the trap and choose a justified workload bound.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "What does the memory experiment constrain?",
+            "choices": [
+              "Claim the one-MiB setting limits the entire process to one MiB.",
+              "Call retained allocator pages a memory leak without measuring lifetimes.",
+              "Distinguish guest growth limits, existing allocations and host process RSS; recover committed state after the trap and choose a justified workload bound."
+            ],
+            "correct": 2,
+            "feedback": "Distinguish guest growth limits, existing allocations and host process RSS; recover committed state after the trap and choose a justified workload bound."
+          },
+          "actions": [],
+          "references": [
+            "host-capabilities",
+            "budget-origin-contract",
+            "measurement-method"
+          ],
+          "self_review": [
+            "Explain why this experiment is neither a whole-process RSS limit nor a fixed-size formula benchmark."
+          ],
+          "local_lab": "wasi-runtime"
+        },
+        {
+          "id": "integrate.runtime-journal",
+          "version": 1,
+          "title": "Reopen without renumbering evidence",
+          "objective": "Preserve source identities across deletion, reopening and later withdrawal.",
+          "explanation": "The journal experiment stores three sources, deletes the middle one and reopens. The surviving high ID must remain stable, because later retraction addresses that identity. Renumbering survivors could withdraw another source or leave a stale one active. The native scoped application also reopens after a real withdrawal.",
+          "tasks": [
+            "Find the missing middle ID and surviving high ID in journal; compare the native withdrawal result.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "A tombstone gap is evidence of identity preservation, not a numbering defect to repair.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "Replay the authoritative journal with stable identities and tombstones, then test both a surviving source and the withdrawn source after reopen.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "Why does a deleted middle ID matter?",
+            "choices": [
+              "Treat a browser recovery JSON file as the native database format.",
+              "Replay the authoritative journal with stable identities and tombstones, then test both a surviving source and the withdrawn source after reopen.",
+              "Reassign sequential IDs because only the remaining text matters."
+            ],
+            "correct": 1,
+            "feedback": "Replay the authoritative journal with stable identities and tombstones, then test both a surviving source and the withdrawn source after reopen."
+          },
+          "actions": [],
+          "references": [
+            "host-journal-recovery",
+            "api-session-lifecycle"
+          ],
+          "self_review": [
+            "Explain how renumbering would break a later source-specific withdrawal."
+          ],
+          "local_lab": "wasi-runtime"
+        },
+        {
+          "id": "integrate.runtime-measurement",
+          "version": 1,
+          "title": "Measure the work you named",
+          "objective": "Measure distinct engine phases and distinguish allocations from resident memory.",
+          "explanation": "The native release kit runs deep/narrow, wide and sparse workloads three times. It records initialization, compile-only, text compilation/admission, non-proof query, proof query and proof serialization separately. Rust allocation requests and Linux RSS are separate measurements. Later repetitions share a warmed process.",
+          "tasks": [
+            "Compare three workload shapes and repetitions; separate compile, admission, query, proof and serialization measurements.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "Allocation bytes are summed requests, not peak live memory; RSS includes the process and allocator.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "Report the exact input, build, profile, phase boundary and warm-process limitation. Use allocation counts to investigate copying and RSS to inspect process footprint; neither alone proves a speed advantage.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "What does this measurement establish?",
+            "choices": [
+              "Report the exact input, build, profile, phase boundary and warm-process limitation. Use allocation counts to investigate copying and RSS to inspect process footprint; neither alone proves a speed advantage.",
+              "Label the entire program time as reasoning latency.",
+              "Compare debug WASI fuel counts with native nanoseconds as equivalent speed units."
+            ],
+            "correct": 0,
+            "feedback": "Report the exact input, build, profile, phase boundary and warm-process limitation. Use allocation counts to investigate copying and RSS to inspect process footprint; neither alone proves a speed advantage."
+          },
+          "actions": [],
+          "references": [
+            "measurement-method",
+            "local-evidence-contract"
+          ],
+          "self_review": [
+            "Explain warm-process effects, measurement overhead and why these runs do not establish general superiority."
+          ],
+          "local_lab": "measurement"
+        },
+        {
+          "id": "integrate.runtime-cost",
+          "version": 1,
+          "title": "Budget for review and maintenance as well as inference",
+          "objective": "Estimate integration costs with explicit workload and staffing assumptions.",
+          "explanation": "Use the worksheet with your own workload and request price. Add review time, correction and regression work, vocabulary/ontology mapping, onboarding, persistent storage and host operations to your written plan. The calculator displays a narrow monthly request estimate; it is not a current provider quote.",
+          "tasks": [
+            "Set request price and review capacity, then write the hosting, correction and maintenance costs the worksheet omits.",
+            "Separate training from inference and distinguish executable bytes, model weights, knowledge data and runtime memory before comparing costs.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "Reducing request price does not reduce minutes spent reviewing a draft.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "State volume and unit-price assumptions, estimate review capacity and maintenance ownership, and choose a small pilot that can test those assumptions.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "Which costs belong in an adoption estimate?",
+            "choices": [
+              "Use a zero price field as evidence that the provider is free.",
+              "Count model tokens while omitting source acquisition and review labor.",
+              "State volume and unit-price assumptions, estimate review capacity and maintenance ownership, and choose a small pilot that can test those assumptions."
+            ],
+            "correct": 2,
+            "feedback": "State volume and unit-price assumptions, estimate review capacity and maintenance ownership, and choose a small pilot that can test those assumptions."
+          },
+          "actions": [],
+          "references": [
+            "integration-cost-model",
+            "review-capacity",
+            "adoption-obligations"
+          ],
+          "self_review": [
+            "Identify the largest uncertain assumption and the pilot measurement that would replace it.",
+            "Specify a fair comparison: same task, inputs, acceptance criteria, hardware and load, with separate cold and warm measurements."
+          ],
+          "local_lab": null,
+          "cost_worksheet": true
+        }
+      ]
+    },
+    {
+      "id": "integrate.scoped-applications",
+      "unit": "I4",
+      "track": "integrate",
+      "title": "Build an application around retained evidence",
+      "summary": "Connect source records, retrieval, ontology mapping, scoped authorization and recovery.",
+      "version": 1,
+      "prerequisites": [
+        "integrate.runtimes-resources"
+      ],
+      "legacy_release": false,
+      "activities": [
+        {
+          "id": "integrate.application-records",
+          "version": 1,
+          "title": "A document is not an assertion",
+          "objective": "Trace application records through explicit admission into engine sources.",
+          "explanation": "The search panel contains original inspection and review documents with IDs, case scope and revision. The accepted source list contains only KR actually admitted to this project. Selecting a document copies its text to review; it does not create an assertion or a proof.",
+          "tasks": [
+            "Select a retrieved document, compare it with accepted KR, and trace the provided source changes.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "A document ID identifies a record; an assertion ID identifies one admitted source in this session.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "CaseB review does not satisfy CaseA. A matching CaseA review supplies the missing premise, and withdrawing it removes that support. The protected conclusion remains derived from its policy and source records.",
+          "setup": [
+            {
+              "text": "derived_only(\"ready\").",
+              "source": "Case fixture line 1"
+            },
+            {
+              "text": "all $cart, $case: owns($case, $cart) & approves(Inspector, $case) & approves(Reviewer, $case) -> ready($cart, $case).",
+              "source": "Case fixture line 2"
+            },
+            {
+              "text": "owns(CaseA, CartB).",
+              "source": "Case fixture line 3"
+            },
+            {
+              "text": "owns(CaseB, CartB).",
+              "source": "Case fixture line 4"
+            },
+            {
+              "text": "approves(Inspector, CaseA).",
+              "source": "Case fixture line 5"
+            },
+            {
+              "text": "approves(Reviewer, CaseB).",
+              "source": "Case fixture line 6"
+            }
+          ],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "ready(CartB, CaseA)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "matching-review",
+              "title": "Admit matching CaseA review",
+              "instruction": "The original replacement note has been reviewed for this case.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "approves(Reviewer, CaseA).",
+                  "source": "Reviewed replacement CaseA note"
+                }
+              ],
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(CartB, CaseA)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "withdraw-review",
+              "title": "Withdraw this reviewed source",
+              "instruction": "An upstream correction invalidated this source. Preserve the other case records.",
+              "changes": [
+                {
+                  "kind": "withdraw_source",
+                  "source": "Reviewed replacement CaseA note"
+                }
+              ],
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(CartB, CaseA)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "api-application-provenance",
+            "retrieval-verification"
+          ],
+          "self_review": [
+            "Explain the handoff from selected document through review to an engine assertion and its withdrawal."
+          ],
+          "local_lab": null,
+          "retrieval": true
+        },
+        {
+          "id": "integrate.application-case-isolation",
+          "version": 1,
+          "title": "The same cart can belong to different cases",
+          "objective": "Prevent another case’s approval from satisfying this case.",
+          "explanation": "CartB appears in both CaseA and CaseB. The rule joins ownership, inspector approval and reviewer approval using the same case variable. The initial reviewer evidence belongs to CaseB. Diagnose the missing CaseA support without treating the cart name as a sufficient join key.",
+          "tasks": [
+            "Run the wrong-case result, add the matching review, and withdraw that specific source.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "Every rule condition must use the same case variable; sharing CartB alone does not join the cases.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "CaseB review does not satisfy CaseA. A matching CaseA review supplies the missing premise, and withdrawing it removes that support. The protected conclusion remains derived from its policy and source records.",
+          "setup": [
+            {
+              "text": "derived_only(\"ready\").",
+              "source": "Case fixture line 1"
+            },
+            {
+              "text": "all $cart, $case: owns($case, $cart) & approves(Inspector, $case) & approves(Reviewer, $case) -> ready($cart, $case).",
+              "source": "Case fixture line 2"
+            },
+            {
+              "text": "owns(CaseA, CartB).",
+              "source": "Case fixture line 3"
+            },
+            {
+              "text": "owns(CaseB, CartB).",
+              "source": "Case fixture line 4"
+            },
+            {
+              "text": "approves(Inspector, CaseA).",
+              "source": "Case fixture line 5"
+            },
+            {
+              "text": "approves(Reviewer, CaseB).",
+              "source": "Case fixture line 6"
+            }
+          ],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "ready(CartB, CaseA)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "matching-review",
+              "title": "Admit matching CaseA review",
+              "instruction": "The original replacement note has been reviewed for this case.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "approves(Reviewer, CaseA).",
+                  "source": "Reviewed replacement CaseA note"
+                }
+              ],
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(CartB, CaseA)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "withdraw-review",
+              "title": "Withdraw this reviewed source",
+              "instruction": "An upstream correction invalidated this source. Preserve the other case records.",
+              "changes": [
+                {
+                  "kind": "withdraw_source",
+                  "source": "Reviewed replacement CaseA note"
+                }
+              ],
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(CartB, CaseA)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "api-application-provenance",
+            "api-authorizer"
+          ],
+          "self_review": [
+            "Point to the join that blocks CaseB evidence and explain the before/after/withdrawal results."
+          ],
+          "local_lab": "scoped-application",
+          "retrieval": false
+        },
+        {
+          "id": "integrate.application-citations",
+          "version": 1,
+          "title": "Follow a conclusion back to retained evidence",
+          "objective": "Connect actual proof citations to source IDs and application provenance.",
+          "explanation": "The proof is a certificate for the query under accepted premises. Execution replay describes how a recorded operation ran. Neither is the original document. Inspect the cited assertion IDs, find their source labels, and distinguish those identifiers from a source document’s version and a project revision.",
+          "tasks": [
+            "Inspect the successful proof, locate its accepted sources, then remove the matching review.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "Proof citation, application record revision and project revision are different identifiers.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "CaseB review does not satisfy CaseA. A matching CaseA review supplies the missing premise, and withdrawing it removes that support. The protected conclusion remains derived from its policy and source records.",
+          "setup": [
+            {
+              "text": "derived_only(\"ready\").",
+              "source": "Case fixture line 1"
+            },
+            {
+              "text": "all $cart, $case: owns($case, $cart) & approves(Inspector, $case) & approves(Reviewer, $case) -> ready($cart, $case).",
+              "source": "Case fixture line 2"
+            },
+            {
+              "text": "owns(CaseA, CartB).",
+              "source": "Case fixture line 3"
+            },
+            {
+              "text": "owns(CaseB, CartB).",
+              "source": "Case fixture line 4"
+            },
+            {
+              "text": "approves(Inspector, CaseA).",
+              "source": "Case fixture line 5"
+            },
+            {
+              "text": "approves(Reviewer, CaseB).",
+              "source": "Case fixture line 6"
+            }
+          ],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "ready(CartB, CaseA)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "matching-review",
+              "title": "Admit matching CaseA review",
+              "instruction": "The original replacement note has been reviewed for this case.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "approves(Reviewer, CaseA).",
+                  "source": "Reviewed replacement CaseA note"
+                }
+              ],
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(CartB, CaseA)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "withdraw-review",
+              "title": "Withdraw this reviewed source",
+              "instruction": "An upstream correction invalidated this source. Preserve the other case records.",
+              "changes": [
+                {
+                  "kind": "withdraw_source",
+                  "source": "Reviewed replacement CaseA note"
+                }
+              ],
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(CartB, CaseA)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "api-application-provenance",
+            "api-session-lifecycle"
+          ],
+          "self_review": [
+            "Trace one premise back to its source and state which real-world claim the proof cannot verify."
+          ],
+          "local_lab": "scoped-application",
+          "retrieval": false
+        },
+        {
+          "id": "integrate.application-ontology",
+          "version": 1,
+          "title": "Map a fragment without hiding a loss",
+          "objective": "Validate an ontology mapping and preserve main state when import is partial or lossy.",
+          "explanation": "The kit round-trips a supported two-place fact fragment, detects local-name collisions, exposes partial mutation before an import refusal, and reports flavor export losses. It also demonstrates that the small reader can accept a token without full Turtle semantics. Native sorts and facts do not automatically become browser recovery images.",
+          "tasks": [
+            "Inspect the round trip, namespace collision, incremental refusal and unsupported token controls.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "The detached importer can mutate before a later row fails; discard that candidate as a unit.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "Use a validated supported fragment and explicit namespace mapping, import into a disposable candidate, expose export refusals, and keep ontology/source provenance outside the fact-only export.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "What must an ontology adapter preserve or refuse?",
+            "choices": [
+              "Use a validated supported fragment and explicit namespace mapping, import into a disposable candidate, expose export refusals, and keep ontology/source provenance outside the fact-only export.",
+              "Assume a successful parse validates all Turtle semantics.",
+              "Drop unsupported facts and call the remainder a complete ontology export."
+            ],
+            "correct": 0,
+            "feedback": "Use a validated supported fragment and explicit namespace mapping, import into a disposable candidate, expose export refusals, and keep ontology/source provenance outside the fact-only export."
+          },
+          "actions": [],
+          "references": [
+            "api-ontology-fragments",
+            "ontology-loss-boundaries"
+          ],
+          "self_review": [
+            "Specify a collision policy, syntax validator and loss policy before promoting an imported candidate."
+          ],
+          "local_lab": "ontology"
+        },
+        {
+          "id": "integrate.application-retrieval",
+          "version": 1,
+          "title": "A relevant result can still be the wrong evidence",
+          "objective": "Filter retrieval by case and withdrawal before selecting evidence for review.",
+          "explanation": "Search for review and approved, then compare CaseA-only results with all cases and with withdrawn records. A high lexical score can identify CaseB or an obsolete CaseA note. Select the current replacement record and inspect its identity before writing a formal draft. The local search uses transparent word matching, not a truth score.",
+          "tasks": [
+            "Search review approved; compare CaseA, all cases and withdrawn results, then select the replacement note.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "A high word-match score cannot repair the wrong case or a withdrawn revision.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "Check case, revision, withdrawal and actual source meaning before review; relevance only identifies a candidate source.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "Which retrieved document can support CaseA?",
+            "choices": [
+              "Choose the highest-scoring document regardless of case or withdrawal.",
+              "Treat the search result order as a symbolic proof.",
+              "Check case, revision, withdrawal and actual source meaning before review; relevance only identifies a candidate source."
+            ],
+            "correct": 2,
+            "feedback": "Check case, revision, withdrawal and actual source meaning before review; relevance only identifies a candidate source."
+          },
+          "actions": [],
+          "references": [
+            "retrieval-verification",
+            "api-application-provenance"
+          ],
+          "self_review": [
+            "Justify the selected record using case, revision, active status and source meaning rather than rank."
+          ],
+          "local_lab": null,
+          "retrieval": true
+        },
+        {
+          "id": "integrate.application-guided-generation",
+          "version": 1,
+          "title": "Use failed checks to guide a new draft",
+          "objective": "Use counterexample queries and source review to repair a generated draft.",
+          "explanation": "The current replacement review says Reviewer approved CaseA for CartB. No CaseB approval should satisfy a CaseA query.",
+          "tasks": [
+            "Run the initial query and inspect its accepted sources.",
+            "Reject the CaseB draft, prepare the CaseA repair and rerun the scoped readiness query.",
+            "Repair the draft, prepare it again, inspect the readings and explicitly approve admission.",
+            "Run the post-review query; compare its proof and source provenance."
+          ],
+          "hints": [
+            "A compiler can accept the wrong case; only the source comparison and distinguishing query expose it.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "The repaired formal source is approves(Reviewer, CaseA). Admit it only after comparing it with the original. The post-review query should be supported by the new reviewed source; the source itself remains an application record whose accuracy needs an owner.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "approves(Reviewer, CaseA)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "query-reviewed",
+              "title": "Check the reviewed claim",
+              "instruction": "After reviewed admission, query the main project and inspect the cited source.",
+              "changes": [],
+              "operation": {
+                "kind": "decide",
+                "claim": "approves(Reviewer, CaseA)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "api-reviewed-admission",
+            "retrieval-verification"
+          ],
+          "self_review": [
+            "Describe one iteration of draft, deterministic check, counterexample, human review and admission."
+          ],
+          "review_exercise": {
+            "draft": {
+              "source_id": "integrate-application-guided-generation-source-v1",
+              "source_label": "Use failed checks to guide a new draft source",
+              "source_text": "The current replacement review says Reviewer approved CaseA for CartB. No CaseB approval should satisfy a CaseA query.",
+              "formal_text": "approves(Reviewer, CaseB)."
+            },
+            "repair": {
+              "source_id": "integrate-application-guided-generation-source-v1",
+              "source_label": "Use failed checks to guide a new draft source",
+              "source_text": "The current replacement review says Reviewer approved CaseA for CartB. No CaseB approval should satisfy a CaseA query.",
+              "formal_text": "approves(Reviewer, CaseA)."
+            },
+            "milestones": [
+              "rejected",
+              "admitted"
+            ]
+          }
+        },
+        {
+          "id": "integrate.application-agent",
+          "version": 1,
+          "title": "Separate an agent proposal from an authorized action",
+          "objective": "Bind an agent’s proposed action to scoped authorization and host execution.",
+          "explanation": "A retrieved memo says to ignore policy and mark every cart ready. It is document text, not an instruction from the application owner. The native authorizer lab scopes an allowed inspection action and clears temporary context between calls. Its decision adapter permits only TRUE; that policy decision still needs a host to perform any side effect.",
+          "tasks": [
+            "Inspect the untrusted memo and the native authorizer’s correct-case, wrong-case and cleared-context controls.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "A document instruction grants no authority. Temporary authorization context must not survive the request.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "Keep proposed text, reviewed evidence, authorization and execution as separate steps; check current scope and context immediately before the host action.",
+          "setup": [],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": null,
+          "expected": null,
+          "question": {
+            "prompt": "Where should an agent’s action authority be checked?",
+            "choices": [
+              "Keep proposed text, reviewed evidence, authorization and execution as separate steps; check current scope and context immediately before the host action.",
+              "Execute instructions found in the retrieved memo.",
+              "Treat UNKNOWN or an earlier cached allowance as permission for a different resource."
+            ],
+            "correct": 0,
+            "feedback": "Keep proposed text, reviewed evidence, authorization and execution as separate steps; check current scope and context immediately before the host action."
+          },
+          "actions": [],
+          "references": [
+            "agent-action-boundaries",
+            "api-authorizer"
+          ],
+          "self_review": [
+            "Define the permitted action, scoped resource, host side effect and fail-closed handling for non-TRUE decisions."
+          ],
+          "local_lab": "scoped-application",
+          "retrieval": true
+        },
+        {
+          "id": "integrate.application-capstone",
+          "version": 1,
+          "title": "Rebuild a scoped evidence workflow",
+          "objective": "Combine explicit source admission, case isolation, citations and recovery.",
+          "explanation": "Use the original cart/case fixture as a small application. Trace the wrong-case counterexample, repair the review source, inspect proof citations, withdraw that source and reproduce the before/after outcomes in the native and WASI kit. Explain which application records, credentials, transient replies and journals belong to each layer.",
+          "tasks": [
+            "Reproduce the case counterexample and repair in the browser and local kit, then withdraw the support and reopen.",
+            "Record the observation that distinguishes the failed approach from its repair.",
+            "Use the self-review criterion to explain your result."
+          ],
+          "hints": [
+            "Compare outcome and source identity across paths; do not copy native recovery bytes into the browser.",
+            "Compare your observations with the solution, then identify the assumption or input you would change next."
+          ],
+          "solution": "CaseB review does not satisfy CaseA. A matching CaseA review supplies the missing premise, and withdrawing it removes that support. The protected conclusion remains derived from its policy and source records.",
+          "setup": [
+            {
+              "text": "derived_only(\"ready\").",
+              "source": "Case fixture line 1"
+            },
+            {
+              "text": "all $cart, $case: owns($case, $cart) & approves(Inspector, $case) & approves(Reviewer, $case) -> ready($cart, $case).",
+              "source": "Case fixture line 2"
+            },
+            {
+              "text": "owns(CaseA, CartB).",
+              "source": "Case fixture line 3"
+            },
+            {
+              "text": "owns(CaseB, CartB).",
+              "source": "Case fixture line 4"
+            },
+            {
+              "text": "approves(Inspector, CaseA).",
+              "source": "Case fixture line 5"
+            },
+            {
+              "text": "approves(Reviewer, CaseB).",
+              "source": "Case fixture line 6"
+            }
+          ],
+          "profile": {
+            "max_chain_depth": 10,
+            "existential_import": false,
+            "strict": false,
+            "materialization": false,
+            "id": "browser.standard",
+            "version": 1
+          },
+          "operation": {
+            "kind": "decide",
+            "claim": "ready(CartB, CaseA)."
+          },
+          "expected": {
+            "family": "decision",
+            "status": "FALSE"
+          },
+          "question": null,
+          "actions": [
+            {
+              "id": "matching-review",
+              "title": "Admit matching CaseA review",
+              "instruction": "The original replacement note has been reviewed for this case.",
+              "changes": [
+                {
+                  "kind": "assert",
+                  "text": "approves(Reviewer, CaseA).",
+                  "source": "Reviewed replacement CaseA note"
+                }
+              ],
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(CartB, CaseA)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "TRUE"
+              },
+              "scope": "main"
+            },
+            {
+              "id": "withdraw-review",
+              "title": "Withdraw this reviewed source",
+              "instruction": "An upstream correction invalidated this source. Preserve the other case records.",
+              "changes": [
+                {
+                  "kind": "withdraw_source",
+                  "source": "Reviewed replacement CaseA note"
+                }
+              ],
+              "operation": {
+                "kind": "decide",
+                "claim": "ready(CartB, CaseA)."
+              },
+              "expected": {
+                "family": "decision",
+                "status": "FALSE"
+              },
+              "scope": "main"
+            }
+          ],
+          "references": [
+            "api-session-lifecycle",
+            "api-application-provenance",
+            "adoption-obligations"
+          ],
+          "self_review": [
+            "Assign an owner to source intake, review, journals, external services, regressions and withdrawn evidence."
+          ],
+          "local_lab": "wasi-runtime",
+          "retrieval": true
         }
       ]
     }

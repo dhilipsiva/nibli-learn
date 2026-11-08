@@ -1,6 +1,6 @@
 {
-  "schema": 2,
-  "version": 2,
+  "schema": 3,
+  "version": 3,
   "entries": [
     {
       "id": "derivable",
@@ -368,7 +368,7 @@
       "id": "runtime-capabilities",
       "title": "Where an operation actually runs",
       "category": "runtime",
-      "body": "The companion executes the supported KR/source workflow in a browser worker. Native host sort configuration, direct IR integrations, filesystem journals, Redb storage, WASI fuel and memory controls, and external runtime callbacks require their respective host environments. They are reference topics here, not simulated browser features. Browser depth exhaustion does not demonstrate WASI fuel or memory exhaustion. The browser also enforces shared engine formula-work and certificate-size limits; a fuel outcome therefore need not be a WASI instruction-fuel trap.",
+      "body": "The companion executes the supported KR/source workflow in a browser worker. Native host sort configuration, direct IR integrations, filesystem journals, Redb storage, WASI fuel and memory controls, and external runtime callbacks require their respective host environments. Integrate provides separate local kits for these host capabilities; the browser does not simulate them. Browser depth exhaustion does not demonstrate WASI fuel or memory exhaustion. The browser also enforces shared engine formula-work and certificate-size limits; a fuel outcome therefore need not be a WASI instruction-fuel trap.",
       "examples": [],
       "related": [
         "types",
@@ -1582,6 +1582,478 @@
           "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/NIBLI_KR.md"
         }
       ]
+    },
+    {
+      "id": "api-reviewed-admission",
+      "category": "R2 · Application APIs",
+      "title": "Prepare, review, admit",
+      "body": "PrepareReview validates source bounds, compiles, checks canonical round-trip, renders a deterministic reading and attempts detached admission. Main knowledge is unchanged. AdmitReviewed requires an exact worker-held ticket, unchanged draft and knowledge/profile, and explicit human confirmation; it repeats ordinary admission. A syntax pass is not a finding about source intent. Review is consumed on an admission attempt and lost on worker restart.",
+      "examples": [
+        {
+          "kind": "api",
+          "source": "PrepareReview { draft } → source, canonical KR, backtranslation, detached admission record\nAdmitReviewed { preparation, draft, human_confirmed: true } → actual main source IDs",
+          "explanation": "Browser review panel; source-review worker tests",
+          "run_in": "Browser review panel; source-review worker tests",
+          "lab": null,
+          "expected": null
+        }
+      ],
+      "related": [],
+      "links": []
+    },
+    {
+      "id": "api-compute-routing",
+      "category": "R2 · Application APIs",
+      "title": "Register an existing relation for dispatch",
+      "body": "CoreSession::register_compute_predicate chooses dispatch for committed vocabulary. It does not declare new words or infer arity. Registering a relation with live stored references is refused because routing would make those rows unreachable. Native callbacks or the component host supply external results. Successful replies belong to one query’s evidence and memo, not the persistent source registry. The browser worker has no asynchronous external-compute bridge.",
+      "examples": [
+        {
+          "kind": "api",
+          "source": "session.register_compute_predicate(\"exponential\".into())?;\nsession.set_compute_dispatch(evaluate, evaluate_batch);",
+          "explanation": "Native compute kit",
+          "run_in": "Native compute kit",
+          "lab": "compute",
+          "expected": null
+        }
+      ],
+      "related": [
+        "compute-transport-contract",
+        "numeric-compute-boundaries"
+      ],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-session/src/lib.rs"
+        }
+      ]
+    },
+    {
+      "id": "api-session-lifecycle",
+      "category": "R2 · Application APIs",
+      "title": "Create, inspect, restore and rebind",
+      "body": "A session owns its knowledge, settings and source registry. Browser recovery restores acknowledged symbolic state in a new worker; native persistence reopens its authoritative journal. Host callbacks and credentials are not serialized state. Rebind required capabilities after restore. Keep old run records attached to their original epoch/revision instead of replacing their meaning with the current project. Check actual exports before assuming native methods exist in WIT.",
+      "examples": [
+        {
+          "kind": "api",
+          "source": "let restored = CoreSession::from_snapshot(&snapshot)?;\nrestored.set_compute_dispatch(evaluate, evaluate_batch);",
+          "explanation": "Native compute and scoped-application kits",
+          "run_in": "Native compute and scoped-application kits",
+          "lab": "compute",
+          "expected": null
+        }
+      ],
+      "related": [],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-session/src/execution.rs"
+        }
+      ]
+    },
+    {
+      "id": "api-authorizer",
+      "category": "R2 · Application APIs",
+      "title": "Conservative authorization with scoped context",
+      "body": "The native Authorizer loads a policy, combines durable facts with temporary call context, evaluates an authorization query and clears that temporary context. Its adapter allows only TRUE; FALSE, UNKNOWN and RESOURCE_EXCEEDED do not permit an action. The application must authenticate callers, construct trusted context, select the correct resource and perform any actual side effect. A decision cache is scoped by policy and context; it is not permission to change the resource or reuse obsolete evidence.",
+      "examples": [
+        {
+          "kind": "api",
+          "source": "authorizer.can(\"Inspector\", \"inspect\", \"CaseA\", \"approves(Inspector, CaseA).\")?;",
+          "explanation": "Native scoped-application kit, including its explicit inspection policy overlay",
+          "run_in": "Native scoped-application kit, including its explicit inspection policy overlay",
+          "lab": "scoped-application",
+          "expected": null
+        }
+      ],
+      "related": [],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-auth/src/lib.rs"
+        }
+      ]
+    },
+    {
+      "id": "api-ontology-fragments",
+      "category": "R2 · Application APIs",
+      "title": "Import a supported ontology fragment",
+      "body": "The small native reader accepts a restricted textual format and collapses IRIs to local names. Class/type input changes native sort configuration; ordinary triples become two-place facts. Imports mutate incrementally, so use a disposable candidate and discard it after any failure. The exporter describes an exportable fact fragment, not the original ontology, namespace provenance, rules, or application journal. Inspect its refused list as part of the result.",
+      "examples": [
+        {
+          "kind": "api",
+          "source": "let candidate = NibliEngine::new();\nimport_triples_raw(&candidate, source)?;\nlet exported = export_facts(&candidate); // inspect document AND refused",
+          "explanation": "Native ontology kit",
+          "run_in": "Native ontology kit",
+          "lab": "ontology",
+          "expected": null
+        }
+      ],
+      "related": [],
+      "links": [
+        {
+          "label": "Pinned public implementation",
+          "url": "https://github.com/dhilipsiva/nibli/blob/0440db4233f8a8cffbf81be9654a5e54c1f9c836/nibli-import/src/lib.rs"
+        }
+      ]
+    },
+    {
+      "id": "api-application-provenance",
+      "category": "R2 · Application APIs",
+      "title": "Keep document, assertion and run identities distinct",
+      "body": "A document ID/revision identifies application evidence. An assertion ID identifies an admitted source in a session. Epoch and revision identify the knowledge used by a run. The companion retains source text and hashes alongside reviewed assertions; those hashes bind bytes but do not authenticate a source or prove an imported review occurred. Withdrawal targets actual assertion IDs. A document edit alone does not silently retract the corresponding accepted premise.",
+      "examples": [
+        {
+          "kind": "data",
+          "source": "document id/revision → reviewed source hash → assertion ID\nassertion IDs + session epoch/revision → query result + proof citations",
+          "explanation": "Browser accepted source records and native scoped application",
+          "run_in": "Browser accepted source records and native scoped application",
+          "lab": "scoped-application",
+          "expected": null
+        }
+      ],
+      "related": [
+        "retrieval-verification",
+        "sources",
+        "api-reviewed-admission"
+      ],
+      "links": []
+    },
+    {
+      "id": "wit-world",
+      "category": "R3 · Runtime interfaces",
+      "title": "Inspect a WIT world and package identity",
+      "body": "This pin exposes the nibli:engine@0.12.0 interfaces through a component world. Crate version 0.2.0, WIT package version and source commit are distinct identities. The artifact exports engine and authorizer resources and imports compute-backend plus listed WASI facilities. Use the actual extracted world to establish what a host must provide; a source filename is not an interface inspection.",
+      "examples": [
+        {
+          "kind": "wit",
+          "source": "import nibli:engine/compute-backend@0.12.0;\nexport nibli:engine/engine@0.12.0;\nexport nibli:engine/authorizer@0.12.0;",
+          "explanation": "Extracted component WIT in the WASI runtime kit",
+          "run_in": "Extracted component WIT in the WASI runtime kit",
+          "lab": "wasi-runtime",
+          "expected": null
+        }
+      ],
+      "related": [],
+      "links": []
+    },
+    {
+      "id": "wit-values-resources",
+      "category": "R3 · Runtime interfaces",
+      "title": "Values cross a boundary; resources have an owner",
+      "body": "WIT records, variants and lists describe values crossing the component boundary. Resources represent owned state with creation, use and release. A host should not keep using a poisoned instance after a trap or treat a resource handle from one instance as a handle in another. Recreate resources and replay acknowledged inputs during recovery. Typed errors returned by a call differ from a host trap that interrupts that call.",
+      "examples": [
+        {
+          "kind": "data",
+          "source": "create component instance → create engine resource → call → release\ntrap → discard poisoned instance → recreate resource → replay journal",
+          "explanation": "WASI runtime kit; inspect the complete extracted WIT",
+          "run_in": "WASI runtime kit; inspect the complete extracted WIT",
+          "lab": "wasi-runtime",
+          "expected": null
+        }
+      ],
+      "related": [],
+      "links": []
+    },
+    {
+      "id": "host-capabilities",
+      "category": "R3 · Runtime interfaces",
+      "title": "A guest boundary does not erase host capabilities",
+      "body": "The observed component imports WASI IO, CLI and an insecure random seed alongside compute interfaces. It has no guest filesystem, socket, HTTP or clock import at this pin. Its host still owns files, process state and the loopback compute bridge. A sandbox limits the guest’s route to capabilities; it does not validate returned evidence or authorize host side effects. Keep capability selection and logical entailment as separate checks.",
+      "examples": [
+        {
+          "kind": "lab",
+          "source": "python3 labs/run.py wasi-runtime --engine-root ../nibli-lab-engine --output ../nibli-capabilities-first",
+          "explanation": "Pinned local WASI kit",
+          "run_in": "Pinned local WASI kit",
+          "lab": "wasi-runtime",
+          "expected": null
+        }
+      ],
+      "related": [],
+      "links": []
+    },
+    {
+      "id": "runtime-artifact-inspection",
+      "category": "R3 · Runtime interfaces",
+      "title": "Record the component you inspected",
+      "body": "Capture source/tool versions, component and host hashes, extracted WIT and the actual import/export list. Compare that record with your deployment assumptions. The kit refuses a wrong or dirty engine checkout and rebuilds the host/component from the pin. Artifact inspection supports capability/version claims; it does not establish the correctness of a future provider or the authenticity of a learner-supplied report.",
+      "examples": [
+        {
+          "kind": "api",
+          "source": "wasm-tools component wit target/wasm32-wasip2/debug/nibli.wasm",
+          "explanation": "The engine’s pinned Nix shell, invoked by the WASI kit",
+          "run_in": "The engine’s pinned Nix shell, invoked by the WASI kit",
+          "lab": "wasi-runtime",
+          "expected": null
+        }
+      ],
+      "related": [],
+      "links": []
+    },
+    {
+      "id": "host-journal-recovery",
+      "category": "R3 · Runtime interfaces",
+      "title": "Recover the last committed inputs",
+      "body": "After a host trap, rebuild the poisoned component and replay only journaled mutations. Preserve stable IDs and tombstones so a later retraction reaches the intended source. The lab deliberately deletes a middle ID before reopening. An interrupted query is not a completed proof and is not a journal mutation. Native journal persistence and browser recovery JSON are different mechanisms; test each one you rely on.",
+      "examples": [
+        {
+          "kind": "data",
+          "source": "commit #0, #1, #2 → withdraw #1 → reopen → retain #0 and #2\nwithdraw #2 → query its claim again",
+          "explanation": "Native scoped application and WASI journal experiments",
+          "run_in": "Native scoped application and WASI journal experiments",
+          "lab": "wasi-runtime",
+          "expected": null
+        }
+      ],
+      "related": [],
+      "links": []
+    },
+    {
+      "id": "review-state-contract",
+      "category": "R5 · Contracts and failures",
+      "title": "Invalidate approval when its basis changes",
+      "body": "The preparation ticket binds original source, formal bytes, provenance, engine, profile and main epoch/revision. Editing the source or draft clears UI approval. An intervening knowledge/profile change disables admission until a new preparation. The worker independently checks and consumes the exact ticket, preventing replay or a modified UI payload from authorizing another draft. Saved drafts can be resumed; approval is never restored from storage.",
+      "examples": [
+        {
+          "kind": "data",
+          "source": "draft → prepare → inspect → reject/edit OR explicitly approve → admit\nedit / knowledge change / profile change / worker restart → fresh review",
+          "explanation": "Browser review panel and native/WASM review tests",
+          "run_in": "Browser review panel and native/WASM review tests",
+          "lab": null,
+          "expected": null
+        }
+      ],
+      "related": [
+        "api-reviewed-admission",
+        "provider-context-failures"
+      ],
+      "links": []
+    },
+    {
+      "id": "provider-context-failures",
+      "category": "R5 · Contracts and failures",
+      "title": "Keep provider failure outside the knowledge result",
+      "body": "The tutor sends one previewed text request, excludes ambient cookies/referrers, rejects redirects, bounds response bytes/time and discards cancelled or stale responses. Keys and replies remain in tab memory. Authentication, rate limit, missing model, malformed output and network/origin failures are transport states, not symbolic FALSE. Model text is untrusted. Browser cancellation does not guarantee provider-side cancellation or a spending limit.",
+      "examples": [
+        {
+          "kind": "api",
+          "source": "POST chosen chat endpoint\n{ \"model\": \"your-installed-model\", \"messages\": [selected text], \"stream\": false }",
+          "explanation": "Optional tutor; deterministic HTTP failure tests; explicitly invoked local-model smoke",
+          "run_in": "Optional tutor; deterministic HTTP failure tests; explicitly invoked local-model smoke",
+          "lab": null,
+          "expected": null
+        }
+      ],
+      "related": [],
+      "links": []
+    },
+    {
+      "id": "compute-transport-contract",
+      "category": "R5 · Contracts and failures",
+      "title": "Boolean JSONL is a low-assurance backend contract",
+      "body": "The stock loopback lab uses newline-delimited requests containing a relation and typed arguments. A parseable Boolean is trusted as the answer; malformed text, timeout or an error becomes backend unavailable. The protocol itself does not establish peer identity, input provenance, model version, freshness or replay protection. Build those obligations into a production host contract when needed, and expose failed checks instead of replacing them with a confident Boolean.",
+      "examples": [
+        {
+          "kind": "data",
+          "source": "{\"relation\":\"exponential\",\"args\":[{\"type\":\"number\",\"value\":8},{\"type\":\"number\",\"value\":2},{\"type\":\"number\",\"value\":3}]}\n{\"result\":true}",
+          "explanation": "Native TCP and WASI loopback compute experiments",
+          "run_in": "Native TCP and WASI loopback compute experiments",
+          "lab": "compute",
+          "expected": null
+        }
+      ],
+      "related": [],
+      "links": []
+    },
+    {
+      "id": "numeric-compute-boundaries",
+      "category": "R5 · Contracts and failures",
+      "title": "Retain numeric and representation boundaries",
+      "body": "Finite built-in arithmetic is definitive when its relation holds or fails; the zero-divisor quotient contract is FALSE. A non-finite compiler-shaped numeric group is UNKNOWN/non-finite. Raw flat compute IR may instead reach a host callback, whose refusal is backend unavailable in this kit. Count/aggregate require complete enumeration, and the engine does not dispatch external calls to invent a domain. Validate the exact ingress and backend argument contract.",
+      "examples": [
+        {
+          "kind": "kr",
+          "source": "quotient(1, 2, 0).",
+          "explanation": "Browser compiler and arithmetic activity",
+          "run_in": null,
+          "lab": "compute",
+          "expected": {
+            "family": "compiled"
+          }
+        }
+      ],
+      "related": [],
+      "links": []
+    },
+    {
+      "id": "budget-origin-contract",
+      "category": "R5 · Contracts and failures",
+      "title": "Depth, fuel, memory and cancellation have different owners",
+      "body": "Reasoner depth bounds search. Host fuel bounds executed WASM work. Guest memory settings restrict growth and do not shrink an existing allocation or bound whole-process RSS. Browser cancellation interrupts a worker. Preserve the originating layer and actual failure class, then repair that layer’s workload or limit. A retry should have a new result identity; no incomplete trace should masquerade as a completed certificate.",
+      "examples": [
+        {
+          "kind": "lab",
+          "source": ":fuel 1000\n? computer(Terminal7).\n:fuel 50000000000\n? computer(Terminal7).",
+          "explanation": "Host REPL inside the WASI kit after its committed setup",
+          "run_in": "Host REPL inside the WASI kit after its committed setup",
+          "lab": "wasi-runtime",
+          "expected": null
+        }
+      ],
+      "related": [],
+      "links": []
+    },
+    {
+      "id": "ontology-loss-boundaries",
+      "category": "R5 · Contracts and failures",
+      "title": "Expose collisions, unsupported syntax and export refusals",
+      "body": "Two different IRIs can collapse onto the same local name. The small reader is not a conforming Turtle validator: [] is accepted as a bare IRI token in the observed pin. The kit exposes and refuses it in its application preflight. Production adapters should use a conforming parser and an explicit supported-fragment mapping. Keep temporal/deontic wrappers, namespace identity, rules and sort declarations out of an allegedly lossless fact-only round-trip claim.",
+      "examples": [
+        {
+          "kind": "data",
+          "source": "https://vendor-a.example/CartB\nhttps://vendor-b.example/CartB\nBoth local names: CartB",
+          "explanation": "Native ontology collision and refusal experiments",
+          "run_in": "Native ontology collision and refusal experiments",
+          "lab": "ontology",
+          "expected": null
+        }
+      ],
+      "related": [],
+      "links": []
+    },
+    {
+      "id": "local-evidence-contract",
+      "category": "R5 · Contracts and failures",
+      "title": "A report is supplied evidence",
+      "body": "The kit records source inventory digest, engine pin, platform/tools, artifact hashes, observations and log hashes. The companion checks structure and expected identities before attaching it. The browser has not rerun the native experiment or authenticated the author. A failed or incompatible report remains useful for diagnosis, but cannot satisfy the matching lab’s completion check. Keep raw logs, assumptions and execution limits with the report.",
+      "examples": [
+        {
+          "kind": "data",
+          "source": "status: passed | failed\nexecution_claim: learner-supplied; not authenticated by the companion\nkit_sha256 + engine_revision + artifact/log hashes",
+          "explanation": "Local-lab report panel and all prepared kits",
+          "run_in": "Local-lab report panel and all prepared kits",
+          "lab": "compute",
+          "expected": null
+        }
+      ],
+      "related": [],
+      "links": []
+    },
+    {
+      "id": "retrieval-verification",
+      "category": "R8 · Research and adoption",
+      "title": "Relevance selects candidates, not premises",
+      "body": "The companion’s local search ranks distinct matching words. It exposes document identity, case scope, revision and withdrawal. Compare scoped results with all-case and withdrawn controls. A relevant but wrong-case or obsolete record can be harmful input to a formalizer. Selection only copies text into review. Verify the intended meaning and scope before admission; a retrieved instruction is data, not authority over the application.",
+      "examples": [
+        {
+          "kind": "data",
+          "source": "search → candidate documents → scope/revision checks → source review → explicit admission → query",
+          "explanation": "Original local records panel in the application activities",
+          "run_in": "Original local records panel in the application activities",
+          "lab": null,
+          "expected": null
+        }
+      ],
+      "related": [],
+      "links": []
+    },
+    {
+      "id": "agent-action-boundaries",
+      "category": "R8 · Research and adoption",
+      "title": "An agent proposal does not authorize execution",
+      "body": "A model may propose an action or a formal draft. The application must decide what evidence may be admitted, evaluate current authorization and perform any host side effect. Keep document instructions outside the command channel. Scope authorization by actor, action, resource and current context; clear temporary context between calls. A symbolic TRUE is conditional on the policy and accepted premises, not a guarantee that an operational action is safe or correct.",
+      "examples": [
+        {
+          "kind": "api",
+          "source": "proposal → reviewed evidence → current authorization → explicit host execution",
+          "explanation": "Native authorizer experiment plus untrusted-document retrieval control",
+          "run_in": "Native authorizer experiment plus untrusted-document retrieval control",
+          "lab": "scoped-application",
+          "expected": null
+        }
+      ],
+      "related": [],
+      "links": []
+    },
+    {
+      "id": "review-capacity",
+      "category": "R8 · Research and adoption",
+      "title": "Measure the queue before scaling draft production",
+      "body": "Daily review load is drafts × reviewed fraction × minutes per review / 60. Capacity depends on available reviewer time and a positive review-time estimate. Sampling can estimate error rates but cannot approve the unreviewed remainder. Use the worksheet to identify unreviewed work, then choose an intake bound, staffing plan or reduced scope. Name the source-policy owner and include correction/regression work in the workload.",
+      "examples": [
+        {
+          "kind": "data",
+          "source": "120 drafts/day × 3 minutes = 6 review hours/day\n4 reviewer hours/day ÷ 3 minutes = 80 drafts/day\n40 drafts/day remain unreviewed",
+          "explanation": "Interactive review-capacity worksheet",
+          "run_in": "Interactive review-capacity worksheet",
+          "lab": null,
+          "expected": null
+        }
+      ],
+      "related": [],
+      "links": []
+    },
+    {
+      "id": "measurement-method",
+      "category": "R8 · Research and adoption",
+      "title": "State the measured phase and environment",
+      "body": "The kit counts successful allocation requests through a Rust System wrapper and records Linux VmRSS separately. Requested bytes include new reallocation sizes, not live or peak bytes. Six explicit phases are timed with Instant. Three repetitions share a process and may be warm. Record toolchain, build, workload, depth, result and proof size. These diagnostic observations do not establish a general performance ranking or equivalence between debug WASI fuel and native time.",
+      "examples": [
+        {
+          "kind": "lab",
+          "source": "python3 labs/run.py measurement --output ../nibli-measurement-first",
+          "explanation": "Native release measurement kit",
+          "run_in": "Native release measurement kit",
+          "lab": "measurement",
+          "expected": null
+        }
+      ],
+      "related": [
+        "resource-budgets",
+        "integration-cost-model",
+        "runtime-artifact-inspection"
+      ],
+      "links": []
+    },
+    {
+      "id": "integration-cost-model",
+      "category": "R8 · Research and adoption",
+      "title": "Price assumptions belong to the learner",
+      "body": "The worksheet uses one model request per draft and 30 days per month. You supply the request price; zero is not a claim about current provider pricing. Review labor and maintenance are separate quantities. Add hosting, acquisition, mapping, onboarding, retries, incident response and the consequence of wrong decisions to an adoption plan. Revisit assumptions with a bounded pilot and real workload data.\n\nTraining a model and running a trained model are different workloads. Quantization can reduce stored weight size and change runtime requirements and output behavior; it does not remove review or calibration work. Compare the executable, model weights, knowledge data and peak runtime memory separately. A small engine binary does not include the knowledge-acquisition labor or an external model’s memory.\n\nFor a fair comparison, hold task, input data, acceptance criteria, hardware, concurrency and failure handling constant; measure cold and warm paths separately.",
+      "examples": [
+        {
+          "kind": "data",
+          "source": "monthly request cost = drafts/day × 30 × chosen price/request\nreview load and maintenance hours remain separate",
+          "explanation": "Interactive cost worksheet and written adoption reflection",
+          "run_in": "Interactive cost worksheet and written adoption reflection",
+          "lab": null,
+          "expected": null
+        }
+      ],
+      "related": [
+        "measurement-method",
+        "review-capacity",
+        "adoption-obligations"
+      ],
+      "links": []
+    },
+    {
+      "id": "adoption-obligations",
+      "category": "R8 · Research and adoption",
+      "title": "Assign ownership across the whole application",
+      "body": "A small pilot should name the owners of source accuracy, vocabulary/ontology mapping, formal review, backend contracts, host capabilities, policy changes and recovery. Test wrong-but-provable encodings, cross-case evidence, withdrawn support and provider failure. A compiler gate, formal theorem, proof certificate and deployed-system assurance cover different obligations. Expand only after observed benefits justify review and maintenance effort.",
+      "examples": [
+        {
+          "kind": "data",
+          "source": "source owner → formal reviewer → policy owner → host operator\nFor each: failure example, repair, regression check, remaining uncertainty",
+          "explanation": "Integration capstone and adoption reflection",
+          "run_in": "Integration capstone and adoption reflection",
+          "lab": null,
+          "expected": null
+        }
+      ],
+      "related": [],
+      "links": []
     }
   ]
 }

@@ -59,6 +59,9 @@ async fn validate_content(id: String) -> Result<(), String> {
         .await
         .map_err(|e| format!("{}: {}", e.kind, e.message))?;
     let course = Course::parse(&value["course"].to_string())?;
-    ReferenceLibrary::parse(&value["references"].to_string(), &course)?;
+    let references = ReferenceLibrary::parse(&value["references"].to_string(), &course)?;
+    if course.schema >= 3 {
+        LabLibrary::parse(&value["labs"].to_string())?.validate_links(&course, &references)?;
+    }
     Ok(())
 }

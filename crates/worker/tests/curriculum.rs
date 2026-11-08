@@ -81,9 +81,11 @@ fn every_authored_engine_observation_and_repair_executes() {
         course.lessons.iter().map(|l| l.unit.as_str()).collect();
     assert_eq!(
         units,
-        ["F1", "F2", "F3", "F4", "F5", "F6", "U1", "U2", "U3", "U4"]
-            .into_iter()
-            .collect()
+        [
+            "F1", "F2", "F3", "F4", "F5", "F6", "U1", "U2", "U3", "U4", "I1", "I2", "I3", "I4"
+        ]
+        .into_iter()
+        .collect()
     );
     let mut failures = vec![];
     let mut observations = vec![];
@@ -115,6 +117,36 @@ fn every_authored_engine_observation_and_repair_executes() {
                     &mut observations,
                     &mut failures,
                 );
+            }
+            if let Some(exercise) = &activity.review_exercise {
+                let before = fixture.current_json();
+                let initial = fixture.call(Command::PrepareReview {
+                    draft: exercise.draft.clone(),
+                });
+                let should_refuse = exercise.milestones.iter().any(|m| m == "refused");
+                let matched = initial.is_err() == should_refuse;
+                observations.push(json!({"activity":activity.id,"observation":"initial-review-gates","matched":matched,"expected_refusal":should_refuse,"actual":initial}));
+                if !matched {
+                    failures.push(format!(
+                        "{}: initial review gate outcome differs",
+                        activity.id
+                    ));
+                }
+                fixture.assert_preserved(&before, &activity.id, &mut failures);
+                let prepared = fixture
+                    .call(Command::PrepareReview {
+                        draft: exercise.repair.clone(),
+                    })
+                    .expect("authored repair must prepare")
+                    .review
+                    .unwrap();
+                fixture
+                    .call(Command::AdmitReviewed {
+                        preparation: Box::new(prepared),
+                        draft: exercise.repair.clone(),
+                        human_confirmed: true,
+                    })
+                    .expect("explicit fixture reviewer must admit the authored repair");
             }
             for action in &activity.actions {
                 let before = fixture.current_json();

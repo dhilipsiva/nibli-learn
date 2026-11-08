@@ -1,0 +1,2 @@
+<https://workshop.example/CartB> <https://workshop.example/located> <https://workshop.example/Bay7> .
+<https://workshop.example/CartB> <https://workshop.example/weight> "12.5"^^<http://www.w3.org/2001/XMLSchema#double> .

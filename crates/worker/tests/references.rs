@@ -4,7 +4,7 @@ use nibli_learn_worker::Runtime;
 use serde_json::json;
 
 #[test]
-fn every_reference_example_has_an_actual_compile_contract() {
+fn reference_examples_compile_kr_and_label_external_execution_contexts() {
     let course = Course::parse(include_str!("../../../content/course.json")).unwrap();
     let library =
         ReferenceLibrary::parse(include_str!("../../../content/references.json"), &course).unwrap();
@@ -30,6 +30,12 @@ fn every_reference_example_has_an_actual_compile_contract() {
     for entry in &library.entries {
         for (index, example) in entry.examples.iter().enumerate() {
             let label = format!("{}/{index}", entry.id);
+            if example.kind != ExampleKind::Kr {
+                assert!(example.expected.is_none());
+                assert!(example.run_in.as_ref().is_some_and(|s| !s.is_empty()));
+                observations.push(json!({"reference":entry.id,"example":index,"kind":example.kind,"run_in":example.run_in,"lab":example.lab,"verification":"execution belongs to the named local lab or browser contract; not a KR compilation"}));
+                continue;
+            }
             let Some(expected) = &example.expected else {
                 failures.push(format!(
                     "{label}: authored example has no compile expectation"
@@ -83,7 +89,12 @@ fn every_reference_example_has_an_actual_compile_contract() {
             }
         }
     }
+    let compiled = observations
+        .iter()
+        .filter(|row| row.get("actual").is_some())
+        .count();
     let report = json!({"schema":1,"engine_revision":ENGINE_REVISION,"content_version":course.version,
+        "kr_compile_observations":compiled,"external_context_descriptions":observations.len()-compiled,
         "references":library.entries.len(),"observations":observations,"failures":failures});
     let target = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../../target/reference-fixtures.json");

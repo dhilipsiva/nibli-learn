@@ -349,7 +349,23 @@ pub fn check_activity(mut state: Signal<AppState>) {
         .as_ref()
         .is_none_or(|q| p.answer == Some(q.correct));
     let review = a.self_review.is_empty() || p.self_reviewed;
-    if baseline && actions && quiz && review {
+    let review_events = a.review_exercise.as_ref().is_none_or(|exercise| {
+        exercise.milestones.iter().all(|milestone| {
+            p.reviews.iter().any(|e| {
+                &e.event == milestone
+                    && e.source_id == exercise.draft.source_id
+                    && e.engine_revision == ENGINE_REVISION
+            })
+        })
+    });
+    let lab = a.local_lab.as_ref().is_none_or(|id| {
+        s.learning
+            .labs
+            .get(id)
+            .zip(s.learning.workspace.lab_reports.get(id))
+            .is_some_and(|(definition, report)| report.meets(definition))
+    });
+    if baseline && actions && quiz && review && review_events && lab {
         s.learning.progress_mut().checked = true;
         s.learning.feedback = if a.operation.is_none() {
             "Self-review recorded. This reflection is your assessment; it is not an engine or model grade.".into()
@@ -359,7 +375,17 @@ pub fn check_activity(mut state: Signal<AppState>) {
         };
     } else {
         s.learning.feedback = format!(
-            "Still needed: {}{}{}{}",
+            "Still needed: {}{}{}{}{}{}",
+            if !review_events {
+                "complete the source review milestones; "
+            } else {
+                ""
+            },
+            if !lab {
+                "attach a compatible local lab report and inspect it; "
+            } else {
+                ""
+            },
             if !baseline {
                 "run and inspect the initial operation; "
             } else {
@@ -437,6 +463,9 @@ pub fn OperationResultView() -> Element {
             if selected.as_ref().is_some_and(|r|r.proof.is_some()){div{class:"interactive-only",crate::inspectors::Proof {}}if let Some(proof)=selected.as_ref().and_then(|r|r.proof.as_ref()){pre{class:"narrow-only","{proof.text}"}}}
             else{div{class:"empty",h3{"This operation has no proof certificate"}p{"Answers, counts, scans and compiler inspections expose their actual result and any recorded execution. No Boolean proof is invented for them."}}}
         }else if let Some(result)=result{TypedResult{result_json:serde_json::to_string(&result).unwrap_or_default()}if matches!(result,OperationResult::Compiled{..}){if let Some(record)=selected.as_ref().map(|r|&r.record){details{summary{"Recorded compiler pipeline · source, AST debug arrays and lowered IR"}pre{{serde_json::to_string_pretty(record.get("artifacts").unwrap_or(&Value::Null)).unwrap_or_default()}}}}}}
+        else if s.screen==Screen::Lesson && s.learning.activity().is_some_and(|a|a.operation.is_none()){
+            p{class:"notice","Explore the activity below and record your reasoning in Self-review. This activity does not require an initial engine query."}
+        }
         else{div{class:"empty",span{class:"empty-symbol","∴"}h3{"Make a prediction, then investigate."}p{"Run the supplied operation to see the engine’s actual result here."}}}
     }}
 }

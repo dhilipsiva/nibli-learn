@@ -20,6 +20,11 @@ check-web:
 check-content:
     python3 scripts/check_content.py
 
+check-labs:
+    cargo fmt --manifest-path labs/native/Cargo.toml -- --check
+    CARGO_TARGET_DIR=target/learning-labs cargo clippy --locked --manifest-path labs/native/Cargo.toml --all-targets -- -D warnings
+    python3 scripts/check_native_labs.py
+
 dependencies:
     npm ci --ignore-scripts
 
@@ -35,7 +40,7 @@ test-browser:
 test-platform:
     npm exec -- playwright test --config tests/platform.config.mjs
 
-ci-native: fmt-check clippy test check-web check-content
+ci-native: fmt-check clippy test check-web check-content check-labs
 
 ci-web: build check-bundle test-browser test-platform
 

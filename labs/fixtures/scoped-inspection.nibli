@@ -1,0 +1,6 @@
+derived_only("ready").
+all $cart, $case: owns($case, $cart) & approves(Inspector, $case) & approves(Reviewer, $case) -> ready($cart, $case).
+owns(CaseA, CartB).
+owns(CaseB, CartB).
+approves(Inspector, CaseA).
+approves(Reviewer, CaseB).

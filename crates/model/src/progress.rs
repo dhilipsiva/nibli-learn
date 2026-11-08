@@ -34,6 +34,8 @@ pub struct ActivityProgress {
     pub answer: Option<usize>,
     #[serde(default)]
     pub reflection: Option<String>,
+    #[serde(default)]
+    pub reviews: Vec<crate::ReviewLearningEvidence>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -260,6 +262,19 @@ impl CourseProgress {
                             || progress.evidence.len() > 64
                             || progress.candidate_evidence.len() > 64
                             || progress.expected_failures.len() > 64
+                            || progress.reviews.len() > 32
+                            || progress.reviews.iter().any(|e| {
+                                !matches!(
+                                    e.event.as_str(),
+                                    "prepared" | "rejected" | "refused" | "admitted"
+                                ) || e.epoch.len() > 128
+                                    || e.revision.len() > 32
+                                    || e.source_id.len() > 256
+                                    || e.source_sha256.len() != 64
+                                    || e.formal_sha256.len() != 64
+                                    || e.engine_revision.len() > 128
+                                    || e.ticket.as_ref().is_some_and(|t| t.len() > 512)
+                            })
                             || progress.actions.iter().any(|id| !valid_content_id(id))
                             || progress
                                 .evidence
@@ -331,6 +346,10 @@ mod tests {
                         actions: vec![],
                         references: vec![],
                         self_review: vec![],
+                        local_lab: None,
+                        retrieval: false,
+                        cost_worksheet: false,
+                        review_exercise: None,
                     })
                     .collect(),
             }],

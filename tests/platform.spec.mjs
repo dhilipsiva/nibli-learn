@@ -9,7 +9,7 @@ const app = path.join(root, 'test-results/platform-site/nibli-learn');
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const jsonBytes = value => Buffer.from(JSON.stringify(value));
 async function put(relative, bytes) { const name = path.join(app, relative); await mkdir(path.dirname(name), { recursive: true }); await writeFile(name, bytes); }
-async function fixture(label, { changedContent = false, version = 2, unsafe = false, localEngine = false, development = false } = {}) {
+async function fixture(label, { changedContent = false, version = 2, appSchema = 2, unsafe = false, localEngine = false, development = false } = {}) {
   const id = `runtime-${label}`;
   const runtimeBase = `/nibli-learn/runtime/${id}/`;
   const packBase = `/nibli-learn/packs/nibli-core/${version}/`;
@@ -24,11 +24,17 @@ async function fixture(label, { changedContent = false, version = 2, unsafe = fa
   const course = JSON.parse(await readFile(path.join(root, 'content/course.json'), 'utf8'));
   const references = JSON.parse(await readFile(path.join(root, 'content/references.json'), 'utf8'));
   course.version = references.version = version;
+  course.schema = references.schema = appSchema;
+  if (appSchema === 2) {
+    course.lessons = course.lessons.filter(lesson => ['foundations', 'use'].includes(lesson.track));
+    references.entries = references.entries.filter(entry => !entry.examples.some(example => example.kind && example.kind !== 'kr'));
+  }
   if (changedContent) course.lessons[0].summary += ' Changed bytes without a content-version bump.';
   const contentPayload = {
-    'manifest.json': jsonBytes({ schema: 2, kind: 'nibli-learn-content-manifest', content_version: version, minimum_app_schema: 2 }),
+    'manifest.json': jsonBytes({ schema: appSchema, kind: 'nibli-learn-content-manifest', content_version: version, minimum_app_schema: appSchema }),
     'course.json': jsonBytes(course), 'references.json': jsonBytes(references),
   };
+  if (appSchema >= 3) contentPayload['labs.json'] = await readFile(path.join(root, 'content/labs.json'));
   async function files(payload, base) {
     const result = [];
     for (const [name, bytes] of Object.entries(payload).sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0)) {
@@ -38,14 +44,14 @@ async function fixture(label, { changedContent = false, version = 2, unsafe = fa
     return result;
   }
   const engineIdentity = localEngine ? `local-${'a'.repeat(40)}-source-${'c'.repeat(16)}` : 'a'.repeat(40);
-  const runtime = { schema: 1, kind: 'nibli-runtime', id, app_schema: 2, app_revision: 'b'.repeat(40), engine_revision: engineIdentity, development, base_path: runtimeBase, files: await files(runtimePayload, runtimeBase) };
+  const runtime = { schema: 1, kind: 'nibli-runtime', id, app_schema: appSchema, app_revision: 'b'.repeat(40), engine_revision: engineIdentity, development, base_path: runtimeBase, files: await files(runtimePayload, runtimeBase) };
   const packFiles = await files(contentPayload, packBase);
   const digest = hash(jsonBytes(packFiles.map(({ path, sha256, bytes }) => ({ path, sha256, bytes }))));
-  const pack = { schema: 1, kind: 'nibli-content-pack', id: 'nibli-core', version, content_version: version, app_schema: 2, engine_revision: engineIdentity, development, base_path: packBase, content_manifest: 'manifest.json', content_digest: digest, files: packFiles };
+  const pack = { schema: 1, kind: 'nibli-content-pack', id: 'nibli-core', version, content_version: version, app_schema: appSchema, engine_revision: engineIdentity, development, base_path: packBase, content_manifest: 'manifest.json', content_digest: digest, files: packFiles };
   if (unsafe) runtime.files[0].path = '../escape.js';
   const runtimeBytes = jsonBytes(runtime); const packBytes = jsonBytes(pack);
   await put(`offline/runtime-${label}.json`, runtimeBytes); await put(`offline/pack-${label}.json`, packBytes);
-  const catalog = { schema: 1, kind: 'nibli-offline-catalog', entries: [{ id, title: `Fixture ${label}`, app_schema: 2, development,
+  const catalog = { schema: 1, kind: 'nibli-offline-catalog', entries: [{ id, title: `Fixture ${label}`, app_schema: appSchema, development,
     runtime: { url: `/nibli-learn/offline/runtime-${label}.json`, sha256: hash(runtimeBytes) },
     content: { url: `/nibli-learn/offline/pack-${label}.json`, sha256: hash(packBytes) } }] };
   await put('offline/catalog.json', jsonBytes(catalog));
@@ -173,7 +179,30 @@ test('changed bytes at the same content version and future content are refused',
   expect((await call(page, 'installOffline', changed.id, 'changed-content', null)).error.kind).toBe('version_conflict');
   const future = await fixture('future', { version: 3 });
   expect((await call(page, 'installOffline', future.id, 'future-content', null)).error.kind).toBe('incompatible');
+  const unsupported = await fixture('unsupported', { version: 4, appSchema: 4 });
+  expect((await call(page, 'installOffline', unsupported.id, 'unsupported-schema', null)).error.kind).toBe('invalid');
   expect((await ok(page, 'offlineStatus')).active.installation_id).toBe('runtime-a');
+});
+
+test('schema 3 installs with its lab catalog and rolls back without changing workspace bytes', async ({ page, context }) => {
+  const old = await activeFixture(page, 'prior-schema');
+  const workspace = { schema: 2, progress: { label: 'retained learner evidence' }, projects: {} };
+  await ok(page, 'saveWorkspace', null, JSON.stringify(workspace), false);
+  const newer = await fixture('integrate', { version: 3, appSchema: 3 });
+  await install(page, newer);
+  await ok(page, 'activateOffline', newer.id, '1');
+  await context.setOffline(true);
+  const fresh = await context.newPage(); await fresh.goto('/nibli-learn/');
+  await expect(fresh.locator('#runtime')).toHaveText('Runtime integrate');
+  const content = await ok(fresh, 'installedContent', newer.id);
+  expect(content.course.schema).toBe(3);
+  expect(content.labs.entries).toHaveLength(5);
+  expect((await ok(fresh, 'loadWorkspace')).data).toEqual(workspace);
+  await ok(page, 'undoOffline', '2');
+  const restored = await context.newPage(); await restored.goto('/nibli-learn/');
+  await expect(restored.locator('#runtime')).toHaveText('Runtime prior-schema');
+  expect(await workerVersion(restored, old.runtimeBase)).toBe('prior-schema');
+  expect((await ok(restored, 'loadWorkspace')).data).toEqual(workspace);
 });
 
 test('unsafe paths and corrupted cached bytes cannot be activated or called installed', async ({ page }) => {

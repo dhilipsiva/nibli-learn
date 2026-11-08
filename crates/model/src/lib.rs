@@ -2,12 +2,16 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
+pub mod application;
+pub use application::*;
 pub mod course;
+pub mod labs;
 pub mod operations;
 pub mod progress;
 pub mod projects;
 pub mod review;
 pub use course::*;
+pub use labs::*;
 pub use operations::*;
 pub use progress::*;
 pub use projects::*;

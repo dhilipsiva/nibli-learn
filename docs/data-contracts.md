@@ -1,8 +1,9 @@
 # Versioned content and local data
 
-The [content manifest](../content/manifest.json) identifies ten available lessons,
-44 stable activities, and the planned later learning tracks. Content version 2
-requires application schema 2. The registry and references are original learning
+The [content manifest](../content/manifest.json) identifies fourteen available lessons,
+76 stable activities, and the planned later learning tracks. Content version 3
+requires application schema 3; the installer also retains support for paired schema-2
+runtimes and content. The registry and references are original learning
 material; `just check-content` verifies their IDs, versions, objectives and links.
 The build manifest binds these bytes to the exact application and engine inputs.
 
@@ -13,8 +14,9 @@ includes its session epoch. A reset may reuse the numeric part.
 | Document | Version boundary | Contents and behavior |
 | --- | --- | --- |
 | Course progress | `schema: 2`, course, lesson and objective versions | Predictions, learner-authored reflection notes, checks, hints, self-review and run identity metadata. No source statements, proofs or execution transcripts. Schema-1 flags migrate to the seven original version-1 objectives without inventing run evidence. |
-| Local project | `schema: 2`, `kind: "nibli-project"`, engine/content versions | Local project name/identity, profile, assertion source labels and recovery image. External imports require detached engine validation before preview and explicit application. |
-| Workspace | `schema: 2` | Versioned progress, up to 64 projects, active project, preferences and bounded aborted-attempt metadata. Stored inside a separate transactional revision envelope. |
+| Local project | `schema: 2`, `kind: "nibli-project"`, engine/content versions | Local project name/identity, profile, assertion source labels and recovery image, unfinished source-review draft and review-cost assumptions. External imports require detached engine validation before preview and explicit application. |
+| Workspace | `schema: 2` | Versioned progress, up to 64 projects, active project, preferences, up to 16 supplied local-lab reports and bounded aborted-attempt metadata. Stored inside a separate transactional revision envelope. |
+| Local lab report | `schema: 1`, `kind: "nibli-local-lab-report"` | Lab/engine/kit identity, source inventory, environment, artifact/log hashes and supplied observations. Parsing is bounded to 2 MiB. Compatible reports require successful process statuses and every required observation; this does not authenticate the supplied execution. |
 | Operation run | `schema: 2`, pinned engine/content identity | Request, generation, epoch/revision, actual profile, operation-specific result, optional actual proof and a separate execution record. Hypothetical scope identifies its original source epoch/revision. |
 | Original proof record | `schema: 1`, `kind: "proof-record"` | The original seven-step Boolean run export, preserving its original claim, outcome, Why, proof and actual execution record. |
 | Execution record | Engine `schema_version` and `engine_version` | Bounded actual artifacts/events, profile, recording status and result/error. Inspection getters have no recording; a missing record does not mean an empty completed execution. |
@@ -56,7 +58,8 @@ main operation. Candidate assertion IDs and profile settings are not transplante
 ## Verified offline pack contract
 
 The [pack schema](../content/offline-pack.schema.json) defines the declarative content
-inventory for application schema 2. The first-party catalog separately pins runtime
+inventory for application schemas 2 and 3. Schema 3 includes the local-lab catalog;
+its source-kit download belongs to the matching runtime inventory. The first-party catalog separately pins runtime
 and content manifests by SHA-256; payload inventories exclude their own manifests.
 Content packs contain lessons, references and permitted images, never executable
 application, worker, JavaScript, WASM or font replacements.
@@ -81,3 +84,18 @@ suite exercises real IndexedDB, CacheStorage and service workers with small runt
 fixtures; a full companion offline journey separately verifies the built reasoning
 application. External arbitrary pack import and publisher signatures are outside this
 first-party catalog contract.
+
+## Source review and supplied evidence
+
+Preparation computes canonical KR, deterministic backtranslation and a real detached
+admission check. A worker-held ticket binds exact source/draft bytes, engine, profile
+and main epoch/revision. Explicit human confirmation and a fresh main admission are
+required. Editing, intervening changes, replay or worker restart cannot reuse approval.
+Tickets and confirmation flags are not saved. Retained assertion provenance records
+the source and hashes as learner-attested history, not source authenticity.
+
+Review activities retain bounded milestone metadata separately from engine runs.
+Reference examples distinguish KR compilation from Rust APIs, WIT, data and local
+commands. Local report import creates no browser operation, proof or source assertion.
+Failed or incompatible reports remain inspectable but do not satisfy a lab requirement.
+Optional model keys and replies are excluded from all these serializable documents.

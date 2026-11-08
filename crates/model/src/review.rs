@@ -106,3 +106,46 @@ impl ReviewProvenance {
         Ok(())
     }
 }
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ReviewExercise {
+    pub draft: ReviewDraft,
+    pub repair: ReviewDraft,
+    pub milestones: Vec<String>,
+}
+impl ReviewExercise {
+    pub fn validate(&self) -> Result<(), String> {
+        self.draft.validate()?;
+        self.repair.validate()?;
+        if self.repair.source_id != self.draft.source_id
+            || self.repair.source_text != self.draft.source_text
+        {
+            return Err(
+                "Review repair must retain its authored source identity and meaning.".into(),
+            );
+        }
+        if self.milestones.is_empty()
+            || self.milestones.len() > 4
+            || self
+                .milestones
+                .iter()
+                .any(|m| !matches!(m.as_str(), "prepared" | "rejected" | "refused" | "admitted"))
+        {
+            return Err("Unknown review exercise milestone.".into());
+        }
+        Ok(())
+    }
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ReviewLearningEvidence {
+    pub event: String,
+    pub engine_revision: String,
+    pub epoch: String,
+    pub revision: String,
+    pub source_id: String,
+    pub source_sha256: String,
+    pub formal_sha256: String,
+    pub ticket: Option<String>,
+}
