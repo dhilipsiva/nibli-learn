@@ -8,6 +8,9 @@ use std::collections::BTreeMap;
 
 pub const WORKSPACE_SCHEMA: u32 = 2;
 pub const MAX_WORKSPACE_BYTES: usize = 16 * 1024 * 1024;
+// Activity projects share the workspace with sandbox and imported projects.
+// Keep room for the complete curriculum as well as independent learner work.
+pub const MAX_WORKSPACE_PROJECTS: usize = 256;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -200,13 +203,17 @@ impl LocalWorkspace {
     }
     pub fn validate(&self, course: &Course) -> Result<(), String> {
         if self.schema != WORKSPACE_SCHEMA
-            || self.projects.len() > 64
             || !matches!(self.theme.as_str(), "dark" | "light")
             || !matches!(self.notation.as_str(), "plain" | "both" | "formal")
             || self.release_support_stage > 3
             || self.aborted.len() > 24
         {
             return Err("Invalid local workspace version or preferences.".into());
+        }
+        if self.projects.len() > MAX_WORKSPACE_PROJECTS {
+            return Err(format!(
+                "Local workspace exceeds {MAX_WORKSPACE_PROJECTS} projects."
+            ));
         }
         self.progress.validate(course)?;
         if self.lab_reports.len() > 16 {
@@ -344,5 +351,52 @@ mod tests {
             .unwrap()
             .remove("strict");
         assert!(profile_from_session(&image).is_err());
+    }
+    #[test]
+    fn complete_course_and_independent_projects_round_trip_within_workspace_bounds() {
+        let catalog = course();
+        let mut workspace = LocalWorkspace::new(&catalog);
+        for lesson in &catalog.lessons {
+            for activity in &lesson.activities {
+                let id = format!("{}-{}", lesson.id, activity.id);
+                let mut project = ProjectDocument::new(
+                    id.clone(),
+                    activity.title.clone(),
+                    catalog.version,
+                    session(),
+                );
+                project.lesson = Some(lesson.id.clone());
+                project.activity = Some(activity.id.clone());
+                workspace.projects.insert(id, project);
+            }
+        }
+        for index in 0..64 {
+            let id = format!("independent-{index}");
+            workspace.projects.insert(
+                id.clone(),
+                ProjectDocument::new(id, "Independent work".into(), catalog.version, session()),
+            );
+        }
+        workspace.active_project = Some("independent-0".into());
+        assert!(workspace.projects.len() > 64);
+        let serialized = serde_json::to_string(&workspace).unwrap();
+        let restored = LocalWorkspace::parse(&serialized, &catalog).unwrap();
+        assert_eq!(
+            serde_json::to_value(&restored).unwrap(),
+            serde_json::to_value(&workspace).unwrap()
+        );
+        for index in workspace.projects.len()..=MAX_WORKSPACE_PROJECTS {
+            let id = format!("extra-{index}");
+            workspace.projects.insert(
+                id.clone(),
+                ProjectDocument::new(id, "Extra project".into(), catalog.version, session()),
+            );
+        }
+        assert!(
+            workspace
+                .validate(&catalog)
+                .unwrap_err()
+                .contains("projects")
+        );
     }
 }

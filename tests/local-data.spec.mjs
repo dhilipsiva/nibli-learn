@@ -60,6 +60,36 @@ async function preview(page, kind, value) {
   await ready(page);
 }
 
+test('a full workspace refuses new sandbox projects and imports without changing saved work', async ({ page }) => {
+  await start(page);
+  const original = await envelope(page);
+  const source = original.data.projects[original.data.active_project];
+  const full = structuredClone(original.data);
+  // Seed the capacity boundary using copies of a real acknowledged engine session.
+  // This does not fabricate a run result or learning completion.
+  for (let index = 1; index < 256; index++) {
+    const id = `capacity-${index}`;
+    full.projects[id] = { ...structuredClone(source), id, name: `Saved project ${index}`, lesson: null, activity: null };
+  }
+  await page.evaluate(async ({ revision, data }) => {
+    const platform = await import('/nibli-learn/platform/platform.js');
+    const result = JSON.parse(await platform.saveWorkspace(revision, JSON.stringify(data), false));
+    if (!result.ok) throw new Error(result.error.message);
+  }, { revision: original.revision, data: full });
+  await page.reload();
+  await ready(page);
+  const before = await envelope(page);
+  expect(Object.keys(before.data.projects)).toHaveLength(256);
+  await page.getByRole('button', { name: 'New sandbox project', exact: true }).click();
+  await expect(page.getByText('This workspace already has 256 projects. Export your work before replacing your local workspace.', { exact: true })).toBeVisible();
+  expect(await envelope(page)).toEqual(before);
+  await preview(page, 'project', source);
+  await expect(page.getByRole('heading', { name: 'Validated preview', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Apply this validated import', exact: true }).click();
+  await expect(page.getByRole('alert')).toContainText('This import was not applied');
+  expect(await envelope(page)).toEqual(before);
+});
+
 test('project preview stays detached, apply renews identity and provenance, and undo restores the prior workspace', async ({ page }, testInfo) => {
   await start(page);
   const before = await envelope(page);

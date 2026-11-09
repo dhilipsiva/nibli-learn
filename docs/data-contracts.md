@@ -15,7 +15,7 @@ includes its session epoch. A reset may reuse the numeric part.
 | --- | --- | --- |
 | Course progress | `schema: 2`, course, lesson and objective versions | Predictions, learner-authored reflection notes, checks, hints, self-review and run identity metadata. No source statements, proofs or execution transcripts. Schema-1 flags migrate to the seven original version-1 objectives without inventing run evidence. |
 | Local project | `schema: 2`, `kind: "nibli-project"`, engine/content versions | Local project name/identity, profile, assertion source labels and recovery image, unfinished source-review draft and review-cost assumptions. External imports require detached engine validation before preview and explicit application. |
-| Workspace | `schema: 2` | Versioned progress, up to 64 projects, active project, preferences, up to 16 supplied local-lab reports and bounded aborted-attempt metadata. Stored inside a separate transactional revision envelope. |
+| Workspace | `schema: 2` | Versioned progress, up to 256 projects within 16 MiB, active project, preferences, up to 16 supplied local-lab reports and bounded aborted-attempt metadata. Stored inside a separate transactional revision envelope. |
 | Local lab report | `schema: 1`, `kind: "nibli-local-lab-report"` | Lab/engine/kit identity, source inventory, environment, artifact/log hashes and supplied observations. Parsing is bounded to 2 MiB. Compatible reports require successful process statuses and every required observation; this does not authenticate the supplied execution. |
 | Operation run | `schema: 2`, pinned engine/content identity | Request, generation, epoch/revision, actual profile, operation-specific result, optional actual proof and a separate execution record. Hypothetical scope identifies its original source epoch/revision. |
 | Original proof record | `schema: 1`, `kind: "proof-record"` | The original seven-step Boolean run export, preserving its original claim, outcome, Why, proof and actual execution record. |
@@ -36,6 +36,14 @@ Completed recordings remain in memory and are exported explicitly. Persistent pr
 stores only bounded run identity metadata. An aborted attempt has its claim, settings,
 epoch/revision and `aborted` status, with no completed outcome or proof. Hard worker
 replacement may capture no events.
+
+Activity projects count toward the workspace limit. The full current course retains
+110 projects for 116 activities: the seven original release steps share one investigation.
+The capacity regression visits every activity in a single browser workspace, verifies
+each durable save, and reloads both the final workspace and the earliest completed
+activity with its original evidence. A model regression also reserves room for all
+authored activities plus 64 independent projects. Existing schema-2 workspaces retain
+their identities; increasing the bound does not rewrite or discard learner work.
 
 Parsing a project envelope does not validate the engine recovery image. The worker
 replays and checks that image in a detached candidate: source strings, compiled roots,

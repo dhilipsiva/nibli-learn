@@ -398,8 +398,10 @@ fn new_project(mut state: Signal<AppState>) {
         return;
     }
     capture(state);
-    if state.peek().learning.workspace.projects.len() >= 64 {
-        state.write().notice="This workspace already has 64 projects. Export an existing project before replacing your local workspace.".into();
+    if state.peek().learning.workspace.projects.len() >= MAX_WORKSPACE_PROJECTS {
+        state.write().notice = format!(
+            "This workspace already has {MAX_WORKSPACE_PROJECTS} projects. Export your work before replacing your local workspace."
+        );
         return;
     }
     let id = format!("project-{}", epoch());
@@ -614,6 +616,14 @@ fn apply_import(mut state: Signal<AppState>) {
     if state.peek().busy {
         return;
     }
+    if matches!(preview, ImportPreview::Project(_))
+        && state.peek().learning.workspace.projects.len() >= MAX_WORKSPACE_PROJECTS
+    {
+        state.write().import_error = format!(
+            "This workspace already has {MAX_WORKSPACE_PROJECTS} projects. This import was not applied. Export your work before replacing your local workspace."
+        );
+        return;
+    }
     if !matches!(preview, ImportPreview::Archive(_)) {
         if state.peek().learning.cross_tab {
             state.write().import_error="Another tab changed the saved workspace. This import was not applied. Export this tab’s copy or explicitly reload the latest saved workspace first.".into();
@@ -753,6 +763,7 @@ pub fn DataPage() -> Element {
         .map(|l| l.activities.len())
         .sum();
     rsx! {main{id:"main-content",tabindex:"-1",class:"data-page",div{class:"page-heading",span{class:"eyebrow","Local data · no account"}h1{"Your projects, your evidence."}p{"Progress and source projects stay on this device. Export a copy before clearing browser storage or moving to another browser."}}
+        if !s.notice.is_empty(){div{class:"notice","{s.notice}"}}
         if !s.storage_error.is_empty(){div{class:"notice error",role:"alert","{s.storage_error}"}}if s.learning.cross_tab{div{class:"notice",p{"Another tab has newer saved work. Current unsaved changes have not been overwritten."}div{class:"button-row",button{class:"button",onclick:move |_|export_workspace(state),"Export this tab’s copy"}button{class:"button primary",disabled:s.busy||s.learning.save_busy,onclick:move |_|reload(state),"Reload saved workspace"}}}}
         div{class:"data-grid",section{class:"data-card",h2{"Learning progress"}p{"{progress_count} of {total} current activities checked. Earlier objective versions remain historical."}div{class:"button-row",button{class:"button",onclick:move |_|download("nibli-course-progress.json",serde_json::to_string_pretty(&state.peek().learning.workspace.progress).unwrap_or_default()),"Export progress"}button{class:"button",onclick:move |_|export_workspace(state),"Export all local work"}}p{class:"small muted","The original schema-1 local storage key is retained during migration. New saves use the versioned browser database."}}
         section{class:"data-card",h2{"Backup and recovery"}p{"Explicit imports create a saved backup. Failed validation preserves existing data."}div{class:"button-row",button{class:"button",disabled:!s.learning.can_undo||s.busy||s.learning.save_busy,onclick:move |_|undo(state),"Undo last replacement"}button{class:"button",onclick:move |_|export_raw(state),"Export retained raw data"}button{class:"button",disabled:s.busy,onclick:move |_|cancel(state),"Restore acknowledged project"}}if !s.export_message.is_empty(){p{"{s.export_message}"}}}}
